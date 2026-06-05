@@ -49,4 +49,4 @@ class UserController extends Controller
                 'User status updated successfully.'
             );
     }
-}w
+}
