@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
@@ -32,34 +31,56 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'unique:users,email'
+            ],
             'nik' => ['nullable', 'string', 'max:50'],
             'phone' => ['nullable', 'string', 'max:20'],
             'gender' => ['nullable', 'in:L,P'],
             'birth_place' => ['nullable', 'string', 'max:100'],
             'birth_date' => ['nullable', 'date'],
             'address' => ['nullable', 'string'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::defaults()
+            ],
         ]);
 
         $user = User::create([
             'role' => 'peserta',
+
             'name' => $request->name,
             'email' => $request->email,
+
             'nik' => $request->nik,
             'phone' => $request->phone,
             'gender' => $request->gender,
             'birth_place' => $request->birth_place,
             'birth_date' => $request->birth_date,
             'address' => $request->address,
-            'is_active' => true,
+
+            'photo' => null,
+            'bio' => null,
+
+            'is_active' => false,
+            'approval_status' => 'pending',
+
             'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return redirect()->route('dashboard');
+        return redirect()
+            ->route('login')
+            ->with(
+                'success',
+                'Registration successful. Please wait for admin approval.'
+            );
     }
 }

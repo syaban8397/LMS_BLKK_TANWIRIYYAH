@@ -31,6 +31,7 @@ class User extends Authenticatable
         'photo',
         'bio',
         'is_active',
+        'approval_status',
     ];
 
     protected $hidden = [
