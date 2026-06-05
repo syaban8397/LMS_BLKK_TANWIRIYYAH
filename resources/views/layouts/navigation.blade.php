@@ -1,175 +1,26 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-900 via-indigo-900 to-slate-900 shadow-2xl overflow-y-auto">
 
-    @php
-        $dashboardRoute = match(auth()->user()->role) {
-            'admin' => route('admin.dashboard'),
-            'instruktur' => route('instruktur.dashboard'),
-            'peserta' => route('peserta.dashboard'),
-            default => url('/'),
-        };
-    @endphp
+    <!-- LOGO -->
+    <div class="px-6 py-6 border-b border-white/10">
 
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+        <div class="flex items-center gap-3">
 
-            <div class="flex">
+            <div
+                class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl">
 
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ $dashboardRoute }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
-
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link
-                        :href="$dashboardRoute"
-                        :active="request()->routeIs('admin.dashboard') ||
-                                  request()->routeIs('instruktur.dashboard') ||
-                                  request()->routeIs('peserta.dashboard')"
-                    >
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
+                🎓
 
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
+            <div>
 
-                    <x-slot name="trigger">
-                        <button
-                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                <h1 class="text-white text-xl font-bold">
+                    LMS BLKK
+                </h1>
 
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4"
-                                     xmlns="http://www.w3.org/2000/svg"
-                                     viewBox="0 0 20 20">
-
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </div>
-
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link
-                                :href="route('logout')"
-                                onclick="event.preventDefault();
-                                         this.closest('form').submit();">
-
-                                {{ __('Log Out') }}
-
-                            </x-dropdown-link>
-                        </form>
-
-                    </x-slot>
-
-                </x-dropdown>
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-
-                <button
-                    @click="open = ! open"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-
-                        <path
-                            :class="{'hidden': open, 'inline-flex': ! open }"
-                            class="inline-flex"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16"
-                        />
-
-                        <path
-                            :class="{'hidden': ! open, 'inline-flex': open }"
-                            class="hidden"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"
-                        />
-
-                    </svg>
-
-                </button>
-
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-
-        <div class="pt-2 pb-3 space-y-1">
-
-            <x-responsive-nav-link
-                :href="$dashboardRoute"
-                :active="request()->routeIs('admin.dashboard') ||
-                          request()->routeIs('instruktur.dashboard') ||
-                          request()->routeIs('peserta.dashboard')"
-            >
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">
-                    {{ Auth::user()->name }}
-                </div>
-
-                <div class="font-medium text-sm text-gray-500">
-                    {{ Auth::user()->email }}
-                </div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link
-                        :href="route('logout')"
-                        onclick="event.preventDefault();
-                                 this.closest('form').submit();">
-
-                        {{ __('Log Out') }}
-
-                    </x-responsive-nav-link>
-
-                </form>
+                <p class="text-blue-200 text-sm">
+                    Tanwiriyyah
+                </p>
 
             </div>
 
@@ -177,4 +28,217 @@
 
     </div>
 
-</nav>w
+    <!-- USER INFO -->
+    <div class="px-5 py-5">
+
+        <div
+            class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+
+            <div class="flex items-center gap-3">
+
+                <div
+                    class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg">
+
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+
+                </div>
+
+                <div>
+
+                    <div class="text-white font-semibold">
+                        {{ Auth::user()->name }}
+                    </div>
+
+                    <div class="text-blue-200 text-sm">
+                        {{ ucfirst(Auth::user()->role) }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MENU -->
+    <div class="px-4 flex-1 overflow-y-auto">
+
+        <p class="text-xs uppercase text-blue-300 font-semibold px-3 mb-3">
+            Main Menu
+        </p>
+
+        <div class="space-y-2">
+
+            <!-- Dashboard -->
+            <a href="{{ route('admin.dashboard') }}"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+
+                <span class="text-lg">📊</span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+            <!-- Users -->
+            <a href="{{ route('admin.users.index') }}"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+
+                <span class="text-lg">👥</span>
+
+                <span>
+                    User Management
+                </span>
+
+            </a>
+
+            <!-- Participants -->
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+
+                <span class="text-lg">🎓</span>
+
+                <span>
+                    Participants
+                </span>
+
+            </a>
+
+            <!-- Instructors -->
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+
+                <span class="text-lg">🧑‍🏫</span>
+
+                <span>
+                    Instructors
+                </span>
+
+            </a>
+
+            <!-- Programs -->
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+
+                <span class="text-lg">📚</span>
+
+                <span>
+                    Training Programs
+                </span>
+
+            </a>
+
+            <!-- Classes -->
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+
+                <span class="text-lg">🏫</span>
+
+                <span>
+                    Classes
+                </span>
+
+            </a>
+
+            <!-- Certificates -->
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+
+                <span class="text-lg">📜</span>
+
+                <span>
+                    Certificates
+                </span>
+
+            </a>
+
+            <!-- Reports -->
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+
+                <span class="text-lg">📈</span>
+
+                <span>
+                    Reports
+                </span>
+
+            </a>
+
+            <!-- Settings -->
+            <a href="{{ route('profile.edit') }}"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+
+                <span class="text-lg">⚙️</span>
+
+                <span>
+                    Settings
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- SYSTEM STATUS -->
+    <div class="px-5 mt-8">
+
+        <div
+            class="bg-green-500/10 border border-green-500/20 rounded-2xl p-4">
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse">
+                </div>
+
+                <div>
+
+                    <div class="text-green-300 text-sm font-semibold">
+                        System Status
+                    </div>
+
+                    <div class="text-white text-xs">
+                        Online & Running
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="px-4 mt-8 pb-6">
+
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+
+            <button
+                type="submit"
+                class="w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg transition">
+
+                🚪 Logout
+
+            </button>
+
+        </form>
+
+        <div class="text-center mt-4">
+
+            <p class="text-xs text-blue-300">
+                LMS BLKK Tanwiriyyah
+            </p>
+
+            <p class="text-xs text-blue-400">
+                Version 1.0
+            </p>
+
+        </div>
+
+    </div>
+
+</nav>

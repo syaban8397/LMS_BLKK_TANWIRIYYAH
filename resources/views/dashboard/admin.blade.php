@@ -1,127 +1,137 @@
 <x-app-layout>
 
-    <x-slot name="header">
-        <h2 class="font-semibold text-2xl">
-            Admin Dashboard
-        </h2>
-    </x-slot>
+<div class="space-y-6">
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4">
+    <!-- HERO -->
+    <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 rounded-2xl p-6 text-white shadow-lg">
 
-            <!-- Welcome Card -->
-            <div class="bg-white rounded-xl shadow p-6 mb-6">
-                <h1 class="text-2xl font-bold">
-                    Welcome, {{ auth()->user()->name }}
-                </h1>
+        <h1 class="text-3xl font-bold">
+            Welcome Back, {{ auth()->user()->name }}
+        </h1>
 
-                <p class="text-gray-500 mt-2">
-                    Administrator Panel
-                </p>
+        <p class="mt-2 text-blue-100">
+            LMS BLKK Tanwiriyyah Administration Dashboard
+        </p>
+
+    </div>
+
+    <!-- STATS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+
+        <div class="bg-white rounded-2xl p-5 shadow">
+            <p class="text-gray-500">Participants</p>
+            <h2 class="text-4xl font-bold mt-2 text-blue-700">
+                {{ $participants ?? 0 }}
+            </h2>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 shadow">
+            <p class="text-gray-500">Instructors</p>
+            <h2 class="text-4xl font-bold mt-2 text-green-700">
+                {{ $instructors ?? 0 }}
+            </h2>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 shadow">
+            <p class="text-gray-500">Classes</p>
+            <h2 class="text-4xl font-bold mt-2 text-purple-700">
+                {{ $classes ?? 0 }}
+            </h2>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 shadow">
+            <p class="text-gray-500">Certificates</p>
+            <h2 class="text-4xl font-bold mt-2 text-orange-700">
+                {{ $certificates ?? 0 }}
+            </h2>
+        </div>
+
+    </div>
+
+    <!-- APPROVAL -->
+    <div class="grid md:grid-cols-3 gap-5">
+
+        <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-5">
+            <h3 class="text-yellow-700 font-semibold">
+                Pending Approval
+            </h3>
+
+            <div class="text-4xl font-bold mt-2 text-yellow-600">
+                {{ $pendingParticipants ?? 0 }}
             </div>
+        </div>
 
-            <!-- Statistics -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-green-50 border border-green-200 rounded-2xl p-5">
+            <h3 class="text-green-700 font-semibold">
+                Approved
+            </h3>
 
-                <div class="bg-white p-6 rounded-xl shadow">
-                    <h3 class="text-gray-500">Participants</h3>
-                    <p class="text-3xl font-bold mt-2">
-                        {{ $participants ?? 0 }}
-                    </p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow">
-                    <h3 class="text-gray-500">Instructors</h3>
-                    <p class="text-3xl font-bold mt-2">
-                        {{ $instructors ?? 0 }}
-                    </p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow">
-                    <h3 class="text-gray-500">Classes</h3>
-                    <p class="text-3xl font-bold mt-2">
-                        {{ $classes ?? 0 }}
-                    </p>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow">
-                    <h3 class="text-gray-500">Certificates</h3>
-                    <p class="text-3xl font-bold mt-2">
-                        {{ $certificates ?? 0 }}
-                    </p>
-                </div>
-
+            <div class="text-4xl font-bold mt-2 text-green-600">
+                {{ $approvedParticipants ?? 0 }}
             </div>
+        </div>
 
-            <!-- Approval Statistics -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-5">
+            <h3 class="text-red-700 font-semibold">
+                Rejected
+            </h3>
 
-                <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-xl">
-                    <h3 class="text-yellow-700 font-semibold">
-                        Pending Approval
-                    </h3>
-
-                    <p class="text-4xl font-bold mt-2 text-yellow-600">
-                        {{ $pendingParticipants ?? 0 }}
-                    </p>
-                </div>
-
-                <div class="bg-green-50 border border-green-200 p-6 rounded-xl">
-                    <h3 class="text-green-700 font-semibold">
-                        Approved Participants
-                    </h3>
-
-                    <p class="text-4xl font-bold mt-2 text-green-600">
-                        {{ $approvedParticipants ?? 0 }}
-                    </p>
-                </div>
-
-                <div class="bg-red-50 border border-red-200 p-6 rounded-xl">
-                    <h3 class="text-red-700 font-semibold">
-                        Rejected Participants
-                    </h3>
-
-                    <p class="text-4xl font-bold mt-2 text-red-600">
-                        {{ $rejectedParticipants ?? 0 }}
-                    </p>
-                </div>
-
+            <div class="text-4xl font-bold mt-2 text-red-600">
+                {{ $rejectedParticipants ?? 0 }}
             </div>
+        </div>
 
-            <!-- Quick Menu -->
-            <div class="bg-white rounded-xl shadow p-6 mt-6">
+    </div>
 
-                <h3 class="text-lg font-semibold mb-4">
-                    Quick Access
-                </h3>
+    <!-- QUICK ACCESS -->
+    <div class="bg-white rounded-2xl p-6 shadow">
 
-                <div class="flex flex-wrap gap-3">
+        <div class="flex justify-between items-center mb-5">
 
-                    <a href="{{ route('admin.users.index') }}"
-                       class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        User Management
-                    </a>
+            <h2 class="text-xl font-bold">
+                Quick Access
+            </h2>
 
-                    <a href="#"
-                       class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                        Programs
-                    </a>
-
-                    <a href="#"
-                       class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-                        Classes
-                    </a>
-
-                    <a href="#"
-                       class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
-                        Reports
-                    </a>
-
-                </div>
-
-            </div>
+            <span class="px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm">
+                Administrator Tools
+            </span>
 
         </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <a href="{{ route('admin.users.index') }}"
+               class="bg-blue-600 text-white rounded-xl p-4 hover:bg-blue-700">
+
+                👥 User Management
+
+            </a>
+
+            <a href="#"
+               class="bg-green-600 text-white rounded-xl p-4 hover:bg-green-700">
+
+                🎓 Programs
+
+            </a>
+
+            <a href="#"
+               class="bg-purple-600 text-white rounded-xl p-4 hover:bg-purple-700">
+
+                🏫 Classes
+
+            </a>
+
+            <a href="#"
+               class="bg-orange-600 text-white rounded-xl p-4 hover:bg-orange-700">
+
+                📈 Reports
+
+            </a>
+
+        </div>
+
     </div>
+
+</div>
 
 </x-app-layout>

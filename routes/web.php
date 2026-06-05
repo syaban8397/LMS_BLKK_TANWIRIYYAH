@@ -1,8 +1,10 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,17 +45,15 @@ Route::middleware(['auth', 'role.check:admin'])
             [DashboardController::class, 'index']
         )->name('dashboard');
 
-        Route::get(
-            '/users',
-            [UserController::class, 'index']
-        )->name('users.index');
+        Route::resource('users', UserController::class);
 
         Route::patch(
-            '/users/{user}/status',
-            [UserController::class, 'updateStatus']
-        )->name('users.status');
+        'users/{user}/status',
+        [UserController::class, 'updateStatus']
+    )->name('users.update-status');
 
     });
+
 /*
 |--------------------------------------------------------------------------
 | Instructor Routes
@@ -65,8 +65,11 @@ Route::middleware(['auth', 'role.check:instruktur'])
     ->name('instruktur.')
     ->group(function () {
 
-        Route::view('/dashboard', 'dashboard.instruktur')
-            ->name('dashboard');
+        Route::view(
+            '/dashboard',
+            'dashboard.instruktur'
+        )->name('dashboard');
+
     });
 
 /*
@@ -80,20 +83,56 @@ Route::middleware(['auth', 'role.check:peserta'])
     ->name('peserta.')
     ->group(function () {
 
-        Route::view('/dashboard', 'dashboard.peserta')
-            ->name('dashboard');
+        Route::view(
+            '/dashboard',
+            'dashboard.peserta'
+        )->name('dashboard');
+
     });
+
+/*
+|--------------------------------------------------------------------------
+| Forgot Password (Email + NIK)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('guest')->group(function () {
+
+    Route::get(
+        '/forgot-password',
+        [ForgotPasswordController::class, 'create']
+    )->name('password.request');
+
+    Route::post(
+        '/forgot-password',
+        [ForgotPasswordController::class, 'store']
+    )->name('password.update.custom');
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Profile Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
+    Route::get(
+        '/profile',
+        [ProfileController::class, 'edit']
+    )->name('profile.edit');
 
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
+    Route::patch(
+        '/profile',
+        [ProfileController::class, 'update']
+    )->name('profile.update');
 
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::delete(
+        '/profile',
+        [ProfileController::class, 'destroy']
+    )->name('profile.destroy');
+
 });
 
 require __DIR__.'/auth.php';

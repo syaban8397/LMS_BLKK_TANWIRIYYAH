@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
                 'max:255',
                 'unique:users,email'
             ],
-            'nik' => ['nullable', 'string', 'max:50'],
+            'nik' => ['nullable', 'string', 'max:50', 'unique:users,nik'],
             'phone' => ['nullable', 'string', 'max:20'],
             'gender' => ['nullable', 'in:L,P'],
             'birth_place' => ['nullable', 'string', 'max:100'],
