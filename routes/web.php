@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::get('/', function () {
@@ -50,7 +51,9 @@ Route::middleware(['auth', 'role.check:admin'])
         Route::patch(
         'users/{user}/status',
         [UserController::class, 'updateStatus']
-    )->name('users.update-status');
+        )->name('users.update-status');
+
+        Route::resource('programs', ProgramController::class);
 
     });
 

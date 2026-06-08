@@ -212,7 +212,7 @@
 
         </a>
 
-        <a href="#"
+        <a href="{{ route('admin.programs.index') }}"
             class="bg-green-600 hover:bg-green-700 text-white p-5 rounded-2xl transition">
 
             <div class="text-2xl mb-2">

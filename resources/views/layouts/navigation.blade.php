@@ -74,8 +74,10 @@ $normalClass =
 
             </a>
 
-            <a href="#"
-                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+            <a
+                href="{{ route('admin.programs.index') }}"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition
+                {{ request()->routeIs('admin.programs.*') ? $activeClass : $normalClass }}">
 
                 <span class="text-xl">📚</span>
 
