@@ -3,383 +3,417 @@
     <x-slot name="header">
 
         <div>
-            <h2 class="text-2xl font-bold text-gray-800">
+
+            <h2 class="text-2xl font-bold text-slate-800">
                 User Management
             </h2>
 
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-slate-500 mt-1">
                 Manage administrators, instructors and participants
             </p>
+
         </div>
 
     </x-slot>
 
-    <div class="py-6">
+    <div class="space-y-6">
 
-        <div class="max-w-7xl mx-auto px-4">
+        {{-- SUCCESS MESSAGE --}}
 
-            @if(session('success'))
+        @if(session('success'))
 
-                <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl">
-                    {{ session('success') }}
-                </div>
+            <div
+                class="bg-green-50 border border-green-200 text-green-700 px-5 py-4 rounded-2xl">
 
-            @endif
-
-            <!-- FILTER -->
-
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
-
-                <form method="GET">
-
-                    <div class="grid lg:grid-cols-4 gap-4">
-
-                        <!-- SEARCH -->
-
-                        <div>
-
-                            <input
-                                type="text"
-                                name="search"
-                                value="{{ request('search') }}"
-                                placeholder="Search name, email, NIK..."
-                                class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-
-                        </div>
-
-                        <!-- ROLE FILTER -->
-
-                        <div>
-
-                            <select
-                                name="role"
-                                class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-
-                                <option value="">
-                                    All Roles
-                                </option>
-
-                                <option
-                                    value="admin"
-                                    @selected(request('role') == 'admin')>
-                                    Admin
-                                </option>
-
-                                <option
-                                    value="instruktur"
-                                    @selected(request('role') == 'instruktur')>
-                                    Instructor
-                                </option>
-
-                                <option
-                                    value="peserta"
-                                    @selected(request('role') == 'peserta')>
-                                    Participant
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                        <!-- ACTION -->
-
-                        <div class="lg:col-span-2 flex flex-wrap gap-2">
-
-                            <button
-                                type="submit"
-                                class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition">
-
-                                Search
-
-                            </button>
-
-                            <a
-                                href="{{ route('admin.users.index') }}"
-                                class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl transition">
-
-                                Reset
-
-                            </a>
-
-                            <a
-                                href="{{ route('admin.users.create') }}"
-                                class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl transition">
-
-                                + Create User
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </form>
+                {{ session('success') }}
 
             </div>
 
-            <!-- TABLE -->
+        @endif
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        {{-- HEADER CARD --}}
 
-                <div class="overflow-x-auto">
+        <div
+            class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 rounded-3xl p-8 text-white shadow-xl">
 
-                    <table class="w-full">
+            <div class="flex justify-between items-center">
 
-                        <thead>
+                <div>
 
-                            <tr class="bg-gray-50 border-b">
+                    <h1 class="text-3xl font-bold">
+                        User Management
+                    </h1>
 
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                    User
-                                </th>
+                    <p class="mt-2 text-blue-100">
+                        Manage user accounts, roles, approvals and permissions.
+                    </p>
 
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                    Role
-                                </th>
+                </div>
 
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                    Phone
-                                </th>
+                <a
+                    href="{{ route('admin.users.create') }}"
+                    class="bg-white text-blue-700 px-5 py-3 rounded-xl font-semibold hover:bg-blue-50">
 
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                    Gender
-                                </th>
+                    + Create User
 
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                    Approval
-                                </th>
+                </a>
 
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                    Active
-                                </th>
+            </div>
 
-                                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600">
-                                    Actions
-                                </th>
+        </div>
 
-                            </tr>
+        {{-- STATISTICS --}}
 
-                        </thead>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 
-                        <tbody>
+            <div class="bg-white rounded-2xl shadow p-6">
 
-                            @forelse($users as $user)
+                <p class="text-gray-500">
+                    Total Users
+                </p>
 
-                                <tr class="border-b hover:bg-gray-50">
+                <h2 class="text-3xl font-bold mt-2">
+                    {{ $users->total() }}
+                </h2>
 
-                                    <!-- USER -->
+            </div>
 
-                                    <td class="px-6 py-4">
+            <div class="bg-white rounded-2xl shadow p-6">
 
-                                        <div class="flex items-center gap-3">
+                <p class="text-gray-500">
+                    Active Users
+                </p>
 
-                                            @if($user->photo)
+                <h2 class="text-3xl font-bold text-green-600 mt-2">
+                    {{ \App\Models\User::where('is_active',true)->count() }}
+                </h2>
 
-                                                <img
-                                                    src="{{ asset('storage/'.$user->photo) }}"
-                                                    class="w-12 h-12 rounded-xl object-cover">
+            </div>
 
-                                            @else
+            <div class="bg-white rounded-2xl shadow p-6">
 
-                                                <img
-                                                    src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}"
-                                                    class="w-12 h-12 rounded-xl">
+                <p class="text-gray-500">
+                    Pending Approval
+                </p>
 
-                                            @endif
+                <h2 class="text-3xl font-bold text-yellow-500 mt-2">
+                    {{ \App\Models\User::where('approval_status','pending')->count() }}
+                </h2>
 
-                                            <div>
+            </div>
 
-                                                <div class="font-semibold text-gray-800">
-                                                    {{ $user->name }}
-                                                </div>
+            <div class="bg-white rounded-2xl shadow p-6">
 
-                                                <div class="text-sm text-gray-500">
-                                                    {{ $user->email }}
-                                                </div>
+                <p class="text-gray-500">
+                    Instructors
+                </p>
 
-                                                @if($user->nik)
+                <h2 class="text-3xl font-bold text-blue-600 mt-2">
+                    {{ \App\Models\User::where('role','instruktur')->count() }}
+                </h2>
 
-                                                    <div class="text-xs text-gray-400">
-                                                        NIK : {{ $user->nik }}
-                                                    </div>
+            </div>
 
-                                                @endif
+        </div>
+
+        {{-- FILTER CARD --}}
+
+        <div class="bg-white rounded-2xl shadow p-6">
+
+            <form method="GET">
+
+                <div class="grid md:grid-cols-4 gap-4">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Search user..."
+                        class="rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+
+                    <select
+                        name="role"
+                        class="rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+
+                        <option value="">
+                            All Roles
+                        </option>
+
+                        <option value="admin">
+                            Admin
+                        </option>
+
+                        <option value="instruktur">
+                            Instructor
+                        </option>
+
+                        <option value="peserta">
+                            Participant
+                        </option>
+
+                    </select>
+
+                    <button
+                        class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl">
+
+                        Search
+
+                    </button>
+
+                    <a
+                        href="{{ route('admin.users.index') }}"
+                        class="bg-gray-200 hover:bg-gray-300 rounded-xl flex items-center justify-center">
+
+                        Reset
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        {{-- USER TABLE --}}
+
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead>
+
+                        <tr class="bg-slate-50">
+
+                            <th class="p-4 text-left">
+                                User
+                            </th>
+
+                            <th class="p-4 text-left">
+                                Role
+                            </th>
+
+                            <th class="p-4 text-left">
+                                Phone
+                            </th>
+
+                            <th class="p-4 text-left">
+                                Approval
+                            </th>
+
+                            <th class="p-4 text-left">
+                                Status
+                            </th>
+
+                            <th class="p-4 text-center">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($users as $user)
+
+                            <tr
+                                class="border-t hover:bg-slate-50">
+
+                                <td class="p-4">
+
+                                    <div class="flex items-center gap-3">
+
+                                        @if($user->photo)
+
+                                            <img
+                                                src="{{ $user->photo }}"
+                                                class="w-12 h-12 rounded-xl object-cover">
+
+                                        @else
+
+                                            <div
+                                                class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold">
+
+                                                {{ strtoupper(substr($user->name,0,1)) }}
+
+                                            </div>
+
+                                        @endif
+
+                                        <div>
+
+                                            <div class="font-semibold">
+
+                                                {{ $user->name }}
+
+                                            </div>
+
+                                            <div class="text-sm text-gray-500">
+
+                                                {{ $user->email }}
+
+                                            </div>
+
+                                            <div class="text-xs text-gray-400">
+
+                                                {{ $user->nik }}
 
                                             </div>
 
                                         </div>
 
-                                    </td>
+                                    </div>
 
-                                    <!-- ROLE -->
+                                </td>
 
-                                    <td class="px-6 py-4">
+                                <td class="p-4">
 
-                                        @if($user->role == 'admin')
+                                    <span
+                                        class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">
 
-                                            <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm">
-                                                Admin
-                                            </span>
+                                        {{ ucfirst($user->role) }}
 
-                                        @elseif($user->role == 'instruktur')
+                                    </span>
 
-                                            <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">
-                                                Instructor
-                                            </span>
+                                </td>
 
-                                        @else
+                                <td class="p-4">
 
-                                            <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm">
-                                                Participant
-                                            </span>
+                                    {{ $user->phone ?: '-' }}
 
-                                        @endif
+                                </td>
 
-                                    </td>
+                                <td class="p-4">
 
-                                    <!-- PHONE -->
+                                    @if($user->approval_status=='approved')
 
-                                    <td class="px-6 py-4">
-                                        {{ $user->phone ?: '-' }}
-                                    </td>
+                                        <span
+                                            class="px-3 py-1 rounded-full bg-green-100 text-green-700">
 
-                                    <!-- GENDER -->
+                                            Approved
 
-                                    <td class="px-6 py-4">
+                                        </span>
 
-                                        @if($user->gender == 'L')
-                                            Male
-                                        @elseif($user->gender == 'P')
-                                            Female
-                                        @else
-                                            -
-                                        @endif
+                                    @elseif($user->approval_status=='rejected')
 
-                                    </td>
+                                        <span
+                                            class="px-3 py-1 rounded-full bg-red-100 text-red-700">
 
-                                    <!-- APPROVAL -->
+                                            Rejected
 
-                                    <td class="px-6 py-4">
+                                        </span>
 
-                                        @if($user->approval_status == 'approved')
+                                    @else
 
-                                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm">
-                                                Approved
-                                            </span>
+                                        <span
+                                            class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700">
 
-                                        @elseif($user->approval_status == 'rejected')
+                                            Pending
 
-                                            <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm">
-                                                Rejected
-                                            </span>
+                                        </span>
 
-                                        @else
+                                    @endif
 
-                                            <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm">
-                                                Pending
-                                            </span>
+                                </td>
 
-                                        @endif
+                                <td class="p-4">
 
-                                    </td>
+                                    @if($user->is_active)
 
-                                    <!-- ACTIVE -->
+                                        <span
+                                            class="px-3 py-1 rounded-full bg-green-100 text-green-700">
 
-                                    <td class="px-6 py-4">
+                                            Active
 
-                                        @if($user->is_active)
+                                        </span>
 
-                                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm">
-                                                Active
-                                            </span>
+                                    @else
 
-                                        @else
+                                        <span
+                                            class="px-3 py-1 rounded-full bg-gray-100 text-gray-700">
 
-                                            <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm">
-                                                Inactive
-                                            </span>
+                                            Inactive
 
-                                        @endif
+                                        </span>
 
-                                    </td>
+                                    @endif
 
-                                    <!-- ACTION -->
+                                </td>
 
-                                    <td class="px-6 py-4">
+                                <td class="p-4">
 
-                                        <div class="flex justify-center gap-2">
+                                    <div
+                                        class="flex justify-center gap-2">
 
-                                            <a
-                                                href="{{ route('admin.users.show', $user) }}"
-                                                class="px-3 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-sm">
+                                        <a
+                                            href="{{ route('admin.users.show',$user) }}"
+                                            class="px-3 py-2 bg-sky-500 text-white rounded-lg">
 
-                                                View
+                                            View
 
-                                            </a>
+                                        </a>
 
-                                            <a
-                                                href="{{ route('admin.users.edit', $user) }}"
-                                                class="px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm">
+                                        <a
+                                            href="{{ route('admin.users.edit',$user) }}"
+                                            class="px-3 py-2 bg-yellow-500 text-white rounded-lg">
 
-                                                Edit
+                                            Edit
 
-                                            </a>
+                                        </a>
 
-                                            <form
-                                                action="{{ route('admin.users.destroy', $user) }}"
-                                                method="POST"
-                                                onsubmit="return confirm('Delete this user?')">
+                                        <form
+                                            action="{{ route('admin.users.destroy',$user) }}"
+                                            method="POST">
 
-                                                @csrf
-                                                @method('DELETE')
+                                            @csrf
+                                            @method('DELETE')
 
-                                                <button
-                                                    type="submit"
-                                                    class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm">
+                                            <button
+                                                class="px-3 py-2 bg-red-600 text-white rounded-lg">
 
-                                                    Delete
+                                                Delete
 
-                                                </button>
+                                            </button>
 
-                                            </form>
+                                        </form>
 
-                                        </div>
+                                    </div>
 
-                                    </td>
+                                </td>
 
-                                </tr>
+                            </tr>
 
-                            @empty
+                        @empty
 
-                                <tr>
+                            <tr>
 
-                                    <td
-                                        colspan="7"
-                                        class="text-center py-12 text-gray-500">
+                                <td
+                                    colspan="6"
+                                    class="text-center py-12 text-gray-500">
 
-                                        No users found.
+                                    No users found.
 
-                                    </td>
+                                </td>
 
-                                </tr>
+                            </tr>
 
-                            @endforelse
+                        @endforelse
 
-                        </tbody>
+                    </tbody>
 
-                    </table>
-
-                </div>
+                </table>
 
             </div>
 
-            <!-- PAGINATION -->
+        </div>
 
-            <div class="mt-6">
+        {{-- PAGINATION --}}
 
-                {{ $users->links() }}
+        <div>
 
-            </div>
+            {{ $users->links() }}
 
         </div>
 

@@ -1,244 +1,307 @@
-<nav class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-900 via-indigo-900 to-slate-900 shadow-2xl overflow-y-auto">
+@php
 
-    <!-- LOGO -->
-    <div class="px-6 py-6 border-b border-white/10">
+$activeClass =
+'bg-white text-blue-900 shadow-lg font-semibold';
 
-        <div class="flex items-center gap-3">
+$normalClass =
+'text-white hover:bg-white/10';
 
-            <div
-                class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl">
+@endphp
 
-                🎓
+<nav class="h-screen flex flex-col">
 
-            </div>
 
-            <div>
+<!-- LOGO -->
+<div class="px-3 py-5 border-b border-white/10">
 
-                <h1 class="text-white text-xl font-bold">
-                    LMS BLKK
-                </h1>
-
-                <p class="text-blue-200 text-sm">
-                    Tanwiriyyah
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- USER INFO -->
-    <div class="px-5 py-5">
+    <div class="flex items-center justify-center">
 
         <div
-            class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+            class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl">
 
-            <div class="flex items-center gap-3">
+            🎓
 
-                <div
-                    class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg">
+        </div>
 
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+        <div class="logo-text ml-3">
 
-                </div>
+            <h1 class="text-white text-xl font-bold">
+                LMS BLKK
+            </h1>
 
-                <div>
-
-                    <div class="text-white font-semibold">
-                        {{ Auth::user()->name }}
-                    </div>
-
-                    <div class="text-blue-200 text-sm">
-                        {{ ucfirst(Auth::user()->role) }}
-                    </div>
-
-                </div>
-
-            </div>
+            <p class="text-blue-200 text-xs">
+                Tanwiriyyah
+            </p>
 
         </div>
 
     </div>
 
-    <!-- MENU -->
-    <div class="px-4 flex-1 overflow-y-auto">
+</div>
 
-        <p class="text-xs uppercase text-blue-300 font-semibold px-3 mb-3">
-            Main Menu
-        </p>
+<!-- MENU -->
+<div class="flex-1 px-3 py-4">
 
-        <div class="space-y-2">
+    <div class="space-y-2">
 
-            <!-- Dashboard -->
-            <a href="{{ route('admin.dashboard') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+        <!-- DASHBOARD -->
+        <a
+            href="{{ route(auth()->user()->role.'.dashboard') }}"
+            class="flex items-center gap-4 px-4 py-3 rounded-2xl transition
+            {{ request()->routeIs(auth()->user()->role.'.dashboard') ? $activeClass : $normalClass }}">
 
-                <span class="text-lg">📊</span>
+            <span class="text-xl">📊</span>
 
-                <span>
-                    Dashboard
-                </span>
+            <span class="menu-text">
+                Dashboard
+            </span>
 
-            </a>
+        </a>
 
-            <!-- Users -->
-            <a href="{{ route('admin.users.index') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+        @if(auth()->user()->role == 'admin')
 
-                <span class="text-lg">👥</span>
+            <!-- USER MANAGEMENT -->
+            <a
+                href="{{ route('admin.users.index') }}"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition
+                {{ request()->routeIs('admin.users.*') ? $activeClass : $normalClass }}">
 
-                <span>
+                <span class="text-xl">👥</span>
+
+                <span class="menu-text">
                     User Management
                 </span>
 
             </a>
 
-            <!-- Participants -->
             <a href="#"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
 
-                <span class="text-lg">🎓</span>
+                <span class="text-xl">📚</span>
 
-                <span>
-                    Participants
-                </span>
-
-            </a>
-
-            <!-- Instructors -->
-            <a href="#"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
-
-                <span class="text-lg">🧑‍🏫</span>
-
-                <span>
-                    Instructors
-                </span>
-
-            </a>
-
-            <!-- Programs -->
-            <a href="#"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
-
-                <span class="text-lg">📚</span>
-
-                <span>
+                <span class="menu-text">
                     Training Programs
                 </span>
 
             </a>
 
-            <!-- Classes -->
             <a href="#"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
 
-                <span class="text-lg">🏫</span>
+                <span class="text-xl">🏫</span>
 
-                <span>
+                <span class="menu-text">
                     Classes
                 </span>
 
             </a>
 
-            <!-- Certificates -->
             <a href="#"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
 
-                <span class="text-lg">📜</span>
+                <span class="text-xl">📖</span>
 
-                <span>
+                <span class="menu-text">
+                    Learning Materials
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📝</span>
+
+                <span class="menu-text">
+                    Assignments
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📅</span>
+
+                <span class="menu-text">
+                    Attendance
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📜</span>
+
+                <span class="menu-text">
                     Certificates
                 </span>
 
             </a>
 
-            <!-- Reports -->
             <a href="#"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
 
-                <span class="text-lg">📈</span>
+                <span class="text-xl">📈</span>
 
-                <span>
+                <span class="menu-text">
                     Reports
                 </span>
 
             </a>
 
-            <!-- Settings -->
-            <a href="{{ route('profile.edit') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition">
+        @endif
 
-                <span class="text-lg">⚙️</span>
+        @if(auth()->user()->role == 'instruktur')
 
-                <span>
-                    Settings
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">🏫</span>
+
+                <span class="menu-text">
+                    My Classes
                 </span>
 
             </a>
 
-        </div>
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📖</span>
+
+                <span class="menu-text">
+                    Learning Materials
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📝</span>
+
+                <span class="menu-text">
+                    Assignments
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📅</span>
+
+                <span class="menu-text">
+                    Attendance
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">🎯</span>
+
+                <span class="menu-text">
+                    Grades
+                </span>
+
+            </a>
+
+        @endif
+
+        @if(auth()->user()->role == 'peserta')
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">🏫</span>
+
+                <span class="menu-text">
+                    My Classes
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📖</span>
+
+                <span class="menu-text">
+                    Learning Materials
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📝</span>
+
+                <span class="menu-text">
+                    Assignments
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📅</span>
+
+                <span class="menu-text">
+                    Attendance
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">🎯</span>
+
+                <span class="menu-text">
+                    Grades
+                </span>
+
+            </a>
+
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+
+                <span class="text-xl">📜</span>
+
+                <span class="menu-text">
+                    Certificates
+                </span>
+
+            </a>
+
+        @endif
 
     </div>
 
-    <!-- SYSTEM STATUS -->
-    <div class="px-5 mt-8">
+</div>
 
-        <div
-            class="bg-green-500/10 border border-green-500/20 rounded-2xl p-4">
+<!-- FOOTER -->
+<div class="border-t border-white/10 p-4">
 
-            <div class="flex items-center gap-3">
+    <div class="logo-text text-center">
 
-                <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse">
-                </div>
+        <p class="text-xs text-blue-300">
+            LMS BLKK Tanwiriyyah
+        </p>
 
-                <div>
-
-                    <div class="text-green-300 text-sm font-semibold">
-                        System Status
-                    </div>
-
-                    <div class="text-white text-xs">
-                        Online & Running
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
+        <p class="text-xs text-blue-400">
+            Version 1.0
+        </p>
 
     </div>
 
-    <!-- FOOTER -->
-    <div class="px-4 mt-8 pb-6">
+</div>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button
-                type="submit"
-                class="w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg transition">
-
-                🚪 Logout
-
-            </button>
-
-        </form>
-
-        <div class="text-center mt-4">
-
-            <p class="text-xs text-blue-300">
-                LMS BLKK Tanwiriyyah
-            </p>
-
-            <p class="text-xs text-blue-400">
-                Version 1.0
-            </p>
-
-        </div>
-
-    </div>
 
 </nav>

@@ -18,7 +18,7 @@
 
 <div class="min-h-screen flex bg-slate-100">
 
-```
+
 <!-- LEFT SIDE -->
 <div class="hidden lg:flex w-1/2 relative overflow-hidden">
 
@@ -264,7 +264,7 @@
     </div>
 
 </div>
-```
+
 
 </div>
 
