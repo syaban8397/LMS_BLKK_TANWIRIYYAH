@@ -225,7 +225,7 @@
                 </label>
 
                 <a
-                    href="{{ route('password.request') }}"
+                    href="{{ route('password.request.custom') }}"
                     class="text-sm text-blue-600 hover:text-blue-700">
 
                     Forgot Password?

@@ -5,86 +5,192 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\View\View;
 
 class ForgotPasswordController extends Controller
 {
     /**
-     * Show forgot password form.
+     * Form Verifikasi
      */
-    public function create(): View
+    public function create()
     {
         return view('auth.forgot-password');
     }
 
     /**
-     * Reset password.
+     * Verifikasi Email + NIK
      */
-    public function store(Request $request): RedirectResponse
+    public function verify(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'email'],
-            'nik' => ['required'],
-            'password' => ['required', 'confirmed', 'min:8'],
+            'email' => 'required|email',
+            'nik' => 'required'
         ]);
 
-        $messages = [];
-
-        // Check Email
         $emailExists = User::where(
             'email',
             $request->email
         )->exists();
 
-        if (!$emailExists) {
-            $messages[] = 'Email is incorrect.';
-        }
-
-        // Check NIK
         $nikExists = User::where(
             'nik',
             $request->nik
         )->exists();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Email & NIK tidak ditemukan
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$emailExists && !$nikExists) {
+
+            return back()->with(
+                'popup_error',
+                'Email dan NIK tidak ditemukan.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Email tidak ditemukan
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$emailExists) {
+
+            return back()->with(
+                'popup_error',
+                'Email tidak ditemukan.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | NIK tidak ditemukan
+        |--------------------------------------------------------------------------
+        */
+
         if (!$nikExists) {
-            $messages[] = 'NIK is incorrect.';
+
+            return back()->with(
+                'popup_error',
+                'NIK tidak ditemukan.'
+            );
         }
 
-        // Check Email + NIK
-        $user = User::where('email', $request->email)
-            ->where('nik', $request->nik)
-            ->first();
+        /*
+        |--------------------------------------------------------------------------
+        | Email & NIK harus milik user yang sama
+        |--------------------------------------------------------------------------
+        */
 
-        // Check Account Status
-        if ($user && !$user->is_active) {
-            $messages[] = 'Account is inactive.';
+        $user = User::where(
+            'email',
+            $request->email
+        )
+        ->where(
+            'nik',
+            $request->nik
+        )
+        ->first();
+
+        if (!$user) {
+
+            return back()->with(
+                'popup_error',
+                'Email dan NIK tidak sesuai.'
+            );
         }
 
-        // If Error Exists
-        if (!empty($messages)) {
+        /*
+        |--------------------------------------------------------------------------
+        | Akun tidak aktif
+        |--------------------------------------------------------------------------
+        */
 
-            return redirect()
-                ->route('login')
-                ->with(
-                    'error',
-                    implode(' ', $messages)
-                );
+        if (!$user->is_active) {
+
+            return back()->with(
+                'popup_error',
+                'Akun tidak aktif. Hubungi administrator.'
+            );
         }
 
-        // Update Password
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan Session Reset
+        |--------------------------------------------------------------------------
+        */
+
+        session([
+            'reset_user_id' => $user->id
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Popup Success
+        |--------------------------------------------------------------------------
+        */
+
+        return back()->with(
+            'popup_success',
+            'Email dan NIK berhasil diverifikasi.'
+        );
+    }
+
+    /**
+     * Form Reset Password
+     */
+    public function showResetForm()
+    {
+        if (!session()->has('reset_user_id')) {
+
+            return redirect()->route(
+                'password.request.custom'
+            );
+        }
+
+        return view(
+            'auth.reset-password'
+        );
+    }
+
+    /**
+     * Simpan Password Baru
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|min:8|confirmed'
+        ]);
+
+        $user = User::find(
+            session('reset_user_id')
+        );
+
+        if (!$user) {
+
+            return redirect()->route(
+                'password.request.custom'
+            );
+        }
+
         $user->update([
             'password' => Hash::make(
                 $request->password
-            ),
+            )
         ]);
+
+        session()->forget(
+            'reset_user_id'
+        );
 
         return redirect()
             ->route('login')
             ->with(
                 'success',
-                'Password has been reset successfully.'
+                'Password berhasil diubah.'
             );
     }
 }

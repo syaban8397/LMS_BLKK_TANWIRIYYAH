@@ -102,15 +102,24 @@ Route::middleware(['auth', 'role.check:peserta'])
 Route::middleware('guest')->group(function () {
 
     Route::get(
-        '/forgot-password',
+        '/forgot-password-custom',
         [ForgotPasswordController::class, 'create']
-    )->name('password.request');
+    )->name('password.request.custom');
 
     Route::post(
-        '/forgot-password',
-        [ForgotPasswordController::class, 'store']
-    )->name('password.update.custom');
+        '/forgot-password-custom',
+        [ForgotPasswordController::class, 'verify']
+    )->name('password.verify.custom');
 
+    Route::get(
+        '/reset-password-custom',
+        [ForgotPasswordController::class, 'showResetForm']
+    )->name('password.form');
+
+    Route::post(
+        '/reset-password-custom',
+        [ForgotPasswordController::class, 'resetPassword']
+    )->name('password.reset.custom');
 });
 
 /*
