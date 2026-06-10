@@ -30,7 +30,7 @@ class ClassModel extends Model
 
     public function program()
     {
-        return $this->belongsTo(Program::class);
+        return $this->belongsTo(Program::class, 'program_id');
     }
 
     public function instructor()
@@ -40,36 +40,36 @@ class ClassModel extends Model
 
     public function participants()
     {
-        return $this->hasMany(ClassParticipant::class);
+        return $this->hasMany(ClassParticipant::class, 'class_id');
     }
 
     public function materials()
     {
-        return $this->hasMany(Material::class);
+        return $this->hasMany(Material::class, 'class_id', 'id');
     }
 
     public function assignments()
     {
-        return $this->hasMany(Assignment::class);
+        return $this->hasMany(Assignment::class, 'class_id', 'id');
     }
 
     public function attendances()
     {
-        return $this->hasMany(Attendance::class);
+        return $this->hasMany(Attendance::class, 'class_id', 'id');
     }
 
     public function finalGrades()
     {
-        return $this->hasMany(FinalGrade::class);
+        return $this->hasMany(FinalGrade::class, 'class_id', 'id');
     }
 
     public function announcements()
     {
-        return $this->hasMany(Announcement::class);
+        return $this->hasMany(Announcement::class, 'class_id', 'id');
     }
 
     public function certificates()
     {
-        return $this->hasMany(Certificate::class);
+        return $this->hasMany(Certificate::class, 'class_id', 'id');
     }
 }
