@@ -1,28 +1,23 @@
 <x-app-layout>
 
-<div class="space-y-6">
+    <x-slot name="header">
 
-    <!-- HERO -->
-    <div
-        class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 rounded-3xl p-8 text-white shadow-xl">
-
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
             <div>
 
-                <h1 class="text-3xl font-bold">
+                <h2 class="text-2xl font-bold text-slate-800">
                     Training Programs
-                </h1>
+                </h2>
 
-                <p class="text-blue-100 mt-2">
-                    Manage all BLKK training programs.
+                <p class="text-sm text-slate-500 mt-1">
+                    Manage all training programs available in the LMS.
                 </p>
 
             </div>
 
-            <a
-                href="{{ route('admin.programs.create') }}"
-                class="bg-white text-blue-800 px-5 py-3 rounded-xl font-semibold hover:bg-blue-50">
+            <a href="{{ route('admin.programs.create') }}"
+               class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-sm transition">
 
                 + New Program
 
@@ -30,267 +25,229 @@
 
         </div>
 
-    </div>
+    </x-slot>
 
-    <!-- SUCCESS -->
-    @if(session('success'))
+    <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-        <div
-            class="bg-green-100 border border-green-200 text-green-700 rounded-2xl p-4">
+        {{-- SUCCESS --}}
+        @if(session('success'))
 
-            {{ session('success') }}
-
-        </div>
-
-    @endif
-
-    <!-- STATS -->
-    <div class="grid md:grid-cols-3 gap-6">
-
-        <div
-            class="bg-white rounded-3xl p-6 shadow-lg">
-
-            <div class="text-slate-500">
-                Total Programs
+            <div class="bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl">
+                {{ session('success') }}
             </div>
 
-            <div
-                class="text-3xl font-bold text-blue-700 mt-2">
+        @endif
 
-                {{ $totalPrograms }}
+        {{-- STATS --}}
+        <div class="grid md:grid-cols-3 gap-6">
+
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+
+                <p class="text-slate-500 text-sm">
+                    Total Programs
+                </p>
+
+                <h3 class="text-4xl font-bold text-blue-700 mt-2">
+                    {{ $totalPrograms }}
+                </h3>
 
             </div>
 
-        </div>
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
 
-        <div
-            class="bg-white rounded-3xl p-6 shadow-lg">
+                <p class="text-slate-500 text-sm">
+                    Active Programs
+                </p>
 
-            <div class="text-slate-500">
-                Active Programs
-            </div>
-
-            <div
-                class="text-3xl font-bold text-green-600 mt-2">
-
-                {{ $activePrograms }}
+                <h3 class="text-4xl font-bold text-green-600 mt-2">
+                    {{ $activePrograms }}
+                </h3>
 
             </div>
 
-        </div>
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
 
-        <div
-            class="bg-white rounded-3xl p-6 shadow-lg">
+                <p class="text-slate-500 text-sm">
+                    Inactive Programs
+                </p>
 
-            <div class="text-slate-500">
-                Inactive Programs
-            </div>
-
-            <div
-                class="text-3xl font-bold text-red-600 mt-2">
-
-                {{ $inactivePrograms }}
+                <h3 class="text-4xl font-bold text-red-600 mt-2">
+                    {{ $inactivePrograms }}
+                </h3>
 
             </div>
 
         </div>
 
-    </div>
+        {{-- TABLE --}}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
 
-    <!-- TABLE -->
-    <div
-        class="bg-white rounded-3xl shadow-lg overflow-hidden">
+            {{-- HEADER --}}
+            <div class="p-6 border-b border-slate-200">
 
-        <div
-            class="p-6 border-b border-slate-200">
+                <h3 class="font-bold text-slate-800">
+                    Program List
+                </h3>
 
-            <h2
-                class="text-lg font-bold text-slate-800">
+            </div>
 
-                Program List
+            {{-- TABLE --}}
+            <div class="overflow-x-auto">
 
-            </h2>
+                <table class="w-full">
 
-        </div>
+                    <thead class="bg-slate-50 text-slate-600 text-sm">
 
-        <div class="overflow-x-auto">
+                        <tr>
 
-            <table class="w-full">
+                            <th class="px-6 py-4 text-left">
+                                Program
+                            </th>
 
-                <thead
-                    class="bg-slate-50">
+                            <th class="px-6 py-4 text-center">
+                                Period
+                            </th>
 
-                    <tr>
+                            <th class="px-6 py-4 text-center">
+                                Status
+                            </th>
 
-                        <th class="px-6 py-4 text-left">
-                            Program
-                        </th>
+                            <th class="px-6 py-4 text-center">
+                                Classes
+                            </th>
 
-                        <th class="px-6 py-4 text-center">
-                            Period
-                        </th>
+                            <th class="px-6 py-4 text-center">
+                                Action
+                            </th>
 
-                        <th class="px-6 py-4 text-center">
-                            Status
-                        </th>
+                        </tr>
 
-                        <th class="px-6 py-4 text-center">
-                            Classes
-                        </th>
+                    </thead>
 
-                        <th class="px-6 py-4 text-center">
-                            Actions
-                        </th>
+                    <tbody>
 
-                    </tr>
+                        @forelse($programs as $program)
 
-                </thead>
+                            <tr class="border-t hover:bg-slate-50 transition">
 
-                <tbody>
+                                {{-- PROGRAM --}}
+                                <td class="px-6 py-4">
 
-                @forelse($programs as $program)
+                                    <div class="font-semibold text-slate-800">
+                                        {{ $program->name }}
+                                    </div>
 
-                    <tr
-                        class="border-t hover:bg-slate-50">
+                                    <div class="text-sm text-slate-500">
+                                        {{ Str::limit($program->description,80) }}
+                                    </div>
 
-                        <td class="px-6 py-4">
+                                </td>
 
-                            <div
-                                class="font-semibold text-slate-800">
+                                {{-- PERIOD --}}
+                                <td class="px-6 py-4 text-center text-slate-700 text-sm">
 
-                                {{ $program->name }}
+                                    {{ $program->start_date->format('d M Y') }}
+                                    -
+                                    {{ $program->end_date->format('d M Y') }}
 
-                            </div>
+                                </td>
 
-                            <div
-                                class="text-sm text-slate-500 mt-1">
+                                {{-- STATUS --}}
+                                <td class="px-6 py-4 text-center">
 
-                                {{ Str::limit($program->description,80) }}
+                                    @if($program->status == 'active')
 
-                            </div>
+                                        <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                                            Active
+                                        </span>
 
-                        </td>
+                                    @else
 
-                        <td class="px-6 py-4 text-center">
+                                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
+                                            Inactive
+                                        </span>
 
-                            {{ $program->start_date->format('d M Y') }}
+                                    @endif
 
-                            <br>
+                                </td>
 
-                            <span class="text-slate-400">
-                                to
-                            </span>
+                                {{-- CLASS COUNT --}}
+                                <td class="px-6 py-4 text-center text-slate-700 font-medium">
 
-                            <br>
+                                    {{ $program->classes()->count() }}
 
-                            {{ $program->end_date->format('d M Y') }}
+                                </td>
 
-                        </td>
+                                {{-- ACTION --}}
+                                <td class="px-6 py-4">
 
-                        <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center gap-2">
 
-                            @if($program->status == 'active')
+                                        <a href="{{ route('admin.programs.show',$program) }}"
+                                           class="px-3 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm transition">
 
-                                <span
-                                    class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
+                                            View
 
-                                    Active
+                                        </a>
 
-                                </span>
+                                        <a href="{{ route('admin.programs.edit',$program) }}"
+                                           class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm transition">
 
-                            @else
+                                            Edit
 
-                                <span
-                                    class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm">
+                                        </a>
 
-                                    Inactive
+                                        <form action="{{ route('admin.programs.destroy',$program) }}"
+                                              method="POST">
 
-                                </span>
+                                            @csrf
+                                            @method('DELETE')
 
-                            @endif
+                                            <button
+                                                onclick="return confirm('Delete this program?')"
+                                                class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm transition">
 
-                        </td>
+                                                Delete
 
-                        <td class="px-6 py-4 text-center">
+                                            </button>
 
-                            {{ $program->classes()->count() }}
+                                        </form>
 
-                        </td>
+                                    </div>
 
-                        <td class="px-6 py-4">
+                                </td>
 
-                            <div
-                                class="flex justify-center gap-2">
+                            </tr>
 
-                                <a
-                                    href="{{ route('admin.programs.show',$program) }}"
-                                    class="px-3 py-2 bg-sky-500 text-white rounded-lg">
+                        @empty
 
-                                    Detail
+                            <tr>
 
-                                </a>
+                                <td colspan="5" class="text-center py-12 text-slate-500">
 
-                                <a
-                                    href="{{ route('admin.programs.edit',$program) }}"
-                                    class="px-3 py-2 bg-yellow-500 text-white rounded-lg">
+                                    No training programs available.
 
-                                    Edit
+                                </td>
 
-                                </a>
+                            </tr>
 
-                                <form
-                                    action="{{ route('admin.programs.destroy',$program) }}"
-                                    method="POST">
+                        @endforelse
 
-                                    @csrf
-                                    @method('DELETE')
+                    </tbody>
 
-                                    <button
-                                        onclick="return confirm('Delete this program?')"
-                                        class="px-3 py-2 bg-red-600 text-white rounded-lg">
+                </table>
 
-                                        Delete
+            </div>
 
-                                    </button>
+            {{-- PAGINATION --}}
+            <div class="p-6 border-t border-slate-100">
 
-                                </form>
+                {{ $programs->links() }}
 
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                @empty
-
-                    <tr>
-
-                        <td
-                            colspan="5"
-                            class="py-12 text-center text-slate-500">
-
-                            No programs found.
-
-                        </td>
-
-                    </tr>
-
-                @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        <div class="p-6">
-
-            {{ $programs->links() }}
+            </div>
 
         </div>
 
     </div>
-
-</div>
 
 </x-app-layout>

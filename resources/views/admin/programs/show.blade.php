@@ -1,182 +1,190 @@
 <x-app-layout>
 
-<div class="space-y-6">
+    <x-slot name="header">
 
-    <!-- HERO -->
-    <div
-        class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 rounded-3xl p-8 text-white shadow-xl">
-
-        <h1 class="text-3xl font-bold">
-            {{ $program->name }}
-        </h1>
-
-        <p class="text-blue-100 mt-2">
-            Training Program Details
-        </p>
-
-    </div>
-
-    <!-- DETAIL -->
-    <div class="bg-white rounded-3xl shadow-lg p-8">
-
-        <div class="grid md:grid-cols-2 gap-8">
+        <div class="flex items-center justify-between">
 
             <div>
 
-                <h3 class="text-sm text-slate-500 mb-2">
-                    Program Name
-                </h3>
+                <h2 class="text-2xl font-bold text-slate-800">
+                    Program Details
+                </h2>
 
-                <p class="font-semibold text-lg">
-                    {{ $program->name }}
-                </p>
-
-            </div>
-
-            <div>
-
-                <h3 class="text-sm text-slate-500 mb-2">
-                    Status
-                </h3>
-
-                @if($program->status == 'active')
-
-                    <span
-                        class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm">
-
-                        Active
-
-                    </span>
-
-                @else
-
-                    <span
-                        class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm">
-
-                        Inactive
-
-                    </span>
-
-                @endif
-
-            </div>
-
-            <div>
-
-                <h3 class="text-sm text-slate-500 mb-2">
-                    Start Date
-                </h3>
-
-                <p>
-                    {{ $program->start_date->format('d F Y') }}
-                </p>
-
-            </div>
-
-            <div>
-
-                <h3 class="text-sm text-slate-500 mb-2">
-                    End Date
-                </h3>
-
-                <p>
-                    {{ $program->end_date->format('d F Y') }}
+                <p class="text-sm text-slate-500 mt-1">
+                    View complete information about the training program.
                 </p>
 
             </div>
 
         </div>
 
-        <hr class="my-8">
+    </x-slot>
 
-        <div>
+    <div class="space-y-6">
 
-            <h3 class="text-sm text-slate-500 mb-2">
-                Description
-            </h3>
+        <!-- HERO -->
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
 
-            <p class="leading-relaxed text-slate-700">
-                {{ $program->description }}
-            </p>
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+                <div>
+
+                    <h1 class="text-3xl font-bold text-slate-800">
+                        {{ $program->name }}
+                    </h1>
+
+                    <p class="text-slate-500 mt-2">
+                        Training Program Overview
+                    </p>
+
+                </div>
+
+                <!-- STATUS -->
+                <div>
+
+                    @if($program->status == 'active')
+
+                        <span class="px-4 py-2 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+                            Active
+                        </span>
+
+                    @else
+
+                        <span class="px-4 py-2 rounded-full bg-red-100 text-red-700 text-sm font-medium">
+                            Inactive
+                        </span>
+
+                    @endif
+
+                </div>
+
+            </div>
 
         </div>
 
-        <hr class="my-8">
-
+        <!-- STATISTICS -->
         <div class="grid md:grid-cols-3 gap-6">
 
-            <div
-                class="bg-blue-50 rounded-2xl p-6">
-
-                <div class="text-sm text-slate-500">
-                    Total Classes
-                </div>
-
-                <div
-                    class="text-3xl font-bold text-blue-700 mt-2">
-
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+                <p class="text-slate-500 text-sm">Total Classes</p>
+                <h3 class="text-4xl font-bold text-blue-700 mt-2">
                     {{ $program->classes()->count() }}
-
-                </div>
-
+                </h3>
             </div>
 
-            <div
-                class="bg-green-50 rounded-2xl p-6">
-
-                <div class="text-sm text-slate-500">
-                    Created At
-                </div>
-
-                <div
-                    class="font-semibold text-green-700 mt-2">
-
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+                <p class="text-slate-500 text-sm">Created At</p>
+                <h3 class="text-lg font-semibold text-green-700 mt-2">
                     {{ $program->created_at->format('d M Y') }}
-
-                </div>
-
+                </h3>
             </div>
 
-            <div
-                class="bg-purple-50 rounded-2xl p-6">
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+                <p class="text-slate-500 text-sm">Last Updated</p>
+                <h3 class="text-lg font-semibold text-purple-700 mt-2">
+                    {{ $program->updated_at->format('d M Y') }}
+                </h3>
+            </div>
 
-                <div class="text-sm text-slate-500">
-                    Updated At
+        </div>
+
+        <!-- PROGRAM INFORMATION (RESTORED) -->
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
+
+            <h3 class="text-lg font-bold text-slate-800 mb-6">
+                Program Information
+            </h3>
+
+            <div class="grid md:grid-cols-2 gap-8">
+
+                <div>
+                    <label class="block text-sm text-slate-500 mb-2">Program Name</label>
+                    <div class="text-slate-800 font-semibold">
+                        {{ $program->name }}
+                    </div>
                 </div>
 
-                <div
-                    class="font-semibold text-purple-700 mt-2">
+                <div>
+                    <label class="block text-sm text-slate-500 mb-2">Program Status</label>
+                    <div class="font-semibold">
+                        {{ ucfirst($program->status) }}
+                    </div>
+                </div>
 
-                    {{ $program->updated_at->format('d M Y') }}
+                <div>
+                    <label class="block text-sm text-slate-500 mb-2">Start Date</label>
+                    <div class="text-slate-800">
+                        {{ $program->start_date->format('d F Y') }}
+                    </div>
+                </div>
 
+                <div>
+                    <label class="block text-sm text-slate-500 mb-2">End Date</label>
+                    <div class="text-slate-800">
+                        {{ $program->end_date->format('d F Y') }}
+                    </div>
                 </div>
 
             </div>
 
         </div>
 
-        <div class="mt-8 flex gap-3">
+        <!-- DESCRIPTION -->
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
 
-            <a
-                href="{{ route('admin.programs.index') }}"
-                class="px-5 py-3 rounded-xl bg-slate-200 hover:bg-slate-300">
+            <h3 class="text-lg font-bold text-slate-800 mb-6">
+                Program Description
+            </h3>
 
-                Back
+            <div class="text-slate-700 leading-relaxed whitespace-pre-line">
+                {{ $program->description }}
+            </div>
 
-            </a>
+        </div>
 
-            <a
-                href="{{ route('admin.programs.edit',$program) }}"
-                class="px-5 py-3 rounded-xl bg-yellow-500 text-white hover:bg-yellow-600">
+        <!-- ACTION -->
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
 
-                Edit Program
+            <div class="flex flex-wrap gap-3">
 
-            </a>
+                <a
+                    href="{{ route('admin.programs.edit',$program) }}"
+                    class="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl transition">
+
+                    Edit Program
+
+                </a>
+
+                <form
+                    action="{{ route('admin.programs.destroy',$program) }}"
+                    method="POST">
+
+                    @csrf
+                    @method('DELETE')
+
+                    <button
+                        type="submit"
+                        onclick="return confirm('Delete this training program?')"
+                        class="px-5 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition">
+
+                        Delete Program
+
+                    </button>
+
+                </form>
+
+                <a
+                    href="{{ route('admin.programs.index') }}"
+                    class="px-5 py-3 bg-slate-200 hover:bg-slate-300 rounded-xl transition">
+
+                    Back to Programs
+
+                </a>
+
+            </div>
 
         </div>
 
     </div>
-
-</div>
 
 </x-app-layout>

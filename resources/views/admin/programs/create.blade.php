@@ -2,37 +2,51 @@
 
 <div class="space-y-6">
 
-    <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 rounded-3xl p-8 text-white shadow-xl">
+    {{-- HERO --}}
+    <div class="bg-gradient-to-r from-blue-800 via-indigo-800 to-slate-900 rounded-3xl p-8 text-white shadow-lg">
 
-        <h1 class="text-3xl font-bold">
-            Create Training Program
-        </h1>
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
-        <p class="text-blue-100 mt-2">
-            Add a new BLKK training program.
-        </p>
+            <div>
+
+                <h1 class="text-3xl font-bold">
+                    Create Training Program
+                </h1>
+
+                <p class="mt-2 text-blue-100">
+                    Add a new training program to the LMS BLKK Tanwiriyyah system.
+                </p>
+
+            </div>
+
+        </div>
 
     </div>
 
-    <div class="bg-white rounded-3xl shadow-lg p-8">
+    {{-- FORM CARD --}}
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
 
-        <form action="{{ route('admin.programs.store') }}"
-              method="POST">
+        <form action="{{ route('admin.programs.store') }}" method="POST">
 
             @csrf
 
             @include('admin.programs.form')
 
-            <div class="mt-8 flex gap-3">
+            {{-- ACTION BUTTONS --}}
+            <div class="border-t border-slate-200 mt-8 pt-6 flex justify-end gap-3">
 
                 <a href="{{ route('admin.programs.index') }}"
-                   class="px-5 py-3 rounded-xl bg-slate-200">
-                    Back
+                   class="px-5 py-3 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium transition">
+
+                    Cancel
+
                 </a>
 
-                <button
-                    class="px-5 py-3 rounded-xl bg-blue-600 text-white">
+                <button type="submit"
+                        class="px-5 py-3 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-semibold shadow transition">
+
                     Save Program
+
                 </button>
 
             </div>

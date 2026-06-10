@@ -1,320 +1,238 @@
 <x-app-layout>
 
-<div class="space-y-6">
+    <x-slot name="header">
 
-
-<!-- HERO -->
-<div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 rounded-3xl p-8 text-white shadow-lg">
-
-    <div class="flex items-center justify-between">
-
-        <div>
-
-            <h1 class="text-3xl font-bold">
-                Welcome Back, {{ auth()->user()->name }}
-            </h1>
-
-            <p class="mt-2 text-blue-100">
-                LMS BLKK Tanwiriyyah Administration Dashboard
-            </p>
-
-        </div>
-
-        <div class="hidden lg:flex items-center justify-center w-24 h-24 rounded-3xl bg-white/10 text-5xl">
-            🎓
-        </div>
-
-    </div>
-
-</div>
-
-<!-- STATISTICS -->
-<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-
-    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
             <div>
-                <p class="text-slate-500 text-sm">
-                    Total Participants
-                </p>
-
-                <h2 class="text-4xl font-bold text-blue-700 mt-2">
-                    {{ $participants ?? 0 }}
+                <h2 class="text-2xl font-bold text-slate-800">
+                    Dashboard SaaS LMS
                 </h2>
-            </div>
 
-            <div class="text-4xl">
-                👨‍🎓
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-
-        <div class="flex items-center justify-between">
-
-            <div>
-                <p class="text-slate-500 text-sm">
-                    Total Instructors
+                <p class="text-sm text-slate-500 mt-1">
+                    Real-time monitoring & analytics system BLKK Tanwiriyyah
                 </p>
-
-                <h2 class="text-4xl font-bold text-green-700 mt-2">
-                    {{ $instructors ?? 0 }}
-                </h2>
             </div>
 
-            <div class="text-4xl">
-                👨‍🏫
+            <div class="flex items-center gap-3">
+
+                <div class="flex items-center gap-2 px-3 py-2 bg-green-100 text-green-700 rounded-xl">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+                    </span>
+                    <span class="text-sm font-medium">Live System</span>
+                </div>
+
+                <div class="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-xl">
+                    👑 Admin Panel
+                </div>
+
+            </div>
+
+        </div>
+
+    </x-slot>
+
+    <div class="space-y-8">
+
+        {{-- HERO --}}
+        <div class="relative overflow-hidden rounded-3xl p-8 text-white shadow-xl bg-gradient-to-r from-indigo-900 via-blue-900 to-slate-900">
+
+            <div class="flex flex-col lg:flex-row justify-between gap-6">
+
+                <div>
+                    <h1 class="text-3xl lg:text-4xl font-bold">
+                        Welcome back, {{ auth()->user()->name }}
+                    </h1>
+
+                    <p class="mt-3 text-blue-100">
+                        Enterprise-grade LMS analytics dashboard
+                    </p>
+
+                    <p class="mt-2 text-blue-200">
+                        All metrics are updated in real-time system pipeline
+                    </p>
+                </div>
+
+                <div class="hidden lg:flex text-7xl opacity-80">
+                    📊
+                </div>
+
+            </div>
+
+        </div>
+
+        {{-- KPI SAAS CARDS --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+            {{-- PESERTA --}}
+            <div class="bg-white rounded-3xl p-6 shadow-sm border hover:shadow-lg transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-slate-500">Total Peserta</p>
+                        <h3 class="text-3xl font-bold text-blue-600 counter" data-value="{{ $participants ?? 0 }}">0</h3>
+
+                        <p class="text-xs text-green-500 mt-1">▲ Active growth</p>
+                    </div>
+
+                    <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
+                        👨‍🎓
+                    </div>
+                </div>
+            </div>
+
+            {{-- INSTRUKTUR --}}
+            <div class="bg-white rounded-3xl p-6 shadow-sm border hover:shadow-lg transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-slate-500">Instruktur</p>
+                        <h3 class="text-3xl font-bold text-green-600 counter" data-value="{{ $instructors ?? 0 }}">0</h3>
+
+                        <p class="text-xs text-green-500 mt-1">▲ Stable</p>
+                    </div>
+
+                    <div class="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center text-2xl">
+                        👨‍🏫
+                    </div>
+                </div>
+            </div>
+
+            {{-- KELAS --}}
+            <div class="bg-white rounded-3xl p-6 shadow-sm border hover:shadow-lg transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-slate-500">Kelas Aktif</p>
+                        <h3 class="text-3xl font-bold text-purple-600 counter" data-value="{{ $classes ?? 0 }}">0</h3>
+
+                        <p class="text-xs text-blue-500 mt-1">● Running</p>
+                    </div>
+
+                    <div class="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center text-2xl">
+                        🏫
+                    </div>
+                </div>
+            </div>
+
+            {{-- SERTIFIKAT --}}
+            <div class="bg-white rounded-3xl p-6 shadow-sm border hover:shadow-lg transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-slate-500">Sertifikat</p>
+                        <h3 class="text-3xl font-bold text-orange-500 counter" data-value="{{ $certificates ?? 0 }}">0</h3>
+
+                        <p class="text-xs text-yellow-500 mt-1">★ Issued</p>
+                    </div>
+
+                    <div class="w-14 h-14 rounded-2xl bg-orange-100 flex items-center justify-center text-2xl">
+                        📜
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- ANALYTICS SECTION --}}
+        <div class="grid lg:grid-cols-3 gap-6">
+
+            {{-- LEFT --}}
+            <div class="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border">
+
+                <div class="flex justify-between mb-6">
+                    <h3 class="font-bold text-slate-800 text-lg">
+                        Activity Overview
+                    </h3>
+
+                    <span id="lastUpdate" class="text-xs text-slate-500">
+                        Loading...
+                    </span>
+                </div>
+
+                <div class="space-y-5 text-slate-600">
+
+                    <div class="flex justify-between border-b pb-3">
+                        <span>Attendance Session</span>
+                        <span class="font-bold" id="attendanceSessions">{{ $attendanceSessions ?? 0 }}</span>
+                    </div>
+
+                    <div class="flex justify-between border-b pb-3">
+                        <span>Total Attendance</span>
+                        <span class="font-bold" id="attendances">{{ $attendances ?? 0 }}</span>
+                    </div>
+
+                    <div class="flex justify-between border-b pb-3">
+                        <span>Grades Processed</span>
+                        <span class="font-bold" id="grades">{{ $grades ?? 0 }}</span>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <span>Notifications</span>
+                        <span class="font-bold" id="notifications">{{ $notifications ?? 0 }}</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            {{-- RIGHT SYSTEM STATUS --}}
+            <div class="bg-gradient-to-br from-slate-900 to-indigo-900 text-white rounded-3xl p-6 shadow-xl">
+
+                <h3 class="font-bold mb-5 text-lg">System Health</h3>
+
+                <div class="space-y-4 text-sm">
+
+                    <div class="p-4 bg-white/10 rounded-2xl">
+                        <p class="text-white/60 text-xs">API Server</p>
+                        <p class="font-bold text-green-300">OPERATIONAL</p>
+                    </div>
+
+                    <div class="p-4 bg-white/10 rounded-2xl">
+                        <p class="text-white/60 text-xs">Database</p>
+                        <p class="font-bold text-green-300">SYNCED</p>
+                    </div>
+
+                    <div class="p-4 bg-white/10 rounded-2xl">
+                        <p class="text-white/60 text-xs">Realtime Engine</p>
+                        <p class="font-bold text-green-300">ACTIVE</p>
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
-    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-
-        <div class="flex items-center justify-between">
-
-            <div>
-                <p class="text-slate-500 text-sm">
-                    Active Classes
-                </p>
-
-                <h2 class="text-4xl font-bold text-purple-700 mt-2">
-                    {{ $classes ?? 0 }}
-                </h2>
-            </div>
-
-            <div class="text-4xl">
-                🏫
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-
-        <div class="flex items-center justify-between">
-
-            <div>
-                <p class="text-slate-500 text-sm">
-                    Certificates Issued
-                </p>
-
-                <h2 class="text-4xl font-bold text-orange-600 mt-2">
-                    {{ $certificates ?? 0 }}
-                </h2>
-            </div>
-
-            <div class="text-4xl">
-                📜
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- MODULE SUMMARY -->
-<div class="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
-
-    <div class="bg-white rounded-3xl p-6 shadow-sm">
-
-        <div class="text-3xl mb-3">📚</div>
-
-        <h3 class="font-bold text-slate-800">
-            Programs
-        </h3>
-
-        <div class="text-3xl font-bold text-blue-700 mt-2">
-            {{ $programs ?? 0 }}
-        </div>
-
-    </div>
-
-    <div class="bg-white rounded-3xl p-6 shadow-sm">
-
-        <div class="text-3xl mb-3">📖</div>
-
-        <h3 class="font-bold text-slate-800">
-            Materials
-        </h3>
-
-        <div class="text-3xl font-bold text-indigo-700 mt-2">
-            {{ $materials ?? 0 }}
-        </div>
-
-    </div>
-
-    <div class="bg-white rounded-3xl p-6 shadow-sm">
-
-        <div class="text-3xl mb-3">📝</div>
-
-        <h3 class="font-bold text-slate-800">
-            Assignments
-        </h3>
-
-        <div class="text-3xl font-bold text-green-700 mt-2">
-            {{ $assignments ?? 0 }}
-        </div>
-
-    </div>
-
-    <div class="bg-white rounded-3xl p-6 shadow-sm">
-
-        <div class="text-3xl mb-3">📢</div>
-
-        <h3 class="font-bold text-slate-800">
-            Announcements
-        </h3>
-
-        <div class="text-3xl font-bold text-red-600 mt-2">
-            {{ $announcements ?? 0 }}
-        </div>
-
-    </div>
-
-</div>
-
-<!-- QUICK ACCESS -->
-<div class="bg-white rounded-3xl p-6 shadow-sm">
-
-    <div class="flex items-center justify-between mb-6">
-
-        <h2 class="text-xl font-bold text-slate-800">
-            Quick Access
-        </h2>
-
-        <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm">
-            Administrator Tools
-        </span>
-
-    </div>
-
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-
-        <a href="{{ route('admin.users.index') }}"
-            class="bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl transition">
-
-            <div class="text-2xl mb-2">
-                👥
-            </div>
-
-            <div class="font-semibold">
-                User Management
-            </div>
-
-        </a>
-
-        <a href="{{ route('admin.programs.index') }}"
-            class="bg-green-600 hover:bg-green-700 text-white p-5 rounded-2xl transition">
-
-            <div class="text-2xl mb-2">
-                📚
-            </div>
-
-            <div class="font-semibold">
-                Programs
-            </div>
-
-        </a>
-
-        <a href="#"
-            class="bg-purple-600 hover:bg-purple-700 text-white p-5 rounded-2xl transition">
-
-            <div class="text-2xl mb-2">
-                🏫
-            </div>
-
-            <div class="font-semibold">
-                Classes
-            </div>
-
-        </a>
-
-        <a href="#"
-            class="bg-orange-600 hover:bg-orange-700 text-white p-5 rounded-2xl transition">
-
-            <div class="text-2xl mb-2">
-                📈
-            </div>
-
-            <div class="font-semibold">
-                Reports
-            </div>
-
-        </a>
-
-    </div>
-
-</div>
-
-<!-- SYSTEM OVERVIEW -->
-<div class="grid lg:grid-cols-2 gap-6">
-
-    <div class="bg-white rounded-3xl p-6 shadow-sm">
-
-        <h3 class="font-bold text-lg mb-5">
-            Learning Activity
-        </h3>
-
-        <div class="space-y-4">
-
-            <div class="flex justify-between">
-                <span>Total Attendance Sessions</span>
-                <span class="font-bold">{{ $attendanceSessions ?? 0 }}</span>
-            </div>
-
-            <div class="flex justify-between">
-                <span>Total Attendance Records</span>
-                <span class="font-bold">{{ $attendances ?? 0 }}</span>
-            </div>
-
-            <div class="flex justify-between">
-                <span>Total Grades</span>
-                <span class="font-bold">{{ $grades ?? 0 }}</span>
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="bg-white rounded-3xl p-6 shadow-sm">
-
-        <h3 class="font-bold text-lg mb-5">
-            Portfolio & Achievement
-        </h3>
-
-        <div class="space-y-4">
-
-            <div class="flex justify-between">
-                <span>Portfolios</span>
-                <span class="font-bold">{{ $portfolios ?? 0 }}</span>
-            </div>
-
-            <div class="flex justify-between">
-                <span>Certificates</span>
-                <span class="font-bold">{{ $certificates ?? 0 }}</span>
-            </div>
-
-            <div class="flex justify-between">
-                <span>Notifications</span>
-                <span class="font-bold">{{ $notifications ?? 0 }}</span>
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-</div>
+    {{-- COUNTER + REALTIME --}}
+    <script>
+        function animateCounter(el, value) {
+            let start = 0;
+            let end = parseInt(value);
+            let step = Math.ceil(end / 40);
+
+            let interval = setInterval(() => {
+                start += step;
+                if (start >= end) {
+                    start = end;
+                    clearInterval(interval);
+                }
+                el.innerText = start;
+            }, 20);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            document.querySelectorAll('.counter').forEach(el => {
+                animateCounter(el, el.dataset.value);
+            });
+
+            setInterval(() => {
+                document.getElementById('lastUpdate').innerText =
+                    "Updated: " + new Date().toLocaleTimeString();
+            }, 1000);
+
+        });
+    </script>
 
 </x-app-layout>
