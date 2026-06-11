@@ -1,156 +1,206 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="space-y-6">
+        {{-- Header --}}
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-                <h2 class="text-2xl font-bold text-slate-800">{{ $class->title }}</h2>
-                <p class="text-sm text-slate-500 mt-1">Class code: <span class="font-semibold">{{ $class->code }}</span></p>
+                <h1 class="text-2xl font-bold text-slate-800">{{ $class->title }}</h1>
+                <p class="text-sm text-slate-500 mt-0.5">Class Code: <span class="font-mono bg-slate-100 px-2 py-0.5 rounded-md">{{ $class->code }}</span> • Instructor: {{ $class->instructor->name }}</p>
             </div>
-            <a href="{{ route('instruktur.classes.index') }}" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-2xl shadow-sm transition">Back</a>
+            <div class="flex gap-2">
+                <a href="{{ route('instruktur.classes.index') }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
+                    ← Back to Classes
+                </a>
+            </div>
         </div>
-    </x-slot>
 
-    <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         @if(session('success'))
-            <div class="bg-green-50 border border-green-200 text-green-700 p-4 rounded-2xl">{{ session('success') }}</div>
+            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">
+                {{ session('success') }}
+            </div>
         @endif
 
-        <div class="flex flex-wrap -mx-3">
-            {{-- CLASS INFORMATION (col-3) --}}
-            <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
-                    <h3 class="font-bold text-slate-800 mb-4">Class Information</h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-3">
-                            <div><p class="text-xs text-slate-500 font-medium">Program</p><p class="text-slate-800 font-semibold text-sm">{{ $class->program->name }}</p></div>
-                            <div><p class="text-xs text-slate-500 font-medium">Class Code</p><p class="text-slate-800 font-semibold text-sm">{{ $class->code }}</p></div>
-                            <div><p class="text-xs text-slate-500 font-medium">Student Quota</p><p class="text-slate-800 font-semibold text-sm"><span class="text-green-600">{{ $class->participants->count() }}</span> / <span class="text-slate-600">{{ $class->quota }}</span></p></div>
+        <div class="grid lg:grid-cols-4 gap-6">
+            {{-- Sidebar Info + Quick Actions (3D card) --}}
+            <div class="lg:col-span-1 space-y-5">
+                {{-- Class Info Card --}}
+                <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                    <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        <span>📋</span> Class Info
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between"><span class="text-slate-500">Program</span><span class="font-medium">{{ $class->program->name }}</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Capacity</span><span class="font-medium"><span class="text-emerald-600">{{ $class->participants->count() }}</span> / {{ $class->quota }}</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Period</span><span class="font-medium">{{ $class->start_date->format('d M Y') }} - {{ $class->end_date->format('d M Y') }}</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Status</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $class->status == 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600' }}">{{ ucfirst($class->status) }}</span>
                         </div>
-                        <div class="space-y-3">
-                            <div><p class="text-xs text-slate-500 font-medium">Start Date</p><p class="text-slate-800 font-semibold text-sm">{{ $class->start_date->format('d F Y') }}</p></div>
-                            <div><p class="text-xs text-slate-500 font-medium">End Date</p><p class="text-slate-800 font-semibold text-sm">{{ $class->end_date->format('d F Y') }}</p></div>
-                            <div><p class="text-xs text-slate-500 font-medium">Status</p>
-                                <p class="text-slate-800 font-semibold">
-                                    @php
-                                        $statusBadge = ['draft' => 'bg-slate-100 text-slate-600', 'active' => 'bg-green-100 text-green-700', 'completed' => 'bg-blue-100 text-blue-700', 'cancelled' => 'bg-red-100 text-red-700'];
-                                        $statusText = ['draft' => 'Draft', 'active' => 'Active', 'completed' => 'Completed', 'cancelled' => 'Cancelled'];
-                                    @endphp
-                                    <span class="px-2 py-0.5 rounded-full text-xs {{ $statusBadge[$class->status] ?? 'bg-slate-100 text-slate-600' }}">{{ $statusText[$class->status] ?? ucfirst($class->status) }}</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-4 border-t border-slate-200">
-                        <p class="text-xs text-slate-500 font-medium mb-1">Description</p>
-                        <p class="text-slate-700 text-sm">{{ $class->description }}</p>
+                        <div class="pt-2 border-t"><span class="text-slate-500 text-xs">Description</span><p class="text-slate-600 mt-1 text-sm">{{ $class->description }}</p></div>
                     </div>
                 </div>
 
-                {{-- QUICK LINKS --}}
-                <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mt-6">
-                    <h4 class="font-bold text-slate-800 mb-4">Quick Links</h4>
-                    <div class="flex flex-wrap gap-4">
-                        <a href="{{ route('instruktur.materials.index', $class) }}" class="px-4 py-2 hover:bg-slate-50 rounded-lg text-sm text-blue-600 transition">📖 All Materials</a>
-                        <a href="{{ route('instruktur.assignments.create', $class) }}" class="px-4 py-2 hover:bg-slate-50 rounded-lg text-sm text-blue-600 transition">📝 All Assignments</a>
-                        <a href="{{ route('instruktur.attendances.index', $class) }}" class="px-4 py-2 hover:bg-slate-50 rounded-lg text-sm text-blue-600 transition">📅 All Attendance</a>
-                        <a href="{{ route('instruktur.classes.add-student', $class) }}" class="px-4 py-2 hover:bg-slate-50 rounded-lg text-sm text-blue-600 transition">👥 Add Students</a>
+                {{-- Quick Actions Card --}}
+                <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                    <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        <span>⚡</span> Quick Actions
+                    </h3>
+                    <div class="space-y-2">
+                        <a href="{{ route('instruktur.materials.index', $class) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700 group">
+                            <span class="text-xl group-hover:scale-110 transition">📖</span><span class="font-medium">All Materials</span>
+                        </a>
+                        <a href="{{ route('instruktur.assignments.create', $class) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700 group">
+                            <span class="text-xl group-hover:scale-110 transition">➕</span><span class="font-medium">New Assignment</span>
+                        </a>
+                        <a href="{{ route('instruktur.attendances.index', $class) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700 group">
+                            <span class="text-xl group-hover:scale-110 transition">📅</span><span class="font-medium">Manage Attendance</span>
+                        </a>
+                        <a href="{{ route('instruktur.classes.add-student', $class) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700 group">
+                            <span class="text-xl group-hover:scale-110 transition">👥</span><span class="font-medium">Manage Students</span>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            {{-- STREAM CONTENT (col-9) --}}
-            <div class="w-full md:w-3/4 px-3">
+            {{-- Main Content (Stream) --}}
+            <div class="lg:col-span-3 space-y-5">
+                {{-- Announcement Form --}}
+                <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                    <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        <span>📢</span> Post Announcement
+                    </h3>
+                    <form action="{{ route('instruktur.announcements.store', $class) }}" method="POST" class="space-y-3">
+                        @csrf
+                        <input type="text" name="title" placeholder="Announcement title..." required class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 text-sm px-3 py-2">
+                        <textarea name="description" rows="2" placeholder="Write your announcement..." required class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 text-sm px-3 py-2"></textarea>
+                        <div class="flex justify-end">
+                            <button type="submit" class="btn-3d px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm">Post Announcement</button>
+                        </div>
+                    </form>
+                </div>
+
+                {{-- Quick Create Buttons (3 cards horizontal) --}}
+                <div class="grid grid-cols-3 gap-4">
+                    <a href="{{ route('instruktur.materials.create', $class) }}" class="quick-card bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+                        <span class="text-3xl block">📄</span>
+                        <p class="font-bold mt-1">Add Material</p>
+                        <p class="text-xs opacity-80">Upload resources</p>
+                    </a>
+                    <a href="{{ route('instruktur.assignments.create', $class) }}" class="quick-card bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+                        <span class="text-3xl block">📝</span>
+                        <p class="font-bold mt-1">New Assignment</p>
+                        <p class="text-xs opacity-80">Create tasks</p>
+                    </a>
+                    <a href="{{ route('instruktur.attendances.create', $class) }}" class="quick-card bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+                        <span class="text-3xl block">📅</span>
+                        <p class="font-bold mt-1">Take Attendance</p>
+                        <p class="text-xs opacity-80">Record presence</p>
+                    </a>
+                </div>
+
+                {{-- Timeline Feed (Announcements, Materials, Assignments) with 3D cards --}}
                 <div class="space-y-4">
-                    {{-- POST ANNOUNCEMENT --}}
-                    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
-                        <h3 class="font-bold text-slate-800 mb-4 text-base">📢 Share Announcement</h3>
-                        <form action="{{ route('instruktur.announcements.store', $class) }}" method="POST" class="space-y-4">
-                            @csrf
-                            <input type="text" name="title" placeholder="Announcement title..." required class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 transition shadow-sm px-4 py-3 text-slate-700 text-sm">
-                            <textarea name="description" rows="3" placeholder="Write your announcement..." required class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 transition shadow-sm px-4 py-3 text-slate-700 text-sm"></textarea>
-                            <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm transition">Post Announcement</button>
-                        </form>
-                    </div>
-
-                    {{-- ACTION BUTTONS --}}
-                    <div class="grid grid-cols-3 gap-4">
-                        <a href="{{ route('instruktur.materials.create', $class) }}" class="px-4 py-3 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl shadow-sm transition text-center font-medium text-sm">+ Add Material</a>
-                        <a href="{{ route('instruktur.assignments.create', $class) }}" class="px-4 py-3 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-2xl shadow-sm transition text-center font-medium text-sm">+ New Assignment</a>
-                        <a href="{{ route('instruktur.attendances.create', $class) }}" class="px-4 py-3 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-2xl shadow-sm transition text-center font-medium text-sm">📅 Take Attendance</a>
-                    </div>
-
-                    {{-- STREAM POSTS --}}
-                    <div class="space-y-4">
-                        {{-- ANNOUNCEMENTS --}}
-                        @forelse($announcements as $announcement)
-                        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6" id="announcement-{{ $announcement->id }}">
-                            <div class="flex items-start justify-between gap-4 mb-4">
-                                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-lg">📢</div><div><p class="font-bold text-slate-800">{{ $announcement->creator?->name }}</p><p class="text-xs text-slate-500">{{ $announcement->created_at->format('d M Y H:i') }}</p></div></div>
-                                <div class="flex gap-2">
-                                    <button onclick="showEditForm({{ $announcement->id }}, '{{ addslashes($announcement->title) }}', '{{ addslashes($announcement->description) }}')" class="px-3 py-1 text-sm bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition">Edit</button>
-                                    <form action="{{ route('instruktur.announcements.destroy', [$class, $announcement]) }}" method="POST" style="display: inline;" onsubmit="return confirm('Delete this announcement?');">@csrf @method('DELETE')<button type="submit" class="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg transition">Delete</button></form>
-                                </div>
+                    <!-- Announcements Section -->
+                    @forelse($announcements as $announcement)
+                    <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200" id="announcement-{{ $announcement->id }}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 flex items-center justify-center text-white">📢</div>
+                                <div><p class="font-semibold text-slate-800">{{ $announcement->creator?->name }}</p><p class="text-xs text-slate-400">{{ $announcement->created_at->diffForHumans() }}</p></div>
                             </div>
-                            <div class="announcement-view-{{ $announcement->id }}">
-                                <h4 class="font-bold text-slate-800 mb-2">{{ $announcement->title }}</h4>
-                                <p class="text-slate-700 whitespace-pre-line">{{ $announcement->description }}</p>
-                            </div>
-                            <div class="announcement-edit-{{ $announcement->id }}" style="display: none;">
-                                <form action="{{ route('instruktur.announcements.update', [$class, $announcement]) }}" method="POST" class="space-y-3">
-                                    @csrf @method('PUT')
-                                    <input type="text" name="title" value="{{ $announcement->title }}" required class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 transition shadow-sm px-3 py-2 text-slate-700 text-sm">
-                                    <textarea name="description" rows="3" required class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 transition shadow-sm px-3 py-2 text-slate-700 text-sm">{{ $announcement->description }}</textarea>
-                                    <div class="flex gap-2">
-                                        <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">Update</button>
-                                        <button type="button" onclick="cancelEdit({{ $announcement->id }})" class="px-3 py-1.5 text-sm bg-slate-300 hover:bg-slate-400 text-slate-700 rounded-lg transition">Cancel</button>
-                                    </div>
+                            <div class="flex gap-2">
+                                <button onclick="showEditForm({{ $announcement->id }}, '{{ addslashes($announcement->title) }}', '{{ addslashes($announcement->description) }}')" class="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded-md hover:bg-amber-200">Edit</button>
+                                <form action="{{ route('instruktur.announcements.destroy', [$class, $announcement]) }}" method="POST" onsubmit="return confirm('Delete?');" class="inline">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-md hover:bg-red-200">Delete</button>
                                 </form>
                             </div>
                         </div>
-                        @empty @endforelse
-
-                        {{-- MATERIALS --}}
-                        @forelse($materials as $material)
-                        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
-                            <div class="flex items-start justify-between gap-4 mb-4">
-                                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-lg">📖</div><div><p class="font-bold text-slate-800">{{ $material->creator?->name }}</p><p class="text-xs text-slate-500">Meeting {{ $material->meeting_number }} • {{ $material->created_at->format('d M Y H:i') }}</p></div></div>
-                                <div class="flex gap-2"><a href="{{ route('instruktur.materials.show', [$class, $material]) }}" class="px-3 py-1 text-sm bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition">View</a><a href="{{ route('instruktur.materials.edit', [$class, $material]) }}" class="px-3 py-1 text-sm bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition">Edit</a></div>
-                            </div>
-                            <h4 class="font-bold text-slate-800 mb-2">{{ $material->title }}</h4>
-                            @if($material->description)<p class="text-sm text-slate-600 mb-3 line-clamp-2">{{ $material->description }}</p>@endif
-                            <div class="flex flex-wrap gap-2 text-xs">@if($material->file_path)<span class="px-2 py-1 bg-green-100 text-green-700 rounded">📎 {{ strtoupper($material->file_type) }}</span>@endif @if($material->youtube_url)<span class="px-2 py-1 bg-red-100 text-red-700 rounded">🎥 YouTube</span>@endif</div>
+                        <div class="announcement-view-{{ $announcement->id }} mt-3">
+                            <h4 class="font-bold text-slate-800">{{ $announcement->title }}</h4>
+                            <p class="text-slate-600 text-sm mt-1 whitespace-pre-line">{{ $announcement->description }}</p>
                         </div>
-                        @empty @endforelse
-
-                        {{-- ASSIGNMENTS --}}
-                        @forelse($assignments as $assignment)
-                        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 border-l-4 border-l-purple-500">
-                            <div class="flex items-start justify-between gap-4 mb-4">
-                                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-lg">📝</div><div><p class="font-bold text-slate-800">{{ $assignment->creator?->name }}</p><p class="text-xs text-slate-500">@if($assignment->deadline->isFuture())Due: {{ $assignment->deadline->format('d M Y H:i') }}@else Ended: {{ $assignment->deadline->format('d M Y H:i') }}@endif</p></div></div>
-                                <div class="flex gap-2">
-                                    <a href="{{ route('instruktur.assignments.edit', [$class, $assignment]) }}" class="px-3 py-1 text-sm bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition">Edit</a>
-                                    <form action="{{ route('instruktur.assignments.destroy', [$class, $assignment]) }}" method="POST" style="display: inline;" onsubmit="return confirm('Delete this assignment?');">@csrf @method('DELETE')<button type="submit" class="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg transition">Delete</button></form>
-                                </div>
-                            </div>
-                            <h4 class="font-bold text-slate-800 mb-2">{{ $assignment->title }}</h4>
-                            <p class="text-slate-700 whitespace-pre-line mb-3">{{ $assignment->description }}</p>
-                            @if($assignment->attachment)<a href="{{ Storage::url($assignment->attachment) }}" target="_blank" class="text-sm text-blue-600 hover:underline">📎 Download Attachment</a>@endif
+                        <div class="announcement-edit-{{ $announcement->id }} mt-3" style="display:none;">
+                            <form action="{{ route('instruktur.announcements.update', [$class, $announcement]) }}" method="POST" class="space-y-2">
+                                @csrf @method('PUT')
+                                <input type="text" name="title" value="{{ $announcement->title }}" class="input-3d w-full rounded-lg border-slate-200 text-sm px-3 py-1.5">
+                                <textarea name="description" rows="2" class="input-3d w-full rounded-lg border-slate-200 text-sm px-3 py-1.5">{{ $announcement->description }}</textarea>
+                                <div class="flex gap-2"><button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded-md text-xs">Save</button><button type="button" onclick="cancelEdit({{ $announcement->id }})" class="px-3 py-1 bg-slate-200 rounded-md text-xs">Cancel</button></div>
+                            </form>
                         </div>
-                        @empty @endforelse
                     </div>
+                    @empty <div class="dashboard-card bg-white rounded-xl p-6 text-center text-slate-400">No announcements yet.</div> @endforelse
+
+                    <!-- Materials -->
+                    @forelse($materials as $material)
+                    <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                        <div class="flex items-start justify-between">
+                            <div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center text-white">📖</div><div><p class="font-semibold text-slate-800">{{ $material->creator?->name }}</p><p class="text-xs text-slate-400">Meeting {{ $material->meeting_number }} • {{ $material->created_at->diffForHumans() }}</p></div></div>
+                            <div class="flex gap-2"><a href="{{ route('instruktur.materials.show', [$class, $material]) }}" class="px-2 py-1 text-xs bg-sky-100 text-sky-700 rounded-md">View</a><a href="{{ route('instruktur.materials.edit', [$class, $material]) }}" class="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded-md">Edit</a></div>
+                        </div>
+                        <h4 class="font-bold text-slate-800 mt-3">{{ $material->title }}</h4>
+                        @if($material->description)<p class="text-slate-600 text-sm mt-1">{{ $material->description }}</p>@endif
+                        <div class="flex gap-2 mt-2">@if($material->file_path)<span class="text-xs bg-slate-100 px-2 py-0.5 rounded">📎 File</span>@endif @if($material->youtube_url)<span class="text-xs bg-red-100 px-2 py-0.5 rounded">🎥 YouTube</span>@endif</div>
+                    </div>
+                    @empty <div class="dashboard-card bg-white rounded-xl p-6 text-center text-slate-400">No materials yet.</div> @endforelse
+
+                    <!-- Assignments -->
+                    @forelse($assignments as $assignment)
+                    @php $submittedCount = $assignment->submissions->count(); $gradedCount = $assignment->submissions->whereNotNull('score')->count(); $progress = $submittedCount > 0 ? ($gradedCount / $submittedCount) * 100 : 0; @endphp
+                    <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                        <div class="flex items-start justify-between">
+                            <div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white">📝</div><div><p class="font-semibold text-slate-800">{{ $assignment->creator?->name }}</p><p class="text-xs text-slate-400">Due: {{ $assignment->deadline->format('d M Y H:i') }}</p></div></div>
+                            <div class="flex gap-2"><a href="{{ route('instruktur.assignments.edit', [$class, $assignment]) }}" class="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded-md">Edit</a><a href="{{ route('instruktur.grades.index', [$class, $assignment]) }}" class="px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded-md">Submissions ({{ $submittedCount }})</a><form action="{{ route('instruktur.assignments.destroy', [$class, $assignment]) }}" method="POST" onsubmit="return confirm('Delete?');" class="inline">@csrf @method('DELETE')<button class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-md">Delete</button></form></div>
+                        </div>
+                        <h4 class="font-bold text-slate-800 mt-3">{{ $assignment->title }}</h4>
+                        <p class="text-slate-600 text-sm mt-1">{{ $assignment->description }}</p>
+                        @if($assignment->attachment)<a href="{{ Storage::url($assignment->attachment) }}" class="text-xs text-blue-600 mt-2 inline-block">📎 Download</a>@endif
+                        @if($submittedCount > 0)
+                        <div class="mt-3 pt-2 border-t"><div class="flex justify-between text-xs"><span>Grading Progress</span><span>{{ $gradedCount }}/{{ $submittedCount }}</span></div><div class="w-full bg-slate-200 rounded-full h-1.5 mt-1"><div class="bg-purple-600 h-1.5 rounded-full" style="width: {{ $progress }}%"></div></div></div>
+                        @endif
+                    </div>
+                    @empty <div class="dashboard-card bg-white rounded-xl p-6 text-center text-slate-400">No assignments yet.</div> @endforelse
                 </div>
             </div>
         </div>
     </div>
+
+    <style>
+        .dashboard-card {
+            transition: all 0.2s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
+        }
+        .input-3d {
+            transition: all 0.2s ease;
+        }
+        .input-3d:focus {
+            transform: scale(1.01);
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+            border-color: #3b82f6;
+        }
+        .btn-3d {
+            transition: all 0.2s ease;
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+        .quick-card {
+            transition: all 0.2s ease;
+        }
+        .quick-card:active {
+            transform: translateY(1px);
+        }
+    </style>
+
+    <script>
+        function showEditForm(id, title, description) {
+            document.querySelector('.announcement-view-' + id).style.display = 'none';
+            document.querySelector('.announcement-edit-' + id).style.display = 'block';
+        }
+        function cancelEdit(id) {
+            document.querySelector('.announcement-view-' + id).style.display = 'block';
+            document.querySelector('.announcement-edit-' + id).style.display = 'none';
+        }
+    </script>
 </x-app-layout>
-
-<script>
-function showEditForm(id, title, description) {
-    document.querySelector('.announcement-view-' + id).style.display = 'none';
-    document.querySelector('.announcement-edit-' + id).style.display = 'block';
-}
-
-function cancelEdit(id) {
-    document.querySelector('.announcement-view-' + id).style.display = 'block';
-    document.querySelector('.announcement-edit-' + id).style.display = 'none';
-}
-</script>w

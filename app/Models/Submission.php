@@ -10,6 +10,7 @@ class Submission extends Model
         'assignment_id',
         'participant_id',
         'url',
+        'file_path',
         'notes',
         'score',
         'feedback',
@@ -21,6 +22,7 @@ class Submission extends Model
     {
         return [
             'submitted_at' => 'datetime',
+            'score' => 'decimal:2',
         ];
     }
 
@@ -32,5 +34,16 @@ class Submission extends Model
     public function participant()
     {
         return $this->belongsTo(User::class, 'participant_id');
+    }
+
+    public function isGraded()
+    {
+        return $this->status === 'graded' || !is_null($this->score);
+    }
+
+    public function isLate()
+    {
+        if (!$this->assignment->deadline) return false;
+        return $this->submitted_at > $this->assignment->deadline;
     }
 }

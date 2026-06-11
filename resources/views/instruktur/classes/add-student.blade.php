@@ -83,7 +83,7 @@
                         @error('participant_ids')<p class="text-red-500 text-sm mt-2">{{ $message }}</p>@enderror
                     </div>
                     <div class="border-t border-slate-200 pt-6 flex justify-end gap-3">
-                        <a href="{{ route('instruktur.classes.show', $class) }}" class="px-6 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition">Cancel</a>
+                        <a href="{{ route('instruktur.classes.stream', $class) }}" class="px-6 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition">Cancel</a>
                         <button type="submit" class="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm">Add Selected Students</button>
                     </div>
                 </form>

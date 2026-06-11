@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Assignment extends Model
 {
@@ -12,6 +13,7 @@ class Assignment extends Model
         'description',
         'attachment',
         'deadline',
+        'is_active',
         'created_by',
     ];
 
@@ -30,5 +32,21 @@ class Assignment extends Model
     public function submissions()
     {
         return $this->hasMany(Submission::class);
+    }
+
+    // TAMBAHKAN RELASI INI
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function isDeadlinePassed()
+    {
+        return Carbon::now()->gt($this->deadline);
+    }
+
+    public function canSubmit()
+    {
+        return !$this->isDeadlinePassed() && $this->is_active;
     }
 }

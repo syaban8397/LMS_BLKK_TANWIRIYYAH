@@ -24,7 +24,7 @@
                     {{-- ACTION BUTTONS --}}
                     <div class="grid grid-cols-3 gap-4">
                         <a href="{{ route('peserta.materials.index', $class) }}" class="px-4 py-3 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl shadow-sm transition text-center font-medium text-sm">📖 Materials</a>
-                        {{-- <a href="{{ route('peserta.assignments.index', $class) }}" class="px-4 py-3 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-2xl shadow-sm transition text-center font-medium text-sm">📝 Assignments</a> --}}
+                        <a href="{{ route('peserta.assignments.index', $class) }}" class="px-4 py-3 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-2xl shadow-sm transition text-center font-medium text-sm">📝 Assignments</a>
                         <a href="{{ route('peserta.attendances.index', $class) }}" class="px-4 py-3 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-2xl shadow-sm transition text-center font-medium text-sm">📅 Attendance</a>
                     </div>
 
@@ -55,19 +55,49 @@
                         </div>
                         @empty @endforelse
 
-                        {{-- ASSIGNMENTS --}}
+                        {{-- ASSIGNMENTS dengan status submission --}}
                         @forelse($assignments as $assignment)
+                        @php
+                            $submission = $assignment->submissions->where('participant_id', auth()->id())->first();
+                            $statusBadge = '';
+                            $statusColor = '';
+                            if($submission && $submission->isGraded()) {
+                                $statusBadge = 'Graded • Score: '.$submission->score;
+                                $statusColor = 'bg-green-100 text-green-700';
+                            } elseif($submission) {
+                                $statusBadge = 'Submitted';
+                                $statusColor = 'bg-yellow-100 text-yellow-700';
+                            } else {
+                                $statusBadge = 'Not submitted';
+                                $statusColor = 'bg-red-100 text-red-700';
+                            }
+                        @endphp
                         <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 border-l-4 border-l-purple-500">
                             <div class="flex items-start justify-between gap-4 mb-4">
-                                <div class="flex items-start gap-4"><div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-lg flex-shrink-0">📝</div><div><p class="font-bold text-slate-800">{{ $assignment->creator?->name }}</p><p class="text-xs text-slate-500">@if($assignment->deadline->isFuture())Due: {{ $assignment->deadline->format('d M Y H:i') }}@else<span class="text-red-600 font-medium">Ended: {{ $assignment->deadline->format('d M Y H:i') }}</span>@endif</p></div></div>
-                                <a href="{{ route('peserta.assignments.show', [$class, $assignment]) }}" class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex-shrink-0">View</a>
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-lg flex-shrink-0">📝</div>
+                                    <div>
+                                        <p class="font-bold text-slate-800">{{ $assignment->creator?->name }}</p>
+                                        <p class="text-xs text-slate-500">
+                                            @if($assignment->deadline->isFuture())
+                                                Due: {{ $assignment->deadline->format('d M Y H:i') }}
+                                            @else
+                                                <span class="text-red-600 font-medium">Ended: {{ $assignment->deadline->format('d M Y H:i') }}</span>
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium {{ $statusColor }}">{{ $statusBadge }}</span>
+                                    <a href="{{ route('peserta.assignments.show', [$class, $assignment]) }}" class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex-shrink-0">View</a>
+                                </div>
                             </div>
                             <h4 class="font-bold text-slate-800 mb-2">{{ $assignment->title }}</h4>
                             <p class="text-slate-700 line-clamp-3">{{ $assignment->description }}</p>
                         </div>
                         @empty @endforelse
 
-                        {{-- ATTENDANCES (Added for peserta to see their attendance status) --}}
+                        {{-- ATTENDANCES --}}
                         @if(isset($attendances) && $attendances->count() > 0)
                         <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 border-l-4 border-l-green-500">
                             <div class="flex items-start gap-4 mb-4">
@@ -96,20 +126,18 @@
                 </div>
             </div>
 
-            {{-- SIDEBAR (col-4) --}}
+            {{-- SIDEBAR --}}
             <div class="w-full lg:w-1/3 px-3">
                 <div class="space-y-4">
-                    {{-- QUICK LINKS --}}
                     <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
                         <h4 class="font-bold text-slate-800 mb-4">Quick Links</h4>
                         <div class="space-y-2">
                             <a href="{{ route('peserta.materials.index', $class) }}" class="block px-4 py-2 hover:bg-slate-50 rounded-lg text-sm text-blue-600 transition">📖 All Materials</a>
-                            {{-- <a href="{{ route('peserta.assignments.index', $class) }}" class="block px-4 py-2 hover:bg-slate-50 rounded-lg text-sm text-blue-600 transition">📝 All Assignments</a> --}}
+                            <a href="{{ route('peserta.assignments.index', $class) }}" class="block px-4 py-2 hover:bg-slate-50 rounded-lg text-sm text-blue-600 transition">📝 All Assignments</a>
                             <a href="{{ route('peserta.attendances.index', $class) }}" class="block px-4 py-2 hover:bg-slate-50 rounded-lg text-sm text-blue-600 transition">📅 My Attendance</a>
                         </div>
                     </div>
 
-                    {{-- CLASS INFO --}}
                     <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
                         <h4 class="font-bold text-slate-800 mb-4">Class Info</h4>
                         <div class="space-y-3 text-sm">
@@ -120,7 +148,6 @@
                         </div>
                     </div>
 
-                    {{-- QUICK STATS --}}
                     <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
                         <h4 class="font-bold text-slate-800 mb-4">Stats</h4>
                         <div class="space-y-2 text-sm">
