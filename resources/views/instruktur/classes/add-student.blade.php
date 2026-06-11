@@ -1,15 +1,37 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div><p class="text-sm text-slate-500 mt-1">Select students to enroll in this class.</p></div>
+    <div class="space-y-6">
+        {{-- Header --}}
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Manage Students</h1>
+                <p class="text-sm text-slate-500 mt-0.5">{{ $class->title }} • Enroll or manage participants</p>
+            </div>
+            <div class="flex gap-2">
+                <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
+                    ← Back to Class
+                </a>
+            </div>
         </div>
-    </x-slot>
 
-    <div class="max-w-7xl mx-auto px-4 py-6">
-        {{-- ENROLLED STUDENTS --}}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden mb-6">
-            <div class="p-6 border-b border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <h3 class="font-bold text-slate-800">Enrolled Students ({{ $participants->total() }})</h3>
+        {{-- Flash Messages --}}
+        @if(session('success'))
+            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        {{-- Enrolled Students Table --}}
+        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                    <h3 class="font-bold text-slate-800">Enrolled Students</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Total: {{ $participants->total() }}</p>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -25,69 +47,99 @@
                     </thead>
                     <tbody>
                         @forelse($participants as $participant)
-                        <tr class="border-t hover:bg-slate-50 transition">
-                            <td class="px-6 py-4 text-slate-800 font-medium">{{ $participant->participant->name }}</td>
-                            <td class="px-6 py-4 text-slate-600 text-sm">{{ $participant->participant->email }}</td>
-                            <td class="px-6 py-4 text-center text-slate-700 text-sm">{{ $participant->enrolled_at?->format('d M Y') ?? '-' }}</td>
-                            <td class="px-6 py-4 text-center">
-                                <form action="{{ route('instruktur.classes.update-student-status', [$class, $participant]) }}" method="POST" class="inline-block">
-                                    @csrf @method('PATCH')
-                                    <select name="status" class="px-2 py-1 rounded text-xs border border-slate-300 focus:border-blue-500 focus:ring-blue-500" onchange="this.form.submit()">
-                                        <option value="active" {{ $participant->status == 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="completed" {{ $participant->status == 'completed' ? 'selected' : '' }}>Completed</option>
-                                        <option value="dropped" {{ $participant->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
-                                    </select>
-                                </form>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <form action="{{ route('instruktur.classes.remove-student', [$class, $participant]) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to remove this student?');">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm transition">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
+                            <tr class="border-t border-slate-100 hover:bg-slate-50 transition">
+                                <td class="px-6 py-4 text-slate-800 font-medium">{{ $participant->participant->name }}</td>
+                                <td class="px-6 py-4 text-slate-600 text-sm">{{ $participant->participant->email }}</td>
+                                <td class="px-6 py-4 text-center text-slate-700 text-sm">{{ $participant->enrolled_at?->format('d M Y') ?? '-' }}</td>
+                                <td class="px-6 py-4 text-center">
+                                    <form action="{{ route('instruktur.classes.update-student-status', [$class, $participant]) }}" method="POST" class="inline-block">
+                                        @csrf @method('PATCH')
+                                        <select name="status" onchange="this.form.submit()"
+                                            class="text-xs rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-2 py-1 bg-white">
+                                            <option value="active" {{ $participant->status == 'active' ? 'selected' : '' }}>Active</option>
+                                            <option value="completed" {{ $participant->status == 'completed' ? 'selected' : '' }}>Completed</option>
+                                            <option value="dropped" {{ $participant->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <form action="{{ route('instruktur.classes.remove-student', [$class, $participant]) }}" method="POST" onsubmit="return confirm('Remove this student from class?')" style="display:inline;">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn-3d px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition shadow-sm">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
                         @empty
-                        <tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">No students enrolled yet.</td></tr>
+                            <tr><td colspan="5" class="px-6 py-12 text-center text-slate-500">No students enrolled yet. Add students using the form below.</td</tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-            <div class="p-4">{{ $participants->links() }}</div>
-        </div>
-
-        {{-- ADD STUDENTS FORM --}}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
-            @if($availableStudents->count() == 0)
-                <div class="text-center py-12">
-                    <p class="text-slate-500 text-lg">No available students to add. All active students are already enrolled or there are no active students in the system.</p>
-                    <a href="{{ route('instruktur.classes.show', $class) }}" class="mt-6 inline-block px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-2xl transition">Back to Class</a>
+            @if($participants->hasPages())
+                <div class="px-6 py-3 border-t border-slate-100 bg-slate-50">
+                    {{ $participants->links() }}
                 </div>
-            @else
-                <form action="{{ route('instruktur.classes.add-student', $class) }}" method="POST">
-                    @csrf
-                    <div class="mb-6">
-                        <label class="block text-sm font-semibold text-slate-700 mb-4">Select Students (Current: {{ $class->participants->count() }}/{{ $class->quota }})</label>
-                        @if($availableStudents->count() > 0)
-                            <div class="bg-slate-50 rounded-2xl p-4 space-y-3 max-h-96 overflow-y-auto">
-                                @foreach($availableStudents as $student)
-                                <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-white transition cursor-pointer">
-                                    <input type="checkbox" name="participant_ids[]" value="{{ $student->id }}" class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                    <div class="flex-1">
-                                        <p class="font-medium text-slate-800">{{ $student->name }}</p>
-                                        <p class="text-sm text-slate-500">{{ $student->email }}</p>
-                                    </div>
-                                </label>
-                                @endforeach
-                            </div>
-                        @endif
-                        @error('participant_ids')<p class="text-red-500 text-sm mt-2">{{ $message }}</p>@enderror
-                    </div>
-                    <div class="border-t border-slate-200 pt-6 flex justify-end gap-3">
-                        <a href="{{ route('instruktur.classes.stream', $class) }}" class="px-6 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition">Cancel</a>
-                        <button type="submit" class="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm">Add Selected Students</button>
-                    </div>
-                </form>
             @endif
         </div>
+
+        {{-- Add Students Form --}}
+        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
+                <h3 class="font-bold text-slate-800">Add New Students</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Current enrollment: {{ $class->participants->count() }} / {{ $class->quota }}</p>
+            </div>
+
+            <div class="p-6">
+                @if($availableStudents->count() == 0)
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-2">👥</div>
+                        <p class="text-slate-500">No available students to add. All active students are already enrolled or there are no active students in the system.</p>
+                        <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d inline-block mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">Back to Class</a>
+                    </div>
+                @else
+                    <form action="{{ route('instruktur.classes.add-student', $class) }}" method="POST">
+                        @csrf
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-slate-700 mb-3">Select students to enroll</label>
+                            <div class="bg-slate-50 rounded-xl p-4 space-y-2 max-h-96 overflow-y-auto border border-slate-200">
+                                @foreach($availableStudents as $student)
+                                    <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-white transition cursor-pointer">
+                                        <input type="checkbox" name="participant_ids[]" value="{{ $student->id }}" class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
+                                        <div class="flex-1">
+                                            <p class="font-medium text-slate-800">{{ $student->name }}</p>
+                                            <p class="text-sm text-slate-500">{{ $student->email }}</p>
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('participant_ids')
+                                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="border-t border-slate-200 pt-6 flex justify-end gap-3">
+                            <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">Cancel</a>
+                            <button type="submit" class="btn-3d px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">Add Selected Students</button>
+                        </div>
+                    </form>
+                @endif
+            </div>
+        </div>
     </div>
+
+    <style>
+        .dashboard-card {
+            transition: all 0.2s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
+        }
+        .btn-3d {
+            transition: all 0.2s ease;
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+    </style>
 </x-app-layout>

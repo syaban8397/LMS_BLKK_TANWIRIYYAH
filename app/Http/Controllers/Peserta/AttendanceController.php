@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Peserta/AttendanceController.php
 
 namespace App\Http\Controllers\Peserta;
 
@@ -8,22 +7,23 @@ use App\Models\ClassModel;
 use App\Models\Attendance;
 use App\Models\ClassParticipant;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
+    // Daftar semua sesi absensi untuk kelas tertentu (peserta)
     public function index(ClassModel $class)
     {
         $this->authorizeParticipant($class);
         
         $attendances = Attendance::where('class_id', $class->id)
             ->where('participant_id', auth()->id())
-            ->orderBy('meeting_number', 'desc')
+            ->orderBy('meeting_number')
             ->get();
         
         return view('peserta.attendances.index', compact('class', 'attendances'));
     }
     
+    // Form atau halaman detail untuk submit absensi
     public function show(ClassModel $class, $meetingNumber)
     {
         $this->authorizeParticipant($class);
@@ -33,56 +33,52 @@ class AttendanceController extends Controller
             ->where('meeting_number', $meetingNumber)
             ->firstOrFail();
         
-        $canSubmit = Carbon::parse($attendance->attendance_date)->addDay()->isFuture();
+        $isExpired = now()->gt($attendance->attendance_deadline);
         
-        return view('peserta.attendances.show', compact('class', 'attendance', 'meetingNumber', 'canSubmit'));
+        return view('peserta.attendances.show', compact('class', 'attendance', 'meetingNumber', 'isExpired'));
     }
     
+    // Proses submit absensi oleh peserta
     public function submit(Request $request, ClassModel $class, $meetingNumber)
     {
         $this->authorizeParticipant($class);
-        
-        $validated = $request->validate([
-            'status' => 'required|in:present,permission,sick',
-            'notes' => 'nullable|string',
-        ]);
         
         $attendance = Attendance::where('class_id', $class->id)
             ->where('participant_id', auth()->id())
             ->where('meeting_number', $meetingNumber)
             ->firstOrFail();
         
-        $canSubmit = Carbon::parse($attendance->attendance_date)->addDay()->isFuture();
-        
-        if (!$canSubmit) {
-            return redirect()->back()->with('error', 'Attendance submission deadline has passed.');
+        // Validasi deadline
+        if (now()->gt($attendance->attendance_deadline)) {
+            return redirect()->back()->with('error', 'Maaf, waktu absensi sudah habis. Silakan hubungi instruktur.');
         }
         
-        if ($attendance->submission_type === 'instructor') {
-            return redirect()->back()->with('error', 'Your attendance has been modified by instructor. Cannot change.');
-        }
+        $request->validate([
+            'status' => 'required|in:present,permission,sick', // peserta tidak bisa memilih 'absent'
+            'notes'  => 'nullable|string|max:255',
+        ]);
         
         $attendance->update([
-            'status' => $validated['status'],
-            'notes' => $validated['notes'] ?? null,
-            'check_in_time' => now()->format('H:i:s'),
+            'status'          => $request->status,
+            'notes'           => $request->notes,
+            'check_in_time'   => now(),
             'submission_type' => 'self',
-            'updated_by' => auth()->id(),
+            'updated_by'      => auth()->id(),
         ]);
         
         return redirect()->route('peserta.attendances.index', $class)
-            ->with('success', 'Attendance submitted successfully.');
+            ->with('success', 'Absensi berhasil disimpan.');
     }
     
     protected function authorizeParticipant(ClassModel $class)
     {
-        $isEnrolled = ClassParticipant::where('class_id', $class->id)
+        $isParticipant = ClassParticipant::where('class_id', $class->id)
             ->where('participant_id', auth()->id())
             ->where('status', 'active')
             ->exists();
         
-        if (!$isEnrolled) {
-            abort(403, 'You are not enrolled in this class.');
+        if (!$isParticipant) {
+            abort(403, 'Anda tidak terdaftar di kelas ini.');
         }
     }
 }

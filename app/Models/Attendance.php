@@ -1,5 +1,4 @@
 <?php
-// app/Models/Attendance.php
 
 namespace App\Models;
 
@@ -8,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model
 {
     protected $table = 'attendances';
-    
+
     protected $fillable = [
         'class_id',
         'participant_id',
         'meeting_number',
         'attendance_date',
+        'attendance_deadline',   // <-- tambahkan ini
         'status',
         'submission_type',
         'notes',
@@ -25,7 +25,8 @@ class Attendance extends Model
     protected function casts(): array
     {
         return [
-            'attendance_date' => 'date',
+            'attendance_date' => 'datetime',
+            'attendance_deadline' => 'datetime',   // <-- tambahkan ini
             'check_in_time' => 'datetime',
         ];
     }

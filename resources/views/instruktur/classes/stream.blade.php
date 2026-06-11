@@ -79,7 +79,7 @@
 
                 {{-- Quick Create Buttons (3 cards horizontal) --}}
                 <div class="grid grid-cols-3 gap-4">
-                    <a href="{{ route('instruktur.materials.create', $class) }}" class="quick-card bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+                    <a href="{{ route('instruktur.materials.index', $class) }}" class="quick-card bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
                         <span class="text-3xl block">📄</span>
                         <p class="font-bold mt-1">Add Material</p>
                         <p class="text-xs opacity-80">Upload resources</p>
@@ -89,7 +89,7 @@
                         <p class="font-bold mt-1">New Assignment</p>
                         <p class="text-xs opacity-80">Create tasks</p>
                     </a>
-                    <a href="{{ route('instruktur.attendances.create', $class) }}" class="quick-card bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+                    <a href="{{ route('instruktur.attendances.index', $class) }}" class="quick-card bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
                         <span class="text-3xl block">📅</span>
                         <p class="font-bold mt-1">Take Attendance</p>
                         <p class="text-xs opacity-80">Record presence</p>

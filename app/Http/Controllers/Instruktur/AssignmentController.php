@@ -21,36 +21,40 @@ class AssignmentController extends Controller
     }
 
     public function store(Request $request, ClassModel $class)
-    {
-        $this->authorizeInstructor($class);
+{
+    $this->authorizeInstructor($class);
 
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'attachment' => 'nullable|file|max:102400',
-            'deadline' => 'required',
-        ]);
+    $validated = $request->validate([
+        'title' => 'required|max:255',
+        'description' => 'required',
+        'attachment' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,zip,rar,jpg,jpeg,png|max:102400',
+        'deadline' => 'required|date_format:Y-m-d\TH:i',
+    ]);
 
-        $attachmentPath = null;
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $attachmentPath = $file->storeAs('assignments', $fileName, 'public');
-        }
+    // Konversi deadline ke format datetime untuk database
+    $deadline = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $validated['deadline'])->format('Y-m-d H:i:s');
 
-        Assignment::create([
-            'class_id' => $class->id,
-            'created_by' => auth()->id(),
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'attachment' => $attachmentPath,
-            'deadline' => $validated['deadline'],
-        ]);
-
-        return redirect()
-            ->route('instruktur.classes.stream', $class)
-            ->with('success', 'Assignment berhasil dibuat.');
+    $attachmentPath = null;
+    if ($request->hasFile('attachment')) {
+        $file = $request->file('attachment');
+        // Sanitasi nama file
+        $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file->getClientOriginalName());
+        $attachmentPath = $file->storeAs('assignments', $fileName, 'public');
     }
+
+    Assignment::create([
+        'class_id' => $class->id,
+        'created_by' => auth()->id(),
+        'title' => $validated['title'],
+        'description' => $validated['description'],
+        'attachment' => $attachmentPath,
+        'deadline' => $deadline,
+    ]);
+
+    return redirect()
+        ->route('instruktur.classes.stream', $class)
+        ->with('success', 'Assignment berhasil dibuat.');
+}
 
     public function edit(ClassModel $class, Assignment $assignment)
     {

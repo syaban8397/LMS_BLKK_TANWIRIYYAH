@@ -14,6 +14,7 @@ use App\Http\Controllers\Instruktur\AssignmentController as InstruktorAssignment
 use App\Http\Controllers\Instruktur\AttendanceController as InstrukturAttendanceController;
 use App\Http\Controllers\Instruktur\GradeController as InstrukturGradeController;
 use App\Http\Controllers\Instruktur\DashboardController as InstrukturDashboardController;
+use App\Http\Controllers\Peserta\DashboardController as PesertaDashboardController;
 use App\Http\Controllers\Peserta\ClassController as PesertaClassController;
 use App\Http\Controllers\Peserta\ClassStreamController as PesertaClassStreamController;
 use App\Http\Controllers\Peserta\MaterialController as PesertaMaterialController;
@@ -137,7 +138,7 @@ Route::middleware(['auth', 'role.check:peserta'])
     ->group(function () {
 
         // Dashboard (sama dengan daftar kelas)
-        Route::get('/dashboard', [PesertaClassController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [PesertaDashboardController::class, 'index'])->name('dashboard');
 
         // Classes
         Route::get('/classes', [PesertaClassController::class, 'index'])->name('classes.index');

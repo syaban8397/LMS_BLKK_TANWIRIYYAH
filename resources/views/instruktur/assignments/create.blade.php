@@ -1,100 +1,122 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="relative overflow-hidden bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-900 -mx-6 -mt-6 px-6 py-12 rounded-b-3xl shadow-2xl">
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
-            <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-xs text-white mb-3">
-                        <span class="animate-pulse">●</span> Assignment Manager
-                    </div>
-                    <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-lg">Create Assignment</h1>
-                    <p class="text-indigo-100 mt-2 text-sm md:text-base">Add a new assignment to <span class="font-semibold">{{ $class->title }}</span></p>
-                </div>
-                <a href="{{ route('instruktur.classes.stream', $class) }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl text-white font-medium hover:bg-white/20 transition-all duration-300">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Back to Stream
+    <div class="space-y-6">
+        {{-- Header --}}
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Create Assignment</h1>
+                <p class="text-sm text-slate-500 mt-0.5">Add a new assignment to <span class="font-semibold">{{ $class->title }}</span></p>
+            </div>
+            <div class="flex gap-2">
+                <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
+                    ← Back to Stream
                 </a>
             </div>
         </div>
-    </x-slot>
 
-    <div class="max-w-4xl mx-auto px-4 py-12">
-        <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
-            <div class="bg-gradient-to-r from-purple-50 to-indigo-50 px-6 py-5 border-b border-purple-100">
-                <h3 class="font-black text-xl text-gray-800 flex items-center gap-2">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                    Assignment Details
-                </h3>
-                <p class="text-gray-500 text-sm mt-1">Fill in the information below to create a new task for students</p>
+        {{-- Error Messages --}}
+        @if ($errors->any())
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm">
+                <ul class="list-disc list-inside space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
+        @endif
 
-            <form action="{{ route('instruktur.assignments.store', $class) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 space-y-8">
+        {{-- Form Card --}}
+        <div class="dashboard-card bg-white rounded-xl p-6 shadow-md border border-slate-200">
+            <form action="{{ route('instruktur.assignments.store', $class) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
-                <div class="space-y-6">
-                    <!-- Title -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
-                            Assignment Title
-                        </label>
-                        <input type="text" name="title" placeholder="e.g., Essay on Web Development" required
-                            class="w-full rounded-xl border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition px-4 py-3 text-gray-700 shadow-sm">
-                        @error('title')<p class="text-red-500 text-sm mt-2">{{ $message }}</p>@enderror
-                    </div>
-
-                    <!-- Description -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                            Description
-                        </label>
-                        <textarea name="description" rows="5" placeholder="Detailed description of the assignment..." required
-                            class="w-full rounded-xl border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition px-4 py-3 text-gray-700 shadow-sm"></textarea>
-                        @error('description')<p class="text-red-500 text-sm mt-2">{{ $message }}</p>@enderror
-                    </div>
-
-                    <!-- Attachment -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-                            Attachment (Optional)
-                        </label>
-                        <div class="relative border-2 border-dashed border-gray-300 rounded-xl hover:border-purple-400 transition cursor-pointer bg-gray-50/50">
-                            <input type="file" name="attachment" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                            <div class="text-center py-8 px-4">
-                                <svg class="w-10 h-10 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                                <p class="text-sm text-gray-500">Click or drag to upload a file</p>
-                                <p class="text-xs text-gray-400 mt-1">PDF, DOC, DOCX, PPT, ZIP (Max 100MB)</p>
-                            </div>
-                        </div>
-                        @error('attachment')<p class="text-red-500 text-sm mt-2">{{ $message }}</p>@enderror
-                    </div>
-
-                    <!-- Deadline -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Deadline
-                        </label>
-                        <input type="datetime-local" name="deadline" required
-                            class="w-full rounded-xl border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition px-4 py-3 text-gray-700 shadow-sm">
-                        @error('deadline')<p class="text-red-500 text-sm mt-2">{{ $message }}</p>@enderror
-                        <p class="text-xs text-gray-400 mt-1">Students cannot submit after the deadline</p>
-                    </div>
+                {{-- Title --}}
+                <div>
+                    <label class="block text-xs font-medium text-slate-500 mb-1">Assignment Title <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" placeholder="e.g., Essay on Web Development" required
+                           class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
+                    @error('title')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
 
-                <div class="border-t border-gray-100 pt-6 flex justify-end gap-4">
-                    <a href="{{ route('instruktur.classes.stream', $class) }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                {{-- Description --}}
+                <div>
+                    <label class="block text-xs font-medium text-slate-500 mb-1">Description <span class="text-red-500">*</span></label>
+                    <textarea name="description" rows="5" placeholder="Detailed description of the assignment..." required
+                              class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2"></textarea>
+                    @error('description')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+
+                {{-- Attachment (File) --}}
+                <div>
+                    <label class="block text-xs font-medium text-slate-500 mb-1">Attachment (Optional)</label>
+                    <div class="relative border-2 border-dashed border-slate-300 rounded-lg hover:border-blue-400 transition cursor-pointer bg-slate-50/50">
+                        <input type="file" name="attachment" id="attachment_input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <div class="text-center py-6 px-4">
+                            <svg class="w-8 h-8 mx-auto text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                            <p class="text-sm text-slate-500">Click or drag to upload a file</p>
+                            <p class="text-xs text-slate-400 mt-1">PDF, DOC, DOCX, PPT, ZIP, JPG, PNG (Max 100MB)</p>
+                            <div id="file_name_display" class="mt-2 text-xs text-blue-600 font-medium hidden"></div>
+                        </div>
+                    </div>
+                    @error('attachment')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+
+                <script>
+                    document.getElementById('attachment_input').addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        const displayDiv = document.getElementById('file_name_display');
+                        if (file) {
+                            displayDiv.textContent = 'Selected: ' + file.name;
+                            displayDiv.classList.remove('hidden');
+                        } else {
+                            displayDiv.textContent = '';
+                            displayDiv.classList.add('hidden');
+                        }
+                    });
+                </script>
+
+                {{-- Deadline --}}
+                <div>
+                    <label class="block text-xs font-medium text-slate-500 mb-1">Deadline <span class="text-red-500">*</span></label>
+                    <input type="datetime-local" name="deadline" required
+                           class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
+                    @error('deadline')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                    <p class="text-xs text-slate-400 mt-1">Students cannot submit after the deadline</p>
+                </div>
+
+                {{-- Action Buttons --}}
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                    <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition">
                         Cancel
                     </a>
-                    <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl font-semibold shadow-lg transition-all duration-200 transform hover:scale-105">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <button type="submit" class="btn-3d px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
                         Create Assignment
                     </button>
                 </div>
             </form>
         </div>
     </div>
+
+    <style>
+        .dashboard-card {
+            transition: all 0.2s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
+        }
+        .input-3d {
+            transition: all 0.2s ease;
+        }
+        .input-3d:focus {
+            transform: scale(1.01);
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+            border-color: #3b82f6;
+        }
+        .btn-3d {
+            transition: all 0.2s ease;
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+    </style>
 </x-app-layout>

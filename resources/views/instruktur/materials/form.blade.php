@@ -1,127 +1,78 @@
-<div class="space-y-6">
-
-    <!-- TITLE -->
+<div class="space-y-5">
+    {{-- TITLE --}}
     <div>
-
-        <label class="block text-sm font-semibold text-slate-700 mb-2">
-            Material Title
-        </label>
-
-        <input
-            type="text"
-            name="title"
-            value="{{ old('title', $material->title ?? '') }}"
-            placeholder="Example: Introduction to Web Development"
-            class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 transition shadow-sm px-4 py-3 text-slate-700">
-
-        @error('title')
-            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-        @enderror
-
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Material Title</label>
+        <input type="text" name="title" value="{{ old('title', $material->title ?? '') }}" placeholder="Example: Introduction to Web Development"
+               class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all">
+        @error('title')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
     </div>
 
-    <!-- DESCRIPTION -->
+    {{-- DESCRIPTION --}}
     <div>
-
-        <label class="block text-sm font-semibold text-slate-700 mb-2">
-            Description
-        </label>
-
-        <textarea
-            rows="4"
-            name="description"
-            placeholder="Provide a detailed description of this material..."
-            class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 transition shadow-sm px-4 py-3 text-slate-700">{{ old('description', $material->description ?? '') }}</textarea>
-
-        @error('description')
-            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-        @enderror
-
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Description</label>
+        <textarea name="description" rows="4" placeholder="Provide a detailed description of this material..."
+                  class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all">{{ old('description', $material->description ?? '') }}</textarea>
+        @error('description')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
     </div>
 
-    <!-- MEETING NUMBER -->
+    {{-- MEETING NUMBER --}}
     <div>
-
-        <label class="block text-sm font-semibold text-slate-700 mb-2">
-            Meeting Number
-        </label>
-
-        <input
-            type="number"
-            name="meeting_number"
-            value="{{ old('meeting_number', $material->meeting_number ?? 1) }}"
-            placeholder="1"
-            min="1"
-            class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 transition shadow-sm px-4 py-3 text-slate-700">
-
-        @error('meeting_number')
-            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-        @enderror
-
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Meeting Number</label>
+        <input type="number" name="meeting_number" value="{{ old('meeting_number', $material->meeting_number ?? 1) }}" min="1"
+               class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all">
+        @error('meeting_number')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
     </div>
 
-    <!-- FILE UPLOAD / YOUTUBE SECTION -->
-    <div class="bg-slate-50 rounded-2xl p-6 space-y-6">
+    {{-- CONTENT SECTION (FILE / YOUTUBE) --}}
+    <div class="border-t border-slate-200 pt-4 mt-2">
+        <p class="text-sm font-semibold text-slate-700 mb-3">Content (Upload file OR provide YouTube link)</p>
 
-        <p class="text-sm font-semibold text-slate-700">
-            Content (Upload file OR provide YouTube link)
-        </p>
+        <div class="space-y-5">
+            {{-- FILE UPLOAD --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">📎 Upload File</label>
+                <p class="text-xs text-slate-400 mb-2">Supported: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, ZIP, JPG, PNG, MP4 (Max 100MB)</p>
+                <input type="file" name="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.txt,.jpg,.jpeg,.png,.mp4"
+                       class="file-input-3d block w-full rounded-lg border-2 border-dashed border-slate-300 focus:border-blue-400 focus:ring-blue-400 transition text-sm px-3 py-2 cursor-pointer">
+                @if(isset($material) && $material->file_path)
+                    <p class="text-xs text-emerald-600 mt-1">✓ Current file: {{ basename($material->file_path) }}</p>
+                @endif
+                @error('file')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+            </div>
 
-        <!-- FILE UPLOAD -->
-        <div>
-
-            <label class="block text-sm font-semibold text-slate-700 mb-2">
-                📎 Upload File
-            </label>
-
-            <p class="text-xs text-slate-500 mb-3">
-                Supported formats: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, ZIP (Max 100MB)
-            </p>
-
-            <input
-                type="file"
-                name="file"
-                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.txt,.jpg,.jpeg,.png,.mp4"
-                class="block w-full rounded-2xl border-2 border-dashed border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition px-4 py-6 text-slate-700 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-
-            @if(isset($material) && $material->file_path)
-                <p class="text-sm text-green-600 mt-2">
-                    ✓ Current file: {{ $material->file_path }}
-                </p>
-            @endif
-
-            @error('file')
-                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-            @enderror
-
-        </div>
-
-        <!-- YOUTUBE URL -->
-        <div>
-
-            <label class="block text-sm font-semibold text-slate-700 mb-2">
-                🎥 YouTube URL
-            </label>
-
-            <input
-                type="url"
-                name="youtube_url"
-                value="{{ old('youtube_url', $material->youtube_url ?? '') }}"
-                placeholder="https://www.youtube.com/watch?v=..."
-                class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 transition shadow-sm px-4 py-3 text-slate-700">
-
-            @error('youtube_url')
-                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-            @enderror
-
+            {{-- YOUTUBE URL --}}
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">🎥 YouTube URL</label>
+                <input type="url" name="youtube_url" value="{{ old('youtube_url', $material->youtube_url ?? '') }}" placeholder="https://www.youtube.com/watch?v=..."
+                       class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all">
+                @error('youtube_url')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+            </div>
         </div>
 
         @error('content')
-            <div class="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p class="text-red-600 text-sm">{{ $message }}</p>
+            <div class="mt-3 p-2 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-red-600 text-xs">{{ $message }}</p>
             </div>
         @enderror
-
     </div>
-
 </div>
+
+<style>
+    .input-3d {
+        transition: all 0.2s ease;
+    }
+    .input-3d:focus {
+        transform: scale(1.01);
+        box-shadow: 0 0 0 2px rgba(59,130,246,0.1);
+        border-color: #3b82f6;
+        outline: none;
+    }
+    .file-input-3d {
+        transition: all 0.2s ease;
+    }
+    .file-input-3d:focus {
+        transform: scale(1.01);
+        border-color: #3b82f6;
+        outline: none;
+    }
+</style>

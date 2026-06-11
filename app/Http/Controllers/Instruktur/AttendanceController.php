@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Instruktur/AttendanceController.php
 
 namespace App\Http\Controllers\Instruktur;
 
@@ -18,7 +17,7 @@ class AttendanceController extends Controller
         $this->authorizeInstructor($class);
         
         $meetings = Attendance::where('class_id', $class->id)
-            ->select('meeting_number', 'attendance_date')
+            ->select('meeting_number', 'attendance_date', 'attendance_deadline')
             ->distinct()
             ->orderBy('meeting_number', 'desc')
             ->get();
@@ -41,14 +40,15 @@ class AttendanceController extends Controller
         return view('instruktur.attendances.create', compact('class', 'nextMeeting'));
     }
     
-    // Menyimpan sesi absensi baru (membuat record kosong untuk semua siswa)
+    // Menyimpan sesi absensi baru dengan deadline (fix TypeError)
     public function store(Request $request, ClassModel $class)
     {
         $this->authorizeInstructor($class);
         
         $validated = $request->validate([
-            'meeting_number' => 'required|integer|min:1',
-            'attendance_date' => 'required|date',
+            'meeting_number'   => 'required|integer|min:1',
+            'attendance_date'  => 'required|date',
+            'deadline_minutes' => 'required|integer|min:0',
         ]);
         
         // Cek apakah sesi sudah ada
@@ -68,23 +68,28 @@ class AttendanceController extends Controller
             return redirect()->back()->with('error', 'No active students in this class.');
         }
         
+        $attendanceDate = \Carbon\Carbon::parse($validated['attendance_date']);
+        // Cast ke int untuk menghindari TypeError
+        $deadline = $attendanceDate->copy()->addMinutes((int) $validated['deadline_minutes']);
+        
         DB::beginTransaction();
         try {
             foreach ($students as $student) {
                 Attendance::create([
-                    'class_id' => $class->id,
-                    'participant_id' => $student->participant_id,
-                    'meeting_number' => $validated['meeting_number'],
-                    'attendance_date' => $validated['attendance_date'],
-                    'status' => 'absent',
-                    'submission_type' => 'self',
-                    'created_by' => auth()->id(),
+                    'class_id'            => $class->id,
+                    'participant_id'      => $student->participant_id,
+                    'meeting_number'      => $validated['meeting_number'],
+                    'attendance_date'     => $attendanceDate,
+                    'attendance_deadline' => $deadline,
+                    'status'              => 'absent',
+                    'submission_type'     => 'self',
+                    'created_by'          => auth()->id(),
                 ]);
             }
             
             DB::commit();
             return redirect()->route('instruktur.attendances.show', [$class, $validated['meeting_number']])
-                ->with('success', 'Attendance session for Meeting ' . $validated['meeting_number'] . ' created successfully.');
+                ->with('success', 'Attendance session for Meeting ' . $validated['meeting_number'] . ' created successfully. Deadline: ' . $deadline);
                 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -108,16 +113,17 @@ class AttendanceController extends Controller
         }
         
         $summary = [
-            'present' => $attendances->where('status', 'present')->count(),
+            'present'    => $attendances->where('status', 'present')->count(),
             'permission' => $attendances->where('status', 'permission')->count(),
-            'sick' => $attendances->where('status', 'sick')->count(),
-            'absent' => $attendances->where('status', 'absent')->count(),
-            'total' => $attendances->count(),
+            'sick'       => $attendances->where('status', 'sick')->count(),
+            'absent'     => $attendances->where('status', 'absent')->count(),
+            'total'      => $attendances->count(),
         ];
         
         $meetingDate = $attendances->first()->attendance_date;
+        $deadline    = $attendances->first()->attendance_deadline;
         
-        return view('instruktur.attendances.show', compact('class', 'attendances', 'meetingNumber', 'meetingDate', 'summary'));
+        return view('instruktur.attendances.show', compact('class', 'attendances', 'meetingNumber', 'meetingDate', 'deadline', 'summary'));
     }
     
     // Form edit absensi per meeting (instruktur mengganti status siswa)
@@ -142,14 +148,23 @@ class AttendanceController extends Controller
             ->get();
         
         $meetingDate = $attendances->first()->attendance_date;
+        $deadline    = $attendances->first()->attendance_deadline;
         
-        return view('instruktur.attendances.edit', compact('class', 'students', 'attendances', 'meetingNumber', 'meetingDate'));
+        return view('instruktur.attendances.edit', compact('class', 'students', 'attendances', 'meetingNumber', 'meetingDate', 'deadline'));
     }
     
-    // Update absensi (instruktur mengganti)
+    // Update absensi (instruktur mengganti) - optional deadline restriction commented
     public function update(Request $request, ClassModel $class, $meetingNumber)
     {
         $this->authorizeInstructor($class);
+        
+        // Jika ingin instruktur TIDAK BISA mengubah setelah deadline, aktifkan kode di bawah:
+        /*
+        $first = Attendance::where('class_id', $class->id)->where('meeting_number', $meetingNumber)->first();
+        if ($first && now()->gt($first->attendance_deadline)) {
+            return redirect()->back()->with('error', 'Sesi absensi sudah ditutup. Tidak dapat mengubah status.');
+        }
+        */
         
         $validated = $request->validate([
             'attendance_date' => 'required|date',
@@ -169,11 +184,11 @@ class AttendanceController extends Controller
                 
                 if ($attendance) {
                     $attendance->update([
-                        'status' => $attendanceData['status'],
-                        'notes' => $attendanceData['notes'] ?? null,
+                        'status'          => $attendanceData['status'],
+                        'notes'           => $attendanceData['notes'] ?? null,
                         'attendance_date' => $validated['attendance_date'],
                         'submission_type' => 'instructor',
-                        'updated_by' => auth()->id(),
+                        'updated_by'      => auth()->id(),
                     ]);
                 }
             }
