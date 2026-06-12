@@ -1,5 +1,72 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <style>
+        /* Animasi 3D untuk container utama */
+        @keyframes fadeInUp3D {
+            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+        @keyframes cardPop3D {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
+            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
+        }
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .peserta-assignment-show-wrapper {
+            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+
+        /* Kartu detail assignment */
+        .detail-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform-style: preserve-3d;
+        }
+        .detail-card:hover {
+            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
+            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Kartu submission */
+        .submission-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+        .submission-card:nth-child(1) { animation-delay: 0.05s; } /* detail assignment */
+        .submission-card:nth-child(2) { animation-delay: 0.1s; } /* submit section */
+        .submission-card:nth-child(3) { animation-delay: 0.15s; } /* your submission content */
+
+        /* Tombol 3D */
+        .btn-3d {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform: translateY(0);
+        }
+        .btn-3d:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+
+        /* Area informasi di dalam kartu */
+        .info-section {
+            animation: fadeSlideUp 0.3s ease forwards;
+            opacity: 0;
+        }
+        .info-section:nth-child(1) { animation-delay: 0.2s; }
+        .info-section:nth-child(2) { animation-delay: 0.25s; }
+        .info-section:nth-child(3) { animation-delay: 0.3s; }
+        .info-section:nth-child(4) { animation-delay: 0.35s; }
+    </style>
+
+    <div class="peserta-assignment-show-wrapper space-y-6">
         {{-- Header Sederhana dengan Tombol Back --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -15,14 +82,14 @@
 
         {{-- Flash Messages --}}
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">{{ session('success') }}</div>
+            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('success') }}</div>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm">{{ session('error') }}</div>
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('error') }}</div>
         @endif
 
         {{-- Assignment Details Card --}}
-        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+        <div class="detail-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -30,7 +97,7 @@
                 </h3>
             </div>
             <div class="p-5 space-y-4">
-                <div class="flex flex-wrap justify-between items-start gap-3">
+                <div class="info-section flex flex-wrap justify-between items-start gap-3">
                     <div class="flex flex-wrap gap-4 text-xs text-slate-500">
                         <span>👤 {{ $assignment->creator->name }}</span>
                         <span>📅 Posted {{ $assignment->created_at->format('d M Y') }}</span>
@@ -43,13 +110,13 @@
                     @endif
                 </div>
 
-                <div class="pt-2 border-t border-slate-100">
+                <div class="info-section pt-2 border-t border-slate-100">
                     <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-2">Description</p>
                     <p class="text-slate-700 text-sm whitespace-pre-line">{{ $assignment->description }}</p>
                 </div>
 
                 @if($assignment->attachment)
-                    <div class="pt-2 border-t border-slate-100">
+                    <div class="info-section pt-2 border-t border-slate-100">
                         <p class="text-xs text-slate-500 font-semibold mb-2">📎 Attachment</p>
                         <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
                             <div class="flex items-center gap-2">
@@ -71,7 +138,7 @@
         @endphp
 
         @if($assignment->deadline->isFuture())
-            <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 border-l-blue-500">
+            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 border-l-blue-500">
                 <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <span>📤</span> Submit Your Work
@@ -85,7 +152,7 @@
                                     <span class="text-green-600 text-lg">✅</span>
                                     <div>
                                         <p class="text-green-800 font-medium">Your submission has been graded</p>
-                                        <p class="text-green-700 text-sm mt-1">Score: <strong>{{ $submission->score }}</strong></p>
+                                        <!-- Score dihapus, hanya feedback -->
                                         @if($submission->feedback)
                                             <p class="text-sm text-green-700 mt-2">Feedback: {{ $submission->feedback }}</p>
                                         @endif
@@ -118,7 +185,7 @@
             </div>
         @else
             @if($submission)
-                <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+                <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">
                         <h3 class="font-bold text-slate-800 flex items-center gap-2">
                             <span>📊</span> Submission Status
@@ -128,8 +195,8 @@
                         <p class="text-slate-700 text-sm">Submitted on: <strong>{{ $submission->submitted_at->format('d M Y H:i') }}</strong></p>
                         @if($submission->isGraded())
                             <div class="bg-green-50 rounded-xl p-3 border border-green-200">
-                                <p class="text-green-800">Score: <strong>{{ $submission->score }}</strong></p>
-                                <p class="text-green-700 text-sm mt-1">Feedback: {{ $submission->feedback ?? '-' }}</p>
+                                <!-- Score dihapus, hanya feedback -->
+                                <p class="text-green-800">Feedback: {{ $submission->feedback ?? 'No feedback provided.' }}</p>
                             </div>
                         @else
                             <div class="bg-amber-50 rounded-xl p-3 border border-amber-200">
@@ -139,7 +206,7 @@
                     </div>
                 </div>
             @else
-                <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 border-l-red-500">
+                <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 border-l-red-500">
                     <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-red-50 to-white">
                         <h3 class="font-bold text-slate-800 flex items-center gap-2">
                             <span>⚠️</span> Deadline Passed
@@ -154,7 +221,7 @@
 
         {{-- Show submitted content if exists (file/url/notes) --}}
         @if($submission && ($submission->file_path || $submission->url))
-            <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <span>📎</span> Your Submission
@@ -182,20 +249,4 @@
             </div>
         @endif
     </div>
-
-    <style>
-        .dashboard-card {
-            transition: all 0.2s ease;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
-        }
-        .btn-3d {
-            transition: all 0.2s ease;
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-    </style>
 </x-app-layout>

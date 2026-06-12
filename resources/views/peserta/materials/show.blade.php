@@ -1,5 +1,58 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <style>
+        /* Animasi 3D untuk container utama */
+        @keyframes fadeInUp3D {
+            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+        @keyframes cardPop3D {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
+            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
+        }
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .peserta-material-show-wrapper {
+            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+
+        /* Semua kartu */
+        .info-card, .file-card, .video-card, .warning-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform-style: preserve-3d;
+        }
+        .info-card:hover, .file-card:hover, .video-card:hover, .warning-card:hover {
+            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
+            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Stagger delay untuk kartu */
+        .info-card { animation-delay: 0.05s; }
+        .file-card { animation-delay: 0.1s; }
+        .video-card { animation-delay: 0.15s; }
+        .warning-card { animation-delay: 0.1s; }
+
+        /* Tombol 3D */
+        .btn-3d {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform: translateY(0);
+        }
+        .btn-3d:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+    </style>
+
+    <div class="peserta-material-show-wrapper space-y-6">
         {{-- Header Sederhana dengan Tombol Back --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -15,14 +68,14 @@
 
         {{-- Flash Messages (opsional) --}}
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">{{ session('success') }}</div>
+            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('success') }}</div>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm">{{ session('error') }}</div>
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('error') }}</div>
         @endif
 
         {{-- Material Info Card --}}
-        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+        <div class="info-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -59,7 +112,7 @@
 
         {{-- File Attachment Card --}}
         @if($material->file_path)
-        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+        <div class="file-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-emerald-50 to-white">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h6v6M9 21H4a1 1 0 01-1-1V4a1 1 0 011-1h10l6 6v11a1 1 0 01-1 1h-3M15 3v6h6"></path></svg>
@@ -100,7 +153,7 @@
 
         {{-- YouTube Video Card --}}
         @if($material->youtube_url)
-        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+        <div class="video-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-red-50 to-white">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -134,27 +187,11 @@
 
         {{-- No content warning --}}
         @if(!$material->file_path && !$material->youtube_url)
-        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 p-6 text-center">
+        <div class="warning-card bg-white rounded-xl shadow-md border border-slate-200 p-6 text-center">
             <svg class="w-10 h-10 text-amber-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
             <p class="text-amber-700 font-medium text-sm">No content attached to this material.</p>
             <p class="text-amber-600 text-xs mt-1">The instructor hasn't added any file or YouTube link.</p>
         </div>
         @endif
     </div>
-
-    <style>
-        .dashboard-card {
-            transition: all 0.2s ease;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
-        }
-        .btn-3d {
-            transition: all 0.2s ease;
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-    </style>
 </x-app-layout>

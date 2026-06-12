@@ -1,193 +1,275 @@
 <x-guest-layout>
     <style>
-        /* Hover animations only - no auto animation */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            border-radius: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
-        .glass-card:hover {
-            transform: translateY(-6px);
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.2);
+        body {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+        /* Animasi fade in 3D */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) rotateX(15deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        /* Card Login 3D mewah dengan perspektif tinggi */
         .login-card {
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.15);
+            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform-style: preserve-3d;
+            transform: perspective(1200px) rotateX(0deg) rotateY(0deg);
+            animation: fadeInUp 0.7s ease-out forwards;
+            opacity: 0;
         }
 
+        /* Efek 3D yang sangat terasa saat hover */
         .login-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.25);
+            transform: perspective(1200px) rotateX(5deg) rotateY(8deg) translateY(-12px);
+            box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.2);
         }
 
-        /* Tombol hover effect */
-        .btn-login {
+        /* Input field modern dengan efek 3D saat focus */
+        .input-luxury {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 0.9rem 1.2rem;
+            color: #0f172a;
+            width: 100%;
             transition: all 0.3s ease;
         }
 
+        .input-luxury:focus {
+            background: #ffffff;
+            border-color: #3b82f6;
+            outline: none;
+            transform: scale(1.02) translateZ(5px);
+            box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .input-luxury::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Tombol Login 3D dengan efek press */
+        .btn-login {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: none;
+            border-radius: 1rem;
+            padding: 0.9rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            cursor: pointer;
+            transform: translateY(0) scale(1);
+            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.2);
+        }
+
         .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #0f172a, #020617);
         }
 
-        /* Input focus effect */
-        input:focus {
-            transform: scale(1.01);
-            transition: transform 0.2s ease;
+        .btn-login:active {
+            transform: translateY(2px) scale(0.98);
         }
 
-        /* Smooth scroll */
-        html {
-            scroll-behavior: smooth;
+        /* Floating shapes 3D dengan gerakan organik */
+        .shape-3d {
+            position: fixed;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            filter: blur(40px);
+            z-index: -1;
+            animation: morph 15s infinite alternate;
+        }
+
+        @keyframes morph {
+            0% {
+                border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                border-radius: 70% 30% 30% 70% / 60% 40% 60% 40%;
+                transform: translate(30px, -30px) rotate(10deg);
+            }
+        }
+
+        .shape1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .shape2 {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -100px;
+            background: rgba(99, 102, 241, 0.06);
+            animation-duration: 18s;
+        }
+
+        .shape3 {
+            width: 300px;
+            height: 300px;
+            top: 40%;
+            right: 10%;
+            background: rgba(37, 99, 235, 0.05);
+            animation-duration: 12s;
+        }
+
+        /* Flash message */
+        .flash-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            padding: 12px 24px;
+            border-radius: 40px;
+            background: white;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+            color: #0f172a;
+            font-weight: 500;
+            border-left: 4px solid;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .flash-success {
+            border-left-color: #10b981;
+            color: #065f46;
+            background: #ecfdf5;
+        }
+
+        .flash-error {
+            border-left-color: #ef4444;
+            color: #991b1b;
+            background: #fef2f2;
+        }
+
+        /* Link register */
+        .register-link {
+            color: #3b82f6;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link:hover {
+            color: #1e3a8a;
+            text-decoration: underline;
+            transform: translateY(-1px);
+            display: inline-block;
         }
     </style>
 
+    <!-- Floating shapes 3D -->
+    <div class="shape-3d shape1"></div>
+    <div class="shape-3d shape2"></div>
+    <div class="shape-3d shape3"></div>
+
     @if(session('success'))
-        <div class="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 bg-green-100 border-l-4 border-green-600 text-green-800 p-4 rounded-xl shadow-lg" style="z-index: 999;">
-            {{ session('success') }}
-        </div>
+        <div class="flash-message flash-success">{{ session('success') }}</div>
     @endif
-
     @if(session('error'))
-        <div class="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 bg-red-100 border-l-4 border-red-600 text-red-800 p-4 rounded-xl shadow-lg" style="z-index: 999;">
-            {{ session('error') }}
-        </div>
+        <div class="flash-message flash-error">{{ session('error') }}</div>
     @endif
 
-    <div class="min-h-screen flex bg-gradient-to-br from-blue-50 via-indigo-50 to-white">
-
-        <!-- LEFT SIDE: Branding dan Features -->
-        <div class="hidden lg:flex w-1/2 relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-800 via-indigo-800 to-sky-800 opacity-90"></div>
-            <div class="relative z-10 flex flex-col justify-center px-16 text-white">
-                <div class="mb-10">
-                    <h1 class="text-5xl font-extrabold leading-tight">
-                        LMS BLKK
-                        <br>
-                        Tanwiriyyah
-                    </h1>
-                    <p class="mt-6 text-lg text-blue-100 leading-relaxed">
-                        Modern Learning Management System designed to support
-                        training, certification, and competency development.
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="glass-card p-5">
-                        <div class="text-3xl mb-3">📚</div>
-                        <h3 class="font-semibold text-lg">Learning Materials</h3>
-                        <p class="text-sm text-blue-100 mt-2">Structured modules that are easy to understand.</p>
-                    </div>
-                    <div class="glass-card p-5">
-                        <div class="text-3xl mb-3">🎓</div>
-                        <h3 class="font-semibold text-lg">Certification</h3>
-                        <p class="text-sm text-blue-100 mt-2">Earn certificates after completing courses.</p>
-                    </div>
-                    <div class="glass-card p-5">
-                        <div class="text-3xl mb-3">📈</div>
-                        <h3 class="font-semibold text-lg">Progress Tracking</h3>
-                        <p class="text-sm text-blue-100 mt-2">Monitor your learning progress in real-time.</p>
-                    </div>
-                    <div class="glass-card p-5">
-                        <div class="text-3xl mb-3">💻</div>
-                        <h3 class="font-semibold text-lg">Online Learning</h3>
-                        <p class="text-sm text-blue-100 mt-2">Learn anytime and anywhere.</p>
-                    </div>
-                </div>
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="login-card w-full max-w-md p-8 md:p-10">
+            <!-- Logo & Title -->
+            <div class="text-center mb-8">
+                <img src="{{ asset('storage/images/Logo.png') }}" alt="YMT Creator Base" class="h-20 w-auto mx-auto drop-shadow-md mb-4">
+                <h2 class="text-3xl font-bold text-slate-800">Welcome Back</h2>
+                <p class="text-slate-500 text-sm mt-1">Sign in to your account</p>
             </div>
-        </div>
 
-        <!-- RIGHT SIDE: Form Login -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
-            <div class="w-full max-w-md login-card bg-white rounded-3xl shadow-2xl p-10">
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 mx-auto flex items-center justify-center text-white text-3xl shadow-lg">
-                        🎓
-                    </div>
-                    <h2 class="mt-5 text-3xl font-bold text-slate-800">LMS BLKK Tanwiriyyah</h2>
-                    <p class="text-slate-500 mt-2">Sign in to continue your learning journey</p>
+            <form method="POST" action="{{ route('login') }}" id="loginForm">
+                @csrf
+
+                <!-- Email -->
+                <div class="mb-5">
+                    <label class="block text-slate-700 text-sm font-semibold mb-2">Email Address</label>
+                    <input type="email" name="email" value="{{ old('email') }}" required autofocus
+                           class="input-luxury" placeholder="your@email.com">
+                    @error('email')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-
-                    <!-- EMAIL -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                        <x-text-input
-                            id="email"
-                            class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition"
-                            type="email"
-                            name="email"
-                            :value="old('email')"
-                            required
-                            autofocus />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <!-- Password -->
+                <div class="mb-6">
+                    <label class="block text-slate-700 text-sm font-semibold mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" name="password" id="password" required
+                               class="input-luxury pr-12" placeholder="••••••••">
+                        <button type="button" onclick="togglePassword()"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition">
+                            <i class="fas fa-eye-slash" id="toggleIcon"></i>
+                        </button>
                     </div>
+                    @error('password')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                    <!-- PASSWORD -->
-                    <div class="mt-5">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                        <div class="relative">
-                            <x-text-input
-                                id="password"
-                                class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 pr-12 transition"
-                                type="password"
-                                name="password"
-                                required />
-                            <button
-                                type="button"
-                                onclick="togglePassword()"
-                                class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-blue-600 transition">
-                                👁️
-                            </button>
-                        </div>
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                    </div>
+                <!-- Tombol Login (tanpa loading) -->
+                <button type="submit" class="btn-login">
+                    Sign In
+                </button>
 
-                    <!-- REMEMBER & FORGOT -->
-                    <div class="flex items-center justify-between mt-5">
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="remember" class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
-                            <span class="ml-2 text-sm text-gray-600">Remember Me</span>
-                        </label>
-                        <a href="{{ route('password.request.custom') }}" class="text-sm text-blue-600 hover:text-blue-700 transition">Forgot Password?</a>
-                    </div>
-
-                    <!-- LOGIN BUTTON -->
-                    <button type="submit" class="btn-login w-full mt-8 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-3 rounded-xl font-semibold shadow-lg transition duration-300">
-                        Sign In
-                    </button>
-
-                    <!-- REGISTER -->
-                    <div class="text-center mt-6">
-                        <a href="{{ route('register') }}" class="text-sm text-gray-600 hover:text-blue-600 transition">
-                            Don't have an account?
-                            <span class="font-semibold">Register Now</span>
-                        </a>
-                    </div>
-                </form>
-            </div>
+                <!-- Link Register -->
+                <div class="text-center mt-6">
+                    <a href="{{ route('register') }}" class="register-link text-sm">
+                        Don't have an account? <span class="font-bold">Register Now</span>
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
+        // Toggle password visibility
         function togglePassword() {
-            const password = document.getElementById('password');
-            if (password.type === 'password') {
-                password.type = 'text';
+            const pwd = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
             } else {
-                password.type = 'password';
+                pwd.type = 'password';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
             }
         }
 
         // Auto-hide flash messages after 3 seconds
         setTimeout(() => {
-            document.querySelectorAll('.fixed.top-24').forEach(el => {
+            document.querySelectorAll('.flash-message').forEach(el => {
                 el.style.opacity = '0';
                 setTimeout(() => el.remove(), 500);
             });

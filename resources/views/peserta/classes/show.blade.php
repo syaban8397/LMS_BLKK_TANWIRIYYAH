@@ -1,6 +1,69 @@
 <x-app-layout>
-    <div class="space-y-6">
-        {{-- Header sederhana dengan tombol back --}}
+    <style>
+        @keyframes fadeInUp3D {
+            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+        @keyframes cardPop3D {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
+            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
+        }
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .peserta-show-wrapper {
+            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+
+        .info-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+        .info-card:hover {
+            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
+            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
+        }
+
+        .quick-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+        .quick-card:nth-child(1) { animation-delay: 0.1s; }
+        .quick-card:nth-child(2) { animation-delay: 0.15s; }
+        .quick-card:nth-child(3) { animation-delay: 0.2s; }
+        .quick-card:nth-child(4) { animation-delay: 0.25s; }
+        .quick-card:hover {
+            transform: translateY(-6px) rotateX(2deg) rotateY(2deg);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .announcement-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            animation-delay: 0.3s;
+        }
+
+        .btn-3d {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform: translateY(0);
+        }
+        .btn-3d:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+    </style>
+
+    <div class="peserta-show-wrapper space-y-6">
+        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
                 <h1 class="text-2xl font-bold text-slate-800">{{ $class->title }}</h1>
@@ -13,15 +76,11 @@
             </div>
         </div>
 
-        @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">{{ session('success') }}</div>
-        @endif
-        @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm">{{ session('error') }}</div>
-        @endif
+        @if(session('success')) <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm animate-pulse">{{ session('success') }}</div> @endif
+        @if(session('error')) <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm animate-pulse">{{ session('error') }}</div> @endif
 
-        {{-- Class Information Card (3D) --}}
-        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+        <!-- Class Info Card -->
+        <div class="info-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -31,16 +90,9 @@
             <div class="p-5">
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-3">
-                        <div>
-                            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide">Program</p>
-                            <p class="text-slate-800 font-semibold">{{ $class->program->name }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide">Instructor</p>
-                            <p class="text-slate-800 font-semibold">{{ $class->instructor->name }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide">Enrollment Status</p>
+                        <div><p class="text-xs text-slate-500 font-semibold uppercase">Program</p><p class="text-slate-800 font-semibold">{{ $class->program->name }}</p></div>
+                        <div><p class="text-xs text-slate-500 font-semibold uppercase">Instructor</p><p class="text-slate-800 font-semibold">{{ $class->instructor->name }}</p></div>
+                        <div><p class="text-xs text-slate-500 font-semibold uppercase">Enrollment Status</p>
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium 
                                 @switch($participation->status)
                                     @case('active') bg-green-100 text-green-700 @break
@@ -53,47 +105,38 @@
                         </div>
                     </div>
                     <div class="space-y-3">
-                        <div>
-                            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide">Start Date</p>
-                            <p class="text-slate-800 font-semibold">{{ $class->start_date->format('d F Y') }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide">End Date</p>
-                            <p class="text-slate-800 font-semibold">{{ $class->end_date->format('d F Y') }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide">Enrolled At</p>
-                            <p class="text-slate-800 font-semibold">{{ $participation->enrolled_at?->format('d F Y') ?? '-' }}</p>
-                        </div>
+                        <div><p class="text-xs text-slate-500 font-semibold uppercase">Start Date</p><p class="text-slate-800 font-semibold">{{ $class->start_date->format('d F Y') }}</p></div>
+                        <div><p class="text-xs text-slate-500 font-semibold uppercase">End Date</p><p class="text-slate-800 font-semibold">{{ $class->end_date->format('d F Y') }}</p></div>
+                        <div><p class="text-xs text-slate-500 font-semibold uppercase">Enrolled At</p><p class="text-slate-800 font-semibold">{{ $participation->enrolled_at?->format('d F Y') ?? '-' }}</p></div>
                     </div>
                 </div>
                 @if($class->description)
                 <div class="mt-5 pt-4 border-t border-slate-200">
-                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-2">Description</p>
+                    <p class="text-xs text-slate-500 font-semibold uppercase mb-2">Description</p>
                     <p class="text-slate-700 text-sm">{{ $class->description }}</p>
                 </div>
                 @endif
             </div>
         </div>
 
-        {{-- Quick Access Cards (3D gradien, seperti quick-card instruktur) --}}
+        <!-- Quick Access Cards (4 kartu gradien) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <a href="{{ route('peserta.materials.index', $class) }}" class="quick-card bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl p-5 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+            <a href="{{ route('peserta.materials.index', $class) }}" class="quick-card bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl p-5 shadow-md text-white text-center">
                 <div class="text-4xl mb-2">📖</div>
                 <h4 class="font-bold text-base">Materials</h4>
                 <p class="text-xs text-blue-100 mt-1">View resources</p>
             </a>
-            <a href="{{ route('peserta.assignments.index', $class) }}" class="quick-card bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-5 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+            <a href="{{ route('peserta.assignments.index', $class) }}" class="quick-card bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-5 shadow-md text-white text-center">
                 <div class="text-4xl mb-2">📝</div>
                 <h4 class="font-bold text-base">Assignments</h4>
                 <p class="text-xs text-purple-100 mt-1">Submit tasks</p>
             </a>
-            <a href="{{ route('peserta.attendances.index', $class) }}" class="quick-card bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl p-5 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+            <a href="{{ route('peserta.attendances.index', $class) }}" class="quick-card bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl p-5 shadow-md text-white text-center">
                 <div class="text-4xl mb-2">📅</div>
                 <h4 class="font-bold text-base">Attendance</h4>
                 <p class="text-xs text-amber-100 mt-1">Record presence</p>
             </a>
-            <a href="#" class="quick-card bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-5 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+            <a href="#" class="quick-card bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-5 shadow-md text-white text-center">
                 <div class="text-4xl mb-2">🎯</div>
                 <h4 class="font-bold text-base">My Grades</h4>
                 <p class="text-xs text-green-100 mt-1">Check progress</p>
@@ -101,8 +144,8 @@
             </a>
         </div>
 
-        {{-- Latest Announcements Card --}}
-        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+        <!-- Latest Announcements Card -->
+        <div class="announcement-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white flex justify-between items-center">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
@@ -139,30 +182,4 @@
             </div>
         </div>
     </div>
-
-    <style>
-        .dashboard-card {
-            transition: all 0.2s ease;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
-        }
-        .btn-3d {
-            transition: all 0.2s ease;
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-        .quick-card {
-            transition: all 0.2s ease;
-        }
-        .quick-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.25);
-        }
-        .quick-card:active {
-            transform: translateY(1px);
-        }
-    </style>
 </x-app-layout>

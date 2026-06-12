@@ -1,5 +1,123 @@
 <x-app-layout>
-    <div class="space-y-5">
+    <style>
+        /* Animasi 3D untuk container utama */
+        @keyframes fadeInUp3D {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) rotateX(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        /* Animasi untuk setiap kartu (staggered) */
+        @keyframes cardPop3D {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px) rotateX(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0);
+            }
+        }
+
+        /* Animasi untuk baris tabel */
+        @keyframes rowFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Wrapper utama */
+        .user-management-wrapper {
+            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+
+        /* Stat card 3D */
+        .stat-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform-style: preserve-3d;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px) rotateX(2deg) rotateY(2deg) scale(1.02);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stagger delay untuk 4 kartu */
+        .stat-card:nth-child(1) { animation-delay: 0.05s; }
+        .stat-card:nth-child(2) { animation-delay: 0.1s; }
+        .stat-card:nth-child(3) { animation-delay: 0.15s; }
+        .stat-card:nth-child(4) { animation-delay: 0.2s; }
+
+        /* Form filter dan tombol 3D */
+        .filter-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            animation-delay: 0.25s;
+        }
+
+        /* Tabel dengan efek baris */
+        .user-table {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            animation-delay: 0.3s;
+        }
+
+        .user-table tbody tr {
+            animation: rowFadeIn 0.3s ease forwards;
+            opacity: 0;
+        }
+
+        /* Stagger untuk baris tabel */
+        .user-table tbody tr:nth-child(1) { animation-delay: 0.35s; }
+        .user-table tbody tr:nth-child(2) { animation-delay: 0.4s; }
+        .user-table tbody tr:nth-child(3) { animation-delay: 0.45s; }
+        .user-table tbody tr:nth-child(4) { animation-delay: 0.5s; }
+        .user-table tbody tr:nth-child(5) { animation-delay: 0.55s; }
+        .user-table tbody tr:nth-child(6) { animation-delay: 0.6s; }
+        .user-table tbody tr:nth-child(7) { animation-delay: 0.65s; }
+        .user-table tbody tr:nth-child(8) { animation-delay: 0.7s; }
+        .user-table tbody tr:nth-child(9) { animation-delay: 0.75s; }
+        .user-table tbody tr:nth-child(10) { animation-delay: 0.8s; }
+
+        /* Tombol 3D */
+        .btn-3d {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform: translateY(0);
+        }
+        .btn-3d:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+
+        /* Link aksi 3D */
+        .action-btn {
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+    </style>
+
+    <div class="user-management-wrapper space-y-5">
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -7,38 +125,38 @@
                 <p class="text-sm text-slate-500 mt-0.5">Manage administrators, instructors, and participants</p>
             </div>
             <a href="{{ route('admin.users.create') }}" 
-               class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+               class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5 btn-3d">
                 + Create User
             </a>
         </div>
 
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm">
+            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">
                 {{ session('success') }}
             </div>
         @endif
 
         {{-- Stat Cards --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all">
+            <div class="stat-card bg-white rounded-xl p-4 border border-slate-200 shadow-md">
                 <div class="flex justify-between items-start">
                     <div><p class="text-xs text-slate-400 uppercase">Total Users</p><p class="text-2xl font-bold text-blue-600 mt-1">{{ $users->total() }}</p></div>
                     <div class="text-xl">👥</div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all">
+            <div class="stat-card bg-white rounded-xl p-4 border border-slate-200 shadow-md">
                 <div class="flex justify-between items-start">
                     <div><p class="text-xs text-slate-400 uppercase">Active</p><p class="text-2xl font-bold text-green-600 mt-1">{{ \App\Models\User::where('is_active',1)->count() }}</p></div>
                     <div class="text-xl">✅</div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all">
+            <div class="stat-card bg-white rounded-xl p-4 border border-slate-200 shadow-md">
                 <div class="flex justify-between items-start">
                     <div><p class="text-xs text-slate-400 uppercase">Pending</p><p class="text-2xl font-bold text-yellow-500 mt-1">{{ \App\Models\User::where('approval_status','pending')->count() }}</p></div>
                     <div class="text-xl">⏳</div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all">
+            <div class="stat-card bg-white rounded-xl p-4 border border-slate-200 shadow-md">
                 <div class="flex justify-between items-start">
                     <div><p class="text-xs text-slate-400 uppercase">Instructors</p><p class="text-2xl font-bold text-indigo-600 mt-1">{{ \App\Models\User::where('role','instruktur')->count() }}</p></div>
                     <div class="text-xl">👨‍🏫</div>
@@ -47,7 +165,7 @@
         </div>
 
         {{-- Filter --}}
-        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-md">
+        <div class="filter-card bg-white rounded-xl p-4 border border-slate-200 shadow-md">
             <form method="GET" class="flex flex-wrap gap-3 items-end">
                 <div class="flex-1 min-w-[150px]">
                     <label class="block text-xs font-medium text-slate-500 mb-1">Search</label>
@@ -64,14 +182,14 @@
                     </select>
                 </div>
                 <div class="flex gap-2">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Search</button>
-                    <a href="{{ route('admin.users.index') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm hover:shadow">Reset</a>
+                    <button type="submit" class="btn-3d bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-md hover:shadow-lg">Search</button>
+                    <a href="{{ route('admin.users.index') }}" class="btn-3d bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm hover:shadow">Reset</a>
                 </div>
             </form>
         </div>
 
-        {{-- User Table - Rapi dengan lebar tetap --}}
-        <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+        {{-- User Table --}}
+        <div class="user-table bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm table-auto">
                     <thead class="bg-slate-50 text-slate-500 text-xs font-semibold">
@@ -127,11 +245,11 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex justify-center gap-1.5 flex-wrap">
-                                        <a href="{{ route('admin.users.show', $user) }}" class="px-2 py-1 bg-sky-500 hover:bg-sky-600 text-white rounded-md text-xs transition shadow-sm hover:shadow">View</a>
-                                        <a href="{{ route('admin.users.edit', $user) }}" class="px-2 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md text-xs transition shadow-sm hover:shadow">Edit</a>
+                                        <a href="{{ route('admin.users.show', $user) }}" class="action-btn px-2 py-1 bg-sky-500 hover:bg-sky-600 text-white rounded-md text-xs transition shadow-sm hover:shadow">View</a>
+                                        <a href="{{ route('admin.users.edit', $user) }}" class="action-btn px-2 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md text-xs transition shadow-sm hover:shadow">Edit</a>
                                         <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Delete this user?')" class="inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-xs transition shadow-sm hover:shadow">Del</button>
+                                            <button type="submit" class="action-btn px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-xs transition shadow-sm hover:shadow">Del</button>
                                         </form>
                                     </div>
                                 </td>

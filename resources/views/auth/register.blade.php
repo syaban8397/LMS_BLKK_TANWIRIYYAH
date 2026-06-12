@@ -1,341 +1,341 @@
 <x-guest-layout>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-<div class="min-h-screen flex bg-slate-100">
+        body {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) rotateX(15deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
 
-<!-- LEFT SIDE -->
-<div class="hidden lg:flex w-1/2 relative overflow-hidden">
+        /* Card Register 3D mewah - tanpa scroll, ukuran pas */
+        .register-card {
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.15);
+            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform-style: preserve-3d;
+            transform: perspective(1200px) rotateX(0deg) rotateY(0deg);
+            animation: fadeInUp 0.7s ease-out forwards;
+            opacity: 0;
+            /* Ukuran pas - tidak perlu scroll */
+            width: 100%;
+            max-width: 1000px;
+        }
 
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-800 to-sky-900"></div>
+        .register-card:hover {
+            transform: perspective(1200px) rotateX(3deg) rotateY(5deg) translateY(-8px);
+            box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.2);
+        }
 
-    <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        /* Input field modern */
+        .input-luxury {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 0.7rem 1rem;
+            color: #0f172a;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
 
-    <div class="relative z-10 flex flex-col justify-center px-16 text-white">
+        .input-luxury:focus {
+            background: #ffffff;
+            border-color: #3b82f6;
+            outline: none;
+            transform: scale(1.02) translateZ(5px);
+            box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
 
-        <div class="mb-10">
+        .input-luxury::placeholder {
+            color: #94a3b8;
+        }
 
-            <h1 class="text-5xl font-extrabold leading-tight">
-                LMS BLKK
-                <br>
-                Tanwiriyyah
-            </h1>
+        select.input-luxury {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23475569' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2rem;
+        }
 
-            <p class="mt-6 text-lg text-blue-100 leading-relaxed">
-                Modern Learning Management System designed to support
-                training, certification, and competency development.
-            </p>
+        /* Tombol Register 3D */
+        .btn-register {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: none;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            cursor: pointer;
+            transform: translateY(0) scale(1);
+            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.2);
+        }
 
-        </div>
+        .btn-register:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #0f172a, #020617);
+        }
 
-        <div class="grid grid-cols-2 gap-6">
+        .btn-register:active {
+            transform: translateY(2px) scale(0.98);
+        }
 
-            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
-                <div class="text-3xl mb-3">📚</div>
-                <h3 class="font-semibold text-lg">Learning Materials</h3>
-                <p class="text-sm text-blue-100 mt-2">
-                    Structured modules that are easy to understand.
-                </p>
+        /* Floating shapes 3D - background */
+        .shape-3d {
+            position: fixed;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            filter: blur(40px);
+            z-index: -1;
+            animation: morph 15s infinite alternate;
+        }
+
+        @keyframes morph {
+            0% {
+                border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                border-radius: 70% 30% 30% 70% / 60% 40% 60% 40%;
+                transform: translate(30px, -30px) rotate(10deg);
+            }
+        }
+
+        .shape1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: rgba(59, 130, 246, 0.08);
+        }
+        .shape2 {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -100px;
+            background: rgba(99, 102, 241, 0.06);
+            animation-duration: 18s;
+        }
+        .shape3 {
+            width: 300px;
+            height: 300px;
+            top: 40%;
+            right: 10%;
+            background: rgba(37, 99, 235, 0.05);
+            animation-duration: 12s;
+        }
+
+        /* Label */
+        label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        /* Link login */
+        .login-link {
+            color: #3b82f6;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .login-link:hover {
+            color: #1e3a8a;
+            text-decoration: underline;
+        }
+
+        /* Flash message */
+        .flash-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            padding: 12px 24px;
+            border-radius: 40px;
+            background: white;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+            border-left: 4px solid;
+            animation: fadeInUp 0.3s ease;
+        }
+        .flash-success {
+            border-left-color: #10b981;
+            color: #065f46;
+            background: #ecfdf5;
+        }
+        .flash-error {
+            border-left-color: #ef4444;
+            color: #991b1b;
+            background: #fef2f2;
+        }
+    </style>
+
+    <div class="shape-3d shape1"></div>
+    <div class="shape-3d shape2"></div>
+    <div class="shape-3d shape3"></div>
+
+    @if(session('success'))
+        <div class="flash-message flash-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="flash-message flash-error">{{ session('error') }}</div>
+    @endif
+
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="register-card p-6 md:p-8">
+            <!-- Logo & Title -->
+            <div class="text-center mb-5">
+                <img src="{{ asset('storage/images/Logo.png') }}" alt="YMT Creator Base" class="h-16 w-auto mx-auto drop-shadow-md mb-2">
+                <h2 class="text-2xl font-bold text-slate-800">Create Account</h2>
+                <p class="text-slate-500 text-sm">Join YMT Creator Base community</p>
             </div>
 
-            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
-                <div class="text-3xl mb-3">🎓</div>
-                <h3 class="font-semibold text-lg">Certification</h3>
-                <p class="text-sm text-blue-100 mt-2">
-                    Earn certificates after completing courses.
-                </p>
-            </div>
-
-            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
-                <div class="text-3xl mb-3">📈</div>
-                <h3 class="font-semibold text-lg">Progress Tracking</h3>
-                <p class="text-sm text-blue-100 mt-2">
-                    Monitor your learning progress in real-time.
-                </p>
-            </div>
-
-            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
-                <div class="text-3xl mb-3">💻</div>
-                <h3 class="font-semibold text-lg">Online Learning</h3>
-                <p class="text-sm text-blue-100 mt-2">
-                    Learn anytime and anywhere.
-                </p>
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- RIGHT SIDE -->
-<div class="w-full lg:w-1/2 flex items-center justify-center p-4">
-
-    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-8">
-
-        <div class="text-center mb-8">
-
-            <div
-                class="w-20 h-20 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 mx-auto flex items-center justify-center text-white text-3xl shadow-lg">
-
-                🎓
-
-            </div>
-
-            <h2 class="mt-5 text-3xl font-bold text-slate-800">
-                Create Account
-            </h2>
-
-            <p class="text-slate-500 mt-2">
-                Register to access LMS BLKK Tanwiriyyah
-            </p>
-
-        </div>
-
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-                <!-- FULL NAME -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Full Name
-                    </label>
-
-                    <x-text-input
-                        id="name"
-                        class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        type="text"
-                        name="name"
-                        :value="old('name')"
-                        required />
-
-                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
-                </div>
-
-                <!-- EMAIL -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Email Address
-                    </label>
-
-                    <x-text-input
-                        id="email"
-                        class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        type="email"
-                        name="email"
-                        :value="old('email')"
-                        required />
-
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                </div>
-
-                <!-- NIK -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        National ID Number (NIK)
-                    </label>
-
-                    <x-text-input
-                        id="nik"
-                        class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        type="text"
-                        name="nik"
-                        :value="old('nik')" />
-
-                    <x-input-error :messages="$errors->get('nik')" class="mt-2" />
-                </div>
-
-                <!-- PHONE -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Phone Number
-                    </label>
-
-                    <x-text-input
-                        id="phone"
-                        class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        type="text"
-                        name="phone"
-                        :value="old('phone')" />
-
-                    <x-input-error :messages="$errors->get('phone')" class="mt-2" />
-                </div>
-
-                <!-- GENDER -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Gender
-                    </label>
-
-                    <select
-                        id="gender"
-                        name="gender"
-                        class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-
-                        <option value="">Select Gender</option>
-
-                        <option value="L" {{ old('gender') == 'L' ? 'selected' : '' }}>
-                            Male
-                        </option>
-
-                        <option value="P" {{ old('gender') == 'P' ? 'selected' : '' }}>
-                            Female
-                        </option>
-
-                    </select>
-
-                    <x-input-error :messages="$errors->get('gender')" class="mt-2" />
-                </div>
-
-                <!-- BIRTH PLACE -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Birth Place
-                    </label>
-
-                    <x-text-input
-                        id="birth_place"
-                        class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        type="text"
-                        name="birth_place"
-                        :value="old('birth_place')" />
-
-                    <x-input-error :messages="$errors->get('birth_place')" class="mt-2" />
-                </div>
-
-                <!-- BIRTH DATE -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Birth Date
-                    </label>
-
-                    <x-text-input
-                        id="birth_date"
-                        class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        type="date"
-                        name="birth_date"
-                        :value="old('birth_date')" />
-
-                    <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
-                </div>
-
-                <!-- ADDRESS -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Address
-                    </label>
-
-                    <textarea
-                        id="address"
-                        name="address"
-                        rows="1"
-                        class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500">{{ old('address') }}</textarea>
-
-                    <x-input-error :messages="$errors->get('address')" class="mt-2" />
-                </div>
-
-                <!-- PASSWORD -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Password
-                    </label>
-
-                    <div class="relative">
-
-                        <x-text-input
-                            id="password"
-                            class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 pr-12"
-                            type="password"
-                            name="password"
-                            required />
-
-                        <button
-                            type="button"
-                            onclick="togglePassword('password')"
-                            class="absolute right-4 top-3">
-                            👁️
-                        </button>
-
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- FULL NAME -->
+                    <div>
+                        <label>Full Name</label>
+                        <input type="text" name="name" value="{{ old('name') }}" required class="input-luxury" placeholder="John Doe">
+                        @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                </div>
-
-                <!-- CONFIRM PASSWORD -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Confirm Password
-                    </label>
-
-                    <div class="relative">
-
-                        <x-text-input
-                            id="password_confirmation"
-                            class="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 pr-12"
-                            type="password"
-                            name="password_confirmation"
-                            required />
-
-                        <button
-                            type="button"
-                            onclick="togglePassword('password_confirmation')"
-                            class="absolute right-4 top-3">
-                            👁️
-                        </button>
-
+                    <!-- EMAIL -->
+                    <div>
+                        <label>Email Address</label>
+                        <input type="email" name="email" value="{{ old('email') }}" required class="input-luxury" placeholder="john@example.com">
+                        @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <x-input-error
-                        :messages="$errors->get('password_confirmation')"
-                        class="mt-2" />
+                    <!-- NIK -->
+                    <div>
+                        <label>NIK (KTP)</label>
+                        <input type="text" name="nik" value="{{ old('nik') }}" class="input-luxury" placeholder="16-digit number">
+                        @error('nik') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
 
+                    <!-- PHONE -->
+                    <div>
+                        <label>Phone Number</label>
+                        <input type="text" name="phone" value="{{ old('phone') }}" class="input-luxury" placeholder="+62 xxx">
+                        @error('phone') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- GENDER -->
+                    <div>
+                        <label>Gender</label>
+                        <select name="gender" class="input-luxury">
+                            <option value="" disabled selected>Select</option>
+                            <option value="L" {{ old('gender') == 'L' ? 'selected' : '' }}>Male</option>
+                            <option value="P" {{ old('gender') == 'P' ? 'selected' : '' }}>Female</option>
+                        </select>
+                        @error('gender') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- BIRTH PLACE -->
+                    <div>
+                        <label>Birth Place</label>
+                        <input type="text" name="birth_place" value="{{ old('birth_place') }}" class="input-luxury" placeholder="City">
+                        @error('birth_place') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- BIRTH DATE -->
+                    <div>
+                        <label>Birth Date</label>
+                        <input type="date" name="birth_date" value="{{ old('birth_date') }}" class="input-luxury">
+                        @error('birth_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- ADDRESS -->
+                    <div>
+                        <label>Address</label>
+                        <input type="text" name="address" value="{{ old('address') }}" class="input-luxury" placeholder="Full address">
+                        @error('address') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div>
+                        <label>Password</label>
+                        <div class="relative">
+                            <input type="password" name="password" id="password" required class="input-luxury pr-12" placeholder="••••••••">
+                            <button type="button" onclick="togglePassword('password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                        @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- CONFIRM PASSWORD -->
+                    <div>
+                        <label>Confirm Password</label>
+                        <div class="relative">
+                            <input type="password" name="password_confirmation" id="password_confirmation" required class="input-luxury pr-12" placeholder="••••••••">
+                            <button type="button" onclick="togglePassword('password_confirmation')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-            </div>
+                <button type="submit" class="btn-register mt-6">
+                    Create Account
+                </button>
 
-            <button
-                type="submit"
-                class="w-full mt-8 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-3 rounded-xl font-semibold shadow-lg transition duration-300">
-
-                Create Account
-
-            </button>
-
-            <div class="text-center mt-5">
-
-                <a
-                    href="{{ route('login') }}"
-                    class="text-sm text-gray-600 hover:text-blue-600">
-
-                    Already have an account?
-                    <span class="font-semibold">
-                        Sign In
-                    </span>
-
-                </a>
-
-            </div>
-
-        </form>
-
+                <div class="text-center mt-4">
+                    <a href="{{ route('login') }}" class="login-link text-sm">
+                        Already have an account? <span class="font-bold">Sign In</span>
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 
-</div>
+    <script>
+        function togglePassword(id) {
+            const field = document.getElementById(id);
+            const icon = field.parentElement.querySelector('button i');
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        }
 
-
-</div>
-
-<script>
-function togglePassword(id) {
-    const field = document.getElementById(id);
-
-    if (field.type === 'password') {
-        field.type = 'text';
-    } else {
-        field.type = 'password';
-    }
-}
-</script>
-
+        setTimeout(() => {
+            document.querySelectorAll('.flash-message').forEach(el => {
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 500);
+            });
+        }, 3000);
+    </script>
 </x-guest-layout>

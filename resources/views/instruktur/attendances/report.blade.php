@@ -1,5 +1,99 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <style>
+        /* Animasi 3D untuk container utama */
+        @keyframes fadeInUp3D {
+            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+        /* Animasi untuk card */
+        @keyframes cardPop3D {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
+            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
+        }
+        /* Animasi untuk baris tabel */
+        @keyframes rowFadeIn {
+            0% { opacity: 0; transform: translateX(-8px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .report-wrapper {
+            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+
+        /* Table card 3D */
+        .report-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform-style: preserve-3d;
+        }
+        .report-card:hover {
+            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
+            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Baris tabel */
+        .report-row {
+            animation: rowFadeIn 0.3s ease forwards;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+        .report-row:hover {
+            background-color: #f8fafc;
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Stagger delay untuk baris (maksimal 50) */
+        .report-row:nth-child(1) { animation-delay: 0.1s; }
+        .report-row:nth-child(2) { animation-delay: 0.13s; }
+        .report-row:nth-child(3) { animation-delay: 0.16s; }
+        .report-row:nth-child(4) { animation-delay: 0.19s; }
+        .report-row:nth-child(5) { animation-delay: 0.22s; }
+        .report-row:nth-child(6) { animation-delay: 0.25s; }
+        .report-row:nth-child(7) { animation-delay: 0.28s; }
+        .report-row:nth-child(8) { animation-delay: 0.31s; }
+        .report-row:nth-child(9) { animation-delay: 0.34s; }
+        .report-row:nth-child(10) { animation-delay: 0.37s; }
+        .report-row:nth-child(11) { animation-delay: 0.4s; }
+        .report-row:nth-child(12) { animation-delay: 0.43s; }
+        .report-row:nth-child(13) { animation-delay: 0.46s; }
+        .report-row:nth-child(14) { animation-delay: 0.49s; }
+        .report-row:nth-child(15) { animation-delay: 0.52s; }
+        .report-row:nth-child(16) { animation-delay: 0.55s; }
+        .report-row:nth-child(17) { animation-delay: 0.58s; }
+        .report-row:nth-child(18) { animation-delay: 0.61s; }
+        .report-row:nth-child(19) { animation-delay: 0.64s; }
+        .report-row:nth-child(20) { animation-delay: 0.67s; }
+        .report-row:nth-child(21) { animation-delay: 0.7s; }
+        .report-row:nth-child(22) { animation-delay: 0.73s; }
+        .report-row:nth-child(23) { animation-delay: 0.76s; }
+        .report-row:nth-child(24) { animation-delay: 0.79s; }
+        .report-row:nth-child(25) { animation-delay: 0.82s; }
+        .report-row:nth-child(26) { animation-delay: 0.85s; }
+        .report-row:nth-child(27) { animation-delay: 0.88s; }
+        .report-row:nth-child(28) { animation-delay: 0.91s; }
+        .report-row:nth-child(29) { animation-delay: 0.94s; }
+        .report-row:nth-child(30) { animation-delay: 0.97s; }
+
+        /* Tombol 3D */
+        .btn-3d {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform: translateY(0);
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-3d:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+    </style>
+
+    <div class="report-wrapper space-y-6">
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -15,18 +109,18 @@
 
         {{-- Flash Messages (if any) --}}
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">
+            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">
                 {{ session('success') }}
             </div>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm">
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">
                 {{ session('error') }}
             </div>
         @endif
 
         {{-- Report Card --}}
-        <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+        <div class="report-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
                 <h3 class="font-bold text-slate-800">Student Attendance Matrix</h3>
                 <p class="text-xs text-slate-500 mt-0.5">Per meeting status summary for all students</p>
@@ -51,7 +145,7 @@
                     </thead>
                     <tbody>
                         @foreach($attendanceMatrix as $studentId => $data)
-                            <tr class="border-t border-slate-100 hover:bg-slate-50 transition">
+                            <tr class="report-row border-t border-slate-100 hover:bg-slate-50 transition">
                                 <td class="px-4 py-3">
                                     <p class="font-medium text-slate-800">{{ $data['name'] }}</p>
                                 </td>
@@ -90,20 +184,4 @@
             </div>
         </div>
     </div>
-
-    <style>
-        .dashboard-card {
-            transition: all 0.2s ease;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
-        }
-        .btn-3d {
-            transition: all 0.2s ease;
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-    </style>
 </x-app-layout>

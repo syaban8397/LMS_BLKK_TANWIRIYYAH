@@ -1,5 +1,72 @@
 <x-app-layout>
-    <div class="space-y-8">
+    <style>
+        /* Animasi 3D untuk container utama */
+        @keyframes fadeInUp3D {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) rotateX(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        /* Animasi untuk setiap card (staggered) */
+        @keyframes cardPop3D {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px) rotateX(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0);
+            }
+        }
+
+        /* Wrapper utama dengan perspektif 3D */
+        .dashboard-wrapper {
+            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+
+        /* Efek 3D pada card (hover dan animasi masuk) */
+        .dashboard-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0; /* default hidden, animasi akan muncul */
+            transform-style: preserve-3d;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+
+        /* Staggered delay untuk card pertama sampai keempat */
+        .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+        .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+        .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+        .dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Efek hover 3D pada card */
+        .dashboard-card:hover {
+            transform: translateY(-8px) rotateX(3deg) rotateY(2deg) scale(1.02);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* Untuk section lain yang juga ingin efek muncul */
+        .analytics-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            animation-delay: 0.5s;
+        }
+
+        .program-stats-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            animation-delay: 0.6s;
+        }
+    </style>
+
+    <div class="dashboard-wrapper space-y-8">
         <!-- Welcome Section (simple) -->
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Dashboard</h1>
@@ -52,8 +119,8 @@
 
         <!-- Analytics & Performance Section -->
         <div class="grid lg:grid-cols-3 gap-6">
-            <!-- Left: Activity Overview (Lebih detail) -->
-            <div class="lg:col-span-2 dashboard-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <!-- Left: Activity Overview -->
+            <div class="lg:col-span-2 analytics-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
                         <span>📊</span> Aktivitas Terkini
@@ -78,7 +145,6 @@
                         <span class="font-semibold text-slate-800" id="notifications">{{ $notifications ?? 0 }}</span>
                     </div>
                 </div>
-                <!-- Tambahan ringkasan kecil -->
                 <div class="mt-6 pt-4 border-t border-slate-100">
                     <div class="flex justify-between text-sm">
                         <span class="text-slate-500">Rata-rata Kehadiran per Kelas</span>
@@ -90,8 +156,8 @@
                 </div>
             </div>
 
-            <!-- Right: System Health & Performance -->
-            <div class="dashboard-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <!-- Right: System Health -->
+            <div class="analytics-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
                 <h3 class="font-bold text-slate-800 text-lg mb-5 flex items-center gap-2">
                     <span>⚙️</span> Kinerja Sistem
                 </h3>
@@ -123,8 +189,8 @@
             </div>
         </div>
 
-        <!-- Additional Stats: Enrollment by Program (Dummy Data, tapi terlihat profesional) -->
-        <div class="dashboard-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        <!-- Additional Stats: Enrollment by Program -->
+        <div class="program-stats-card bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
             <h3 class="font-bold text-slate-800 text-lg mb-5 flex items-center gap-2">
                 <span>📋</span> Distribusi Peserta per Program
             </h3>

@@ -1,6 +1,83 @@
 {{-- resources/views/peserta/attendances/show.blade.php --}}
 <x-app-layout>
-    <div class="space-y-6">
+    <style>
+        /* Animasi 3D untuk container utama */
+        @keyframes fadeInUp3D {
+            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+        @keyframes cardPop3D {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
+            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
+        }
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .peserta-attendance-show-wrapper {
+            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+
+        /* Kartu utama */
+        .attendance-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform-style: preserve-3d;
+        }
+        .attendance-card:hover {
+            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
+            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Setiap group form */
+        .form-group {
+            animation: fadeSlideUp 0.4s ease forwards;
+            opacity: 0;
+        }
+        .form-group:nth-child(1) { animation-delay: 0.1s; }  /* Radio options */
+        .form-group:nth-child(2) { animation-delay: 0.15s; } /* Notes */
+        .form-group:nth-child(3) { animation-delay: 0.2s; }  /* Info box */
+
+        /* Radio label 3D */
+        .radio-label {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform: translateY(0);
+        }
+        .radio-label:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Input field 3D */
+        .input-3d {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+        .input-3d:focus {
+            transform: scale(1.01) translateZ(3px);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            outline: none;
+        }
+
+        /* Tombol 3D */
+        .btn-3d {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform: translateY(0);
+        }
+        .btn-3d:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+    </style>
+
+    <div class="peserta-attendance-show-wrapper space-y-6">
         {{-- Header Sederhana dengan Tombol Back --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -15,13 +92,13 @@
         </div>
 
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm">{{ session('error') }}</div>
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('error') }}</div>
         @endif
 
         {{-- Card Utama --}}
         @if($attendance->submission_type == 'instructor')
             {{-- Locked by instructor --}}
-            <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="attendance-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-amber-50 to-white">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <span>🔒</span> Attendance Locked
@@ -47,7 +124,7 @@
             </div>
         @elseif($isExpired)
             {{-- Deadline passed --}}
-            <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="attendance-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-red-50 to-white">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <span>⏰</span> Deadline Passed
@@ -64,7 +141,7 @@
             </div>
         @else
             {{-- Form submit/edit --}}
-            <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="attendance-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <span>📋</span> Attendance Form
@@ -76,18 +153,18 @@
                         @csrf
 
                         {{-- Status Options --}}
-                        <div>
+                        <div class="form-group">
                             <label class="block text-sm font-semibold text-slate-700 mb-3">Choose Your Attendance Status</label>
                             <div class="grid md:grid-cols-3 gap-4">
-                                <label class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:bg-green-50 has-[:checked]:border-green-500 has-[:checked]:bg-green-50">
+                                <label class="radio-label flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:bg-green-50 has-[:checked]:border-green-500 has-[:checked]:bg-green-50">
                                     <input type="radio" name="status" value="present" {{ old('status', $attendance->status) == 'present' ? 'checked' : '' }} class="w-5 h-5 text-green-600 focus:ring-green-500" required>
                                     <div><span class="text-2xl">✅</span><p class="font-semibold text-green-700">Present</p><p class="text-xs text-slate-500">Attended the class</p></div>
                                 </label>
-                                <label class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:bg-yellow-50 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50">
+                                <label class="radio-label flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:bg-yellow-50 has-[:checked]:border-yellow-500 has-[:checked]:bg-yellow-50">
                                     <input type="radio" name="status" value="permission" {{ old('status', $attendance->status) == 'permission' ? 'checked' : '' }} class="w-5 h-5 text-yellow-600 focus:ring-yellow-500">
                                     <div><span class="text-2xl">📝</span><p class="font-semibold text-yellow-700">Permission</p><p class="text-xs text-slate-500">Had permission to be absent</p></div>
                                 </label>
-                                <label class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:bg-orange-50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50">
+                                <label class="radio-label flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:bg-orange-50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50">
                                     <input type="radio" name="status" value="sick" {{ old('status', $attendance->status) == 'sick' ? 'checked' : '' }} class="w-5 h-5 text-orange-600 focus:ring-orange-500">
                                     <div><span class="text-2xl">🤒</span><p class="font-semibold text-orange-700">Sick</p><p class="text-xs text-slate-500">Was sick</p></div>
                                 </label>
@@ -98,7 +175,7 @@
                         </div>
 
                         {{-- Notes --}}
-                        <div>
+                        <div class="form-group">
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Notes (Optional)</label>
                             <textarea name="notes" rows="3" placeholder="Add any additional information..." 
                                 class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all">{{ old('notes', $attendance->notes) }}</textarea>
@@ -108,7 +185,7 @@
                         </div>
 
                         {{-- Info Box --}}
-                        <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                        <div class="form-group bg-blue-50 rounded-xl p-4 border border-blue-200">
                             <p class="text-sm text-blue-800 flex items-center gap-2">
                                 📌 <span>Your attendance will be recorded with your current check-in time. You can edit until the deadline ({{ $attendance->attendance_deadline ? $attendance->attendance_deadline->format('d M Y H:i') : 'not set' }}).</span>
                             </p>
@@ -126,29 +203,4 @@
             </div>
         @endif
     </div>
-
-    <style>
-        .dashboard-card {
-            transition: all 0.2s ease;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
-        }
-        .btn-3d {
-            transition: all 0.2s ease;
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-        .input-3d {
-            transition: all 0.2s ease;
-        }
-        .input-3d:focus {
-            transform: scale(1.01);
-            box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
-            border-color: #3b82f6;
-            outline: none;
-        }
-    </style>
 </x-app-layout>

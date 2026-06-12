@@ -1,6 +1,90 @@
 <x-app-layout>
-    <div class="space-y-6">
-        {{-- Header (sama persis gaya instruktur) --}}
+    <style>
+        /* Animasi 3D untuk container utama */
+        @keyframes fadeInUp3D {
+            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+        @keyframes cardPop3D {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
+            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
+        }
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .peserta-stream-wrapper {
+            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+
+        /* Sidebar cards */
+        .sidebar-card, .stats-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+        .sidebar-card:hover, .stats-card:hover {
+            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
+            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
+        }
+        .sidebar-card:nth-child(1) { animation-delay: 0.05s; }
+        .sidebar-card:nth-child(2) { animation-delay: 0.1s; }
+        .sidebar-card:nth-child(3) { animation-delay: 0.15s; }
+
+        /* Quick action cards */
+        .quick-card {
+            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+        .quick-card:nth-child(1) { animation-delay: 0.2s; }
+        .quick-card:nth-child(2) { animation-delay: 0.25s; }
+        .quick-card:nth-child(3) { animation-delay: 0.3s; }
+        .quick-card:hover {
+            transform: translateY(-6px) rotateX(2deg) rotateY(2deg);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Timeline items */
+        .timeline-item {
+            animation: fadeSlideUp 0.4s ease forwards;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+        .timeline-item:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.1);
+        }
+        .timeline-item:nth-child(1) { animation-delay: 0.35s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.45s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.5s; }
+        .timeline-item:nth-child(5) { animation-delay: 0.55s; }
+        .timeline-item:nth-child(6) { animation-delay: 0.6s; }
+        .timeline-item:nth-child(7) { animation-delay: 0.65s; }
+        .timeline-item:nth-child(8) { animation-delay: 0.7s; }
+        .timeline-item:nth-child(9) { animation-delay: 0.75s; }
+        .timeline-item:nth-child(10) { animation-delay: 0.8s; }
+
+        /* Tombol 3D */
+        .btn-3d {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            transform: translateY(0);
+        }
+        .btn-3d:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+    </style>
+
+    <div class="peserta-stream-wrapper space-y-6">
+        {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
                 <h1 class="text-2xl font-bold text-slate-800">{{ $class->title }}</h1>
@@ -18,17 +102,17 @@
 
         {{-- Flash Messages --}}
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">{{ session('success') }}</div>
+            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('success') }}</div>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm">{{ session('error') }}</div>
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('error') }}</div>
         @endif
 
         <div class="grid lg:grid-cols-4 gap-6">
-            {{-- Sidebar Info + Quick Links (sama gaya instruktur) --}}
+            {{-- Sidebar Info + Quick Links --}}
             <div class="lg:col-span-1 space-y-5">
-                {{-- Class Info Card (3D) --}}
-                <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                {{-- Class Info Card --}}
+                <div class="sidebar-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
                     <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
                         <span>📋</span> Class Info
                     </h3>
@@ -42,8 +126,8 @@
                     </div>
                 </div>
 
-                {{-- Quick Links Card (mirip quick actions instruktur) --}}
-                <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                {{-- Quick Links Card --}}
+                <div class="sidebar-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
                     <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
                         <span>🔗</span> Quick Links
                     </h3>
@@ -61,7 +145,7 @@
                 </div>
 
                 {{-- Stats Card --}}
-                <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                <div class="stats-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
                     <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
                         <span>📊</span> Statistics
                     </h3>
@@ -76,30 +160,30 @@
 
             {{-- Main Content (Stream) --}}
             <div class="lg:col-span-3 space-y-5">
-                {{-- Action Buttons (3D gradien cards seperti quick-card instruktur) --}}
+                {{-- Action Buttons (3D gradien) --}}
                 <div class="grid grid-cols-3 gap-4">
-                    <a href="{{ route('peserta.materials.index', $class) }}" class="quick-card bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+                    <a href="{{ route('peserta.materials.index', $class) }}" class="quick-card bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl p-4 shadow-md text-white text-center">
                         <span class="text-3xl block">📖</span>
                         <p class="font-bold mt-1">Materials</p>
                         <p class="text-xs opacity-80">Browse resources</p>
                     </a>
-                    <a href="{{ route('peserta.assignments.index', $class) }}" class="quick-card bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+                    <a href="{{ route('peserta.assignments.index', $class) }}" class="quick-card bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-4 shadow-md text-white text-center">
                         <span class="text-3xl block">📝</span>
                         <p class="font-bold mt-1">Assignments</p>
                         <p class="text-xs opacity-80">Submit tasks</p>
                     </a>
-                    <a href="{{ route('peserta.attendances.index', $class) }}" class="quick-card bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-4 shadow-md text-white text-center hover:shadow-lg hover:-translate-y-1 transition">
+                    <a href="{{ route('peserta.attendances.index', $class) }}" class="quick-card bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-4 shadow-md text-white text-center">
                         <span class="text-3xl block">📅</span>
                         <p class="font-bold mt-1">Attendance</p>
                         <p class="text-xs opacity-80">Record presence</p>
                     </a>
                 </div>
 
-                {{-- Timeline Feed (semua card 3D) --}}
+                {{-- Timeline Feed --}}
                 <div class="space-y-4">
                     {{-- Announcements --}}
                     @forelse($announcements as $announcement)
-                    <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                    <div class="timeline-item bg-white rounded-xl p-5 shadow-md border border-slate-200">
                         <div class="flex items-start justify-between">
                             <div class="flex gap-3">
                                 <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 flex items-center justify-center text-white text-lg">📢</div>
@@ -115,12 +199,12 @@
                         </div>
                     </div>
                     @empty
-                    <div class="dashboard-card bg-white rounded-xl p-6 text-center text-slate-400">No announcements yet.</div>
+                    <div class="timeline-item bg-white rounded-xl p-6 text-center text-slate-400">No announcements yet.</div>
                     @endforelse
 
                     {{-- Materials --}}
                     @forelse($materials as $material)
-                    <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
+                    <div class="timeline-item bg-white rounded-xl p-5 shadow-md border border-slate-200">
                         <div class="flex items-start justify-between">
                             <div class="flex gap-3">
                                 <div class="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center text-white text-lg">📖</div>
@@ -139,7 +223,7 @@
                         </div>
                     </div>
                     @empty
-                    <div class="dashboard-card bg-white rounded-xl p-6 text-center text-slate-400">No materials yet.</div>
+                    <div class="timeline-item bg-white rounded-xl p-6 text-center text-slate-400">No materials yet.</div>
                     @endforelse
 
                     {{-- Assignments dengan status submission --}}
@@ -149,7 +233,7 @@
                         $statusBadge = '';
                         $statusColor = '';
                         if($submission && $submission->isGraded()) {
-                            $statusBadge = 'Graded • Score: '.$submission->score;
+                            $statusBadge = 'Graded';
                             $statusColor = 'bg-green-100 text-green-700';
                         } elseif($submission) {
                             $statusBadge = 'Submitted';
@@ -159,7 +243,7 @@
                             $statusColor = 'bg-red-100 text-red-700';
                         }
                     @endphp
-                    <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200 border-l-4 border-l-purple-500">
+                    <div class="timeline-item bg-white rounded-xl p-5 shadow-md border border-slate-200 border-l-4 border-l-purple-500">
                         <div class="flex items-start justify-between">
                             <div class="flex gap-3">
                                 <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white text-lg">📝</div>
@@ -186,12 +270,12 @@
                         @endif
                     </div>
                     @empty
-                    <div class="dashboard-card bg-white rounded-xl p-6 text-center text-slate-400">No assignments yet.</div>
+                    <div class="timeline-item bg-white rounded-xl p-6 text-center text-slate-400">No assignments yet.</div>
                     @endforelse
 
                     {{-- Attendance Summary Card (jika ada) --}}
                     @if(isset($attendances) && $attendances->count() > 0)
-                    <div class="dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200 border-l-4 border-l-green-500">
+                    <div class="timeline-item bg-white rounded-xl p-5 shadow-md border border-slate-200 border-l-4 border-l-green-500">
                         <div class="flex items-start justify-between">
                             <div class="flex gap-3">
                                 <div class="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-teal-400 flex items-center justify-center text-white text-lg">📅</div>
@@ -203,22 +287,10 @@
                             <a href="{{ route('peserta.attendances.index', $class) }}" class="btn-3d px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md text-xs transition shadow-sm">View All</a>
                         </div>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-                            <div class="text-center p-2 bg-green-50 rounded-lg border border-green-200 hover:-translate-y-1 transition">
-                                <p class="text-2xl font-bold text-green-700">{{ $attendances->where('status', 'present')->count() }}</p>
-                                <p class="text-xs text-green-600">Present</p>
-                            </div>
-                            <div class="text-center p-2 bg-yellow-50 rounded-lg border border-yellow-200 hover:-translate-y-1 transition">
-                                <p class="text-2xl font-bold text-yellow-700">{{ $attendances->where('status', 'permission')->count() }}</p>
-                                <p class="text-xs text-yellow-600">Permission</p>
-                            </div>
-                            <div class="text-center p-2 bg-orange-50 rounded-lg border border-orange-200 hover:-translate-y-1 transition">
-                                <p class="text-2xl font-bold text-orange-700">{{ $attendances->where('status', 'sick')->count() }}</p>
-                                <p class="text-xs text-orange-600">Sick</p>
-                            </div>
-                            <div class="text-center p-2 bg-red-50 rounded-lg border border-red-200 hover:-translate-y-1 transition">
-                                <p class="text-2xl font-bold text-red-700">{{ $attendances->where('status', 'absent')->count() }}</p>
-                                <p class="text-xs text-red-600">Absent</p>
-                            </div>
+                            <div class="text-center p-2 bg-green-50 rounded-lg border border-green-200 hover:-translate-y-1 transition"><p class="text-2xl font-bold text-green-700">{{ $attendances->where('status', 'present')->count() }}</p><p class="text-xs text-green-600">Present</p></div>
+                            <div class="text-center p-2 bg-yellow-50 rounded-lg border border-yellow-200 hover:-translate-y-1 transition"><p class="text-2xl font-bold text-yellow-700">{{ $attendances->where('status', 'permission')->count() }}</p><p class="text-xs text-yellow-600">Permission</p></div>
+                            <div class="text-center p-2 bg-orange-50 rounded-lg border border-orange-200 hover:-translate-y-1 transition"><p class="text-2xl font-bold text-orange-700">{{ $attendances->where('status', 'sick')->count() }}</p><p class="text-xs text-orange-600">Sick</p></div>
+                            <div class="text-center p-2 bg-red-50 rounded-lg border border-red-200 hover:-translate-y-1 transition"><p class="text-2xl font-bold text-red-700">{{ $attendances->where('status', 'absent')->count() }}</p><p class="text-xs text-red-600">Absent</p></div>
                         </div>
                         @php
                             $totalMeetings = $attendances->count();
@@ -240,30 +312,4 @@
             </div>
         </div>
     </div>
-
-    <style>
-        .dashboard-card {
-            transition: all 0.2s ease;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
-        }
-        .btn-3d {
-            transition: all 0.2s ease;
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-        .quick-card {
-            transition: all 0.2s ease;
-        }
-        .quick-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.25);
-        }
-        .quick-card:active {
-            transform: translateY(1px);
-        }
-    </style>
 </x-app-layout>
