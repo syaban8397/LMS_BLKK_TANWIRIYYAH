@@ -69,15 +69,20 @@
                     <div id="current-time" class="font-bold text-blue-700 text-sm"></div>
                 </div>
 
-                <!-- Profile Dropdown -->
+                <!-- Profile Dropdown dengan Foto -->
                 <div class="relative">
                     <button id="profileButton" class="flex items-center gap-3 hover:bg-slate-100 rounded-xl px-3 py-2 transition">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold">
-                            {{ strtoupper(substr(Auth::user()->name,0,1)) }}
-                        </div>
+                        @php $user = Auth::user(); @endphp
+                        @if($user->photo)
+                            <img src="{{ Storage::url($user->photo) }}" class="w-10 h-10 rounded-full object-cover">
+                        @else
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                        @endif
                         <div class="text-left">
-                            <div class="font-semibold text-slate-800">{{ Auth::user()->name }}</div>
-                            <div class="text-xs text-slate-500">{{ ucfirst(Auth::user()->role) }}</div>
+                            <div class="font-semibold text-slate-800">{{ $user->name }}</div>
+                            <div class="text-xs text-slate-500">{{ ucfirst($user->role) }}</div>
                         </div>
                         <span class="text-slate-500">▼</span>
                     </button>

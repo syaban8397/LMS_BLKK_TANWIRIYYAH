@@ -38,8 +38,10 @@
                 <table class="w-full">
                     <thead class="bg-slate-50 text-slate-600 text-sm">
                         <tr>
+                            <th class="px-6 py-4 text-left">Photo</th>
                             <th class="px-6 py-4 text-left">Name</th>
                             <th class="px-6 py-4 text-left">Email</th>
+                            <th class="px-6 py-4 text-left">Phone</th>
                             <th class="px-6 py-4 text-center">Enrolled At</th>
                             <th class="px-6 py-4 text-center">Status</th>
                             <th class="px-6 py-4 text-center">Action</th>
@@ -47,9 +49,20 @@
                     </thead>
                     <tbody>
                         @forelse($participants as $participant)
+                            @php $student = $participant->participant; @endphp
                             <tr class="border-t border-slate-100 hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 text-slate-800 font-medium">{{ $participant->participant->name }}</td>
-                                <td class="px-6 py-4 text-slate-600 text-sm">{{ $participant->participant->email }}</td>
+                                <td class="px-6 py-4">
+                                    @if($student->photo)
+                                        <img src="{{ Storage::url($student->photo) }}" class="w-10 h-10 rounded-full object-cover">
+                                    @else
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold text-sm">
+                                            {{ strtoupper(substr($student->name, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-slate-800 font-medium">{{ $student->name }}</td>
+                                <td class="px-6 py-4 text-slate-600 text-sm">{{ $student->email }}</td>
+                                <td class="px-6 py-4 text-slate-600 text-sm">{{ $student->phone ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center text-slate-700 text-sm">{{ $participant->enrolled_at?->format('d M Y') ?? '-' }}</td>
                                 <td class="px-6 py-4 text-center">
                                     <form action="{{ route('instruktur.classes.update-student-status', [$class, $participant]) }}" method="POST" class="inline-block">
@@ -68,9 +81,9 @@
                                         <button type="submit" class="btn-3d px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition shadow-sm">Remove</button>
                                     </form>
                                 </td>
-                            </tr>
+                            <tr>
                         @empty
-                            <tr><td colspan="5" class="px-6 py-12 text-center text-slate-500">No students enrolled yet. Add students using the form below.</td</tr>
+                            <tr><td colspan="7" class="px-6 py-12 text-center text-slate-500">No students enrolled yet. Add students using the form below.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -105,9 +118,21 @@
                                 @foreach($availableStudents as $student)
                                     <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-white transition cursor-pointer">
                                         <input type="checkbox" name="participant_ids[]" value="{{ $student->id }}" class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                        <div class="flex-1">
-                                            <p class="font-medium text-slate-800">{{ $student->name }}</p>
-                                            <p class="text-sm text-slate-500">{{ $student->email }}</p>
+                                        <div class="flex items-center gap-3 flex-1">
+                                            @if($student->photo)
+                                                <img src="{{ Storage::url($student->photo) }}" class="w-8 h-8 rounded-full object-cover">
+                                            @else
+                                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold text-xs">
+                                                    {{ strtoupper(substr($student->name, 0, 1)) }}
+                                                </div>
+                                            @endif
+                                            <div class="flex-1">
+                                                <p class="font-medium text-slate-800">{{ $student->name }}</p>
+                                                <p class="text-sm text-slate-500">{{ $student->email }}</p>
+                                            </div>
+                                            <div class="text-sm text-slate-500">
+                                                {{ $student->phone ?? '-' }}
+                                            </div>
                                         </div>
                                     </label>
                                 @endforeach

@@ -3,61 +3,105 @@
         <h2 class="text-lg font-medium text-gray-900">
             {{ __('Profile Information') }}
         </h2>
-
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
+            {{ __("Update your account's profile information and photo.") }}
         </p>
     </header>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form>
-
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
+        <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
+        <!-- Email -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
+        </div>
 
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800">
-                        {{ __('Your email address is unverified.') }}
+        <!-- NIK -->
+        <div>
+            <x-input-label for="nik" :value="__('NIK')" />
+            <x-text-input id="nik" name="nik" type="text" class="mt-1 block w-full" :value="old('nik', $user->nik)" />
+            <x-input-error class="mt-2" :messages="$errors->get('nik')" />
+        </div>
 
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
+        <!-- Phone -->
+        <div>
+            <x-input-label for="phone" :value="__('Phone')" />
+            <x-text-input id="phone" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $user->phone)" />
+            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+        </div>
 
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
+        <!-- Gender -->
+        <div>
+            <x-input-label for="gender" :value="__('Gender')" />
+            <select id="gender" name="gender" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                <option value="">Select Gender</option>
+                <option value="L" {{ old('gender', $user->gender) == 'L' ? 'selected' : '' }}>Male</option>
+                <option value="P" {{ old('gender', $user->gender) == 'P' ? 'selected' : '' }}>Female</option>
+            </select>
+            <x-input-error class="mt-2" :messages="$errors->get('gender')" />
+        </div>
+
+        <!-- Birth Place -->
+        <div>
+            <x-input-label for="birth_place" :value="__('Birth Place')" />
+            <x-text-input id="birth_place" name="birth_place" type="text" class="mt-1 block w-full" :value="old('birth_place', $user->birth_place)" />
+            <x-input-error class="mt-2" :messages="$errors->get('birth_place')" />
+        </div>
+
+        <!-- Birth Date -->
+        <div>
+            <x-input-label for="birth_date" :value="__('Birth Date')" />
+            <x-text-input id="birth_date" name="birth_date" type="date" class="mt-1 block w-full" :value="old('birth_date', $user->birth_date)" />
+            <x-input-error class="mt-2" :messages="$errors->get('birth_date')" />
+        </div>
+
+        <!-- Address -->
+        <div>
+            <x-input-label for="address" :value="__('Address')" />
+            <textarea id="address" name="address" rows="3" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('address', $user->address) }}</textarea>
+            <x-input-error class="mt-2" :messages="$errors->get('address')" />
+        </div>
+
+        <!-- Bio -->
+        <div>
+            <x-input-label for="bio" :value="__('Bio')" />
+            <textarea id="bio" name="bio" rows="4" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('bio', $user->bio) }}</textarea>
+            <x-input-error class="mt-2" :messages="$errors->get('bio')" />
+        </div>
+
+        <!-- Current Photo Preview -->
+        <div>
+            <x-input-label :value="__('Current Photo')" />
+            @if($user->photo)
+                <img src="{{ Storage::url($user->photo) }}" class="w-32 h-32 object-cover rounded-full mt-2">
+            @else
+                <div class="w-32 h-32 bg-gray-200 rounded-full mt-2 flex items-center justify-center">
+                    <span class="text-gray-500">No Photo</span>
                 </div>
             @endif
         </div>
 
+        <!-- Upload New Photo -->
+        <div>
+            <x-input-label for="photo" :value="__('Upload New Photo')" />
+            <input id="photo" name="photo" type="file" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+            <x-input-error class="mt-2" :messages="$errors->get('photo')" />
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
-
             @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
+                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-gray-600">{{ __('Saved.') }}</p>
             @endif
         </div>
     </form>
