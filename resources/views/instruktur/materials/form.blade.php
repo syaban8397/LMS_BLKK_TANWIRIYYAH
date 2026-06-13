@@ -7,6 +7,15 @@
         @error('title')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
     </div>
 
+    {{-- MATERIAL CODE --}}
+    <div class="form-group">
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Kode Materi (Kode Unit)</label>
+        <input type="text" name="material_code" value="{{ old('material_code', $material->material_code ?? '') }}"
+               placeholder="Contoh: J.63OPR00.001.2"
+               class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all">
+        @error('material_code')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+    </div>
+
     {{-- DESCRIPTION --}}
     <div class="form-group">
         <label class="block text-xs font-semibold text-slate-600 mb-1">Description</label>

@@ -13,6 +13,7 @@ class Assignment extends Model
         'description',
         'attachment',
         'deadline',
+        'late_submission_allowed',
         'is_active',
         'created_by',
     ];
@@ -21,6 +22,7 @@ class Assignment extends Model
     {
         return [
             'deadline' => 'datetime',
+            'late_submission_allowed' => 'boolean',
         ];
     }
 
@@ -45,8 +47,13 @@ class Assignment extends Model
         return Carbon::now()->gt($this->deadline);
     }
 
-    public function canSubmit()
+    public function canSubmitAfterDeadline(): bool
     {
-        return !$this->isDeadlinePassed() && $this->is_active;
+        return (bool) $this->late_submission_allowed;
+    }
+
+    public function allowsSubmission(): bool
+    {
+        return $this->deadline->isFuture() || $this->canSubmitAfterDeadline();
     }
 }

@@ -34,6 +34,14 @@ $normalClass = 'text-white hover:bg-white/10';
                     <span class="text-xl">🏫</span>
                     <span class="menu-text">Classes</span>
                 </a>
+                <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ request()->routeIs('admin.announcements.*') ? $activeClass : $normalClass }}">
+                    <span class="text-xl">📢</span>
+                    <span class="menu-text">Announcements</span>
+                </a>
+                <a href="{{ route('admin.certificates.index') }}" class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ request()->routeIs('admin.certificates.*') ? $activeClass : $normalClass }}">
+                    <span class="text-xl">📜</span>
+                    <span class="menu-text">Certificates</span>
+                </a>
                 <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
                     <span class="text-xl">📖</span>
                     <span class="menu-text">Learning Materials</span>
@@ -47,10 +55,6 @@ $normalClass = 'text-white hover:bg-white/10';
                     <span class="menu-text">Attendance</span>
                 </a>
                 <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
-                    <span class="text-xl">📜</span>
-                    <span class="menu-text">Certificates</span>
-                </a>
-                <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
                     <span class="text-xl">📈</span>
                     <span class="menu-text">Reports</span>
                 </a>
@@ -61,6 +65,10 @@ $normalClass = 'text-white hover:bg-white/10';
                     <span class="text-xl">🏫</span>
                     <span class="menu-text">My Classes</span>
                 </a>
+                <a href="{{ route('instruktur.certificates.index') }}" class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ request()->routeIs('instruktur.certificates.*') ? $activeClass : $normalClass }}">
+                    <span class="text-xl">📜</span>
+                    <span class="menu-text">Certificates</span>
+                </a>
             @endif
 
             @if(auth()->user()->role == 'peserta')
@@ -68,7 +76,7 @@ $normalClass = 'text-white hover:bg-white/10';
                     <span class="text-xl">🏫</span>
                     <span class="menu-text">My Classes</span>
                 </a>
-                <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ $normalClass }}">
+                <a href="{{ route('peserta.certificates.index') }}" class="flex items-center gap-4 px-4 py-3 rounded-2xl transition {{ request()->routeIs('peserta.certificates.*') ? $activeClass : $normalClass }}">
                     <span class="text-xl">📜</span>
                     <span class="menu-text">Certificates</span>
                 </a>

@@ -48,11 +48,17 @@ class AttendanceController extends Controller
             ->where('meeting_number', $meetingNumber)
             ->firstOrFail();
         
+        if ($attendance->submission_type === 'instructor') {
+            return redirect()->back()->with('error', 'Absensi ini sudah dikunci oleh instruktur.');
+        }
+
         // Validasi deadline
         if (now()->gt($attendance->attendance_deadline)) {
             return redirect()->back()->with('error', 'Maaf, waktu absensi sudah habis. Silakan hubungi instruktur.');
         }
-        
+        if (now()->lt($attendance->attendance_date)) {
+            return redirect()->back()->with('error', 'Sesi absensi belum dimulai. Silakan cek jadwal kelas.');
+        }
         $request->validate([
             'status' => 'required|in:present,permission,sick', // peserta tidak bisa memilih 'absent'
             'notes'  => 'nullable|string|max:255',

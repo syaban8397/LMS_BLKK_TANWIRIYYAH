@@ -95,6 +95,10 @@
             <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('error') }}</div>
         @endif
 
+        @php
+            $isNotStarted = now()->lt($attendance->attendance_date);
+        @endphp
+        
         {{-- Card Utama --}}
         @if($attendance->submission_type == 'instructor')
             {{-- Locked by instructor --}}
@@ -122,6 +126,22 @@
                     </div>
                 </div>
             </div>
+        @elseif($isNotStarted)
+        {{-- Sesi belum dimulai --}}
+        <div class="attendance-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <span>⏳</span> Sesi Belum Dimulai
+                </h3>
+            </div>
+            <div class="p-6 text-center">
+                <div class="text-5xl mb-3">⏳</div>
+                <h4 class="text-lg font-bold text-blue-800 mb-2">Belum Waktunya Absen</h4>
+                <p class="text-blue-700">Sesi absensi akan dibuka pada <strong>{{ $attendance->attendance_date->format('d M Y H:i') }}</strong>.</p>
+                <p class="text-blue-600 text-sm mt-2">Silakan kembali lagi pada waktu tersebut.</p>
+            </div>
+        </div>
+
         @elseif($isExpired)
             {{-- Deadline passed --}}
             <div class="attendance-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
@@ -139,6 +159,7 @@
                     @endif
                 </div>
             </div>
+
         @else
             {{-- Form submit/edit --}}
             <div class="attendance-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">

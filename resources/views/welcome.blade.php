@@ -145,6 +145,9 @@
         .program-card:nth-child(1) { animation-delay: 0.25s; }
         .program-card:nth-child(2) { animation-delay: 0.3s; }
         .program-card:nth-child(3) { animation-delay: 0.35s; }
+        .program-card:nth-child(4) { animation-delay: 0.4s; }
+        .program-card:nth-child(5) { animation-delay: 0.45s; }
+        .program-card:nth-child(6) { animation-delay: 0.5s; }
 
         /* Stagger fasilitas */
         .facility-card { animation: cardPop3D 0.5s ease forwards; opacity: 0; }
@@ -262,10 +265,37 @@
             <div class="max-w-7xl mx-auto px-6 lg:px-10 text-center">
                 <span class="text-blue-700 font-bold uppercase">Program Unggulan</span>
                 <h2 class="text-5xl font-extrabold mt-4 text-slate-800">Bidang Kompetensi Kreatif</h2>
-                <div class="grid lg:grid-cols-3 gap-8 mt-16">
-                    <div class="program-card blue-card p-8"><div class="text-5xl">🎬</div><h3 class="text-2xl font-bold mt-6">Content Creator</h3><p class="mt-4">Produksi konten kreatif, personal branding, strategi media sosial.</p></div>
-                    <div class="program-card blue-card p-8"><div class="text-5xl">🎨</div><h3 class="text-2xl font-bold mt-6">Desain Grafis & Multimedia</h3><p class="mt-4">Desain visual, editing video, fotografi, animasi.</p></div>
-                    <div class="program-card blue-card p-8"><div class="text-5xl">📈</div><h3 class="text-2xl font-bold mt-6">Digital Marketing</h3><p class="mt-4">Strategi pemasaran digital, SEO, iklan berbayar.</p></div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+                    <div class="program-card blue-card p-8">
+                        <div class="text-5xl">📈</div>
+                        <h3 class="text-2xl font-bold mt-6">Digital Marketing</h3>
+                        <p class="mt-4 text-slate-600">Strategi pemasaran digital, media sosial, dan evaluasi skema kompetensi.</p>
+                    </div>
+                    <div class="program-card blue-card p-8">
+                        <div class="text-5xl">🎬</div>
+                        <h3 class="text-2xl font-bold mt-6">Content Creator</h3>
+                        <p class="mt-4 text-slate-600">Produksi konten kreatif, personal branding, dan strategi media sosial.</p>
+                    </div>
+                    <div class="program-card blue-card p-8">
+                        <div class="text-5xl">🎨</div>
+                        <h3 class="text-2xl font-bold mt-6">Desain Grafis</h3>
+                        <p class="mt-4 text-slate-600">Desain visual, tipografi, layout, dan aplikasi tools desain profesional.</p>
+                    </div>
+                    <div class="program-card blue-card p-8">
+                        <div class="text-5xl">💻</div>
+                        <h3 class="text-2xl font-bold mt-6">Web Developer</h3>
+                        <p class="mt-4 text-slate-600">Pengembangan website, frontend, dan dasar-dasar pemrograman web.</p>
+                    </div>
+                    <div class="program-card blue-card p-8">
+                        <div class="text-5xl">📷</div>
+                        <h3 class="text-2xl font-bold mt-6">Fotografi</h3>
+                        <p class="mt-4 text-slate-600">Teknik fotografi, komposisi, editing, dan visual storytelling.</p>
+                    </div>
+                    <div class="program-card blue-card p-8">
+                        <div class="text-5xl">🎤</div>
+                        <h3 class="text-2xl font-bold mt-6">Public Speaking</h3>
+                        <p class="mt-4 text-slate-600">Komunikasi efektif, presentasi, dan kepercayaan diri di depan publik.</p>
+                    </div>
                 </div>
             </div>
         </section>

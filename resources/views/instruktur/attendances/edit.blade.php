@@ -173,13 +173,22 @@
                     @error('attendance_date')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Deadline Info (readonly) --}}
+                {{-- Deadline Info & Extension --}}
                 <div class="form-group">
-                    <div class="deadline-box bg-gray-50 rounded-lg p-4 border border-gray-200">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Attendance Deadline (cannot be changed)</label>
-                        <input type="text" value="{{ $deadline ? $deadline->format('d/m/Y H:i') : 'Not set' }}" readonly
-                               class="w-full rounded-lg bg-gray-100 border-gray-200 text-sm px-3 py-2 text-slate-600">
-                        <p class="text-xs text-slate-400 mt-1">Students cannot submit/change attendance after this deadline.</p>
+                    <div class="deadline-box bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Batas Waktu Absensi Saat Ini</label>
+                            <input type="text" value="{{ $deadline ? $deadline->format('d/m/Y H:i') : 'Belum diatur' }}" readonly
+                                   class="w-full rounded-lg bg-gray-100 border-gray-200 text-sm px-3 py-2 text-slate-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Perpanjang Deadline (menit)</label>
+                            <input type="number" name="extend_deadline_minutes" value="{{ old('extend_deadline_minutes', 0) }}" min="0" max="1440"
+                                   class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2"
+                                   placeholder="0 = tidak diperpanjang">
+                            <p class="text-xs text-slate-400 mt-1">Isi jumlah menit tambahan jika ingin memperpanjang waktu absensi peserta.</p>
+                            @error('extend_deadline_minutes')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                        </div>
                     </div>
                 </div>
 

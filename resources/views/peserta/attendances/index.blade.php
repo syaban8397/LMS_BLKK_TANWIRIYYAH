@@ -116,7 +116,9 @@
                         @forelse($attendances as $attendance)
                             @php
                                 $deadline = $attendance->attendance_deadline;
-                                $canSubmit = $deadline && now()->lessThanOrEqualTo($deadline);
+                                $hasStarted = now()->gte($attendance->attendance_date);
+                                $canSubmit = $hasStarted && $deadline && now()->lessThanOrEqualTo($deadline);
+                                $isNotStarted = !$hasStarted;
                                 $isModifiedByInstructor = $attendance->submission_type == 'instructor';
                                 $statusLabels = ['present' => '✅ Present', 'permission' => '📝 Permission', 'sick' => '🤒 Sick', 'absent' => '❌ Absent'];
                                 $statusColors = ['present' => 'bg-green-100 text-green-700', 'permission' => 'bg-yellow-100 text-yellow-700', 'sick' => 'bg-orange-100 text-orange-700', 'absent' => 'bg-red-100 text-red-700'];
@@ -155,6 +157,8 @@
                                            class="btn-3d inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition shadow-sm">
                                             {{ $isSubmitted ? 'Edit' : 'Submit' }}
                                         </a>
+                                    @elseif($isNotStarted)
+                                        <span class="text-xs text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg">Belum dimulai</span>
                                     @elseif($isModifiedByInstructor)
                                         <span class="text-xs text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg">Locked by Instructor</span>
                                     @else

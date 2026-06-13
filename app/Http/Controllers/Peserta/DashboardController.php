@@ -8,6 +8,7 @@ use App\Models\Attendance;
 use App\Models\Assignment;
 use App\Models\Material;
 use App\Models\Submission;
+use App\Models\Certificate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -32,7 +33,7 @@ class DashboardController extends Controller
         $assignments = Assignment::whereIn('class_id', $classIds)->count();
         
         // Sertifikat (sesuaikan dengan model Anda, jika ada)
-        $certificates = 0; // ganti dengan query sertifikat jika ada
+        $certificates = Certificate::where('participant_id', $user->id)->count();
         
         // Kelas selesai (status completed)
         $completedClasses = $participations->where('status', 'completed')->count();

@@ -164,7 +164,7 @@
                 <a href="#" class="quick-btn bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
                     📝 Assignments
                 </a>
-                <a href="#" class="quick-btn bg-orange-600 hover:bg-orange-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
+                <a href="{{ route('peserta.certificates.index') }}" class="quick-btn bg-orange-600 hover:bg-orange-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
                     📜 Certificates
                 </a>
             </div>

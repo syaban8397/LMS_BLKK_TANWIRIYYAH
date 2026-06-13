@@ -41,6 +41,7 @@ class MaterialController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|max:255',
+            'material_code' => 'nullable|max:50',
             'description' => 'nullable|string',
             'meeting_number' => 'required|integer|min:1',
             'file' => 'nullable|file|max:102400', // 100MB max
@@ -69,6 +70,7 @@ class MaterialController extends Controller
         Material::create([
             'class_id' => $class->id,
             'title' => $validated['title'],
+            'material_code' => $validated['material_code'] ?? null,
             'description' => $validated['description'],
             'meeting_number' => $validated['meeting_number'],
             'file_path' => $filePath,
@@ -122,6 +124,7 @@ class MaterialController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|max:255',
+            'material_code' => 'nullable|max:50',
             'description' => 'nullable|string',
             'meeting_number' => 'required|integer|min:1',
             'file' => 'nullable|file|max:102400',
@@ -146,6 +149,7 @@ class MaterialController extends Controller
 
         $material->update([
             'title' => $validated['title'],
+            'material_code' => $validated['material_code'] ?? null,
             'description' => $validated['description'],
             'meeting_number' => $validated['meeting_number'],
             'file_path' => $filePath,

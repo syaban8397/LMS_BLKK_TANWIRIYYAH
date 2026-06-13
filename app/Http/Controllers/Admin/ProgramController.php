@@ -10,7 +10,7 @@ class ProgramController extends Controller
 {
     public function index()
     {
-        $programs = Program::latest()->paginate(10);
+        $programs = Program::withCount('classes')->latest()->paginate(10);
 
         $totalPrograms = Program::count();
 
@@ -48,7 +48,12 @@ class ProgramController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'status' => 'required|in:active,inactive',
+            'certificate_degree' => 'nullable|in:' . implode(',', Program::certificateDegreeCodes()),
+            'validity_years' => 'nullable|integer|min:1|max:10',
+            'capacity' => 'required|integer|min:1|max:999',
         ]);
+
+        $validated['validity_years'] = $validated['validity_years'] ?? config('certificate.default_validity_years');
 
         Program::create($validated);
 
@@ -87,7 +92,20 @@ class ProgramController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'status' => 'required|in:active,inactive',
+            'certificate_degree' => 'nullable|in:' . implode(',', Program::certificateDegreeCodes()),
+            'validity_years' => 'nullable|integer|min:1|max:10',
+            'capacity' => 'required|integer|min:1|max:999',
         ]);
+
+        $validated['validity_years'] = $validated['validity_years'] ?? config('certificate.default_validity_years');
+
+        if ($validated['capacity'] < $program->classCount()) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'capacity' => 'Kapasitas tidak boleh kurang dari jumlah kelas yang sudah ada (' . $program->classCount() . ').',
+                ]);
+        }
 
         $program->update($validated);
 

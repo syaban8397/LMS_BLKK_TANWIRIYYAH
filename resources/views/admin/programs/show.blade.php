@@ -149,8 +149,16 @@
                     <p class="font-medium text-slate-800 mt-0.5">{{ $program->name }}</p>
                 </div>
                 <div>
-                    <span class="text-slate-400 text-xs">Status</span>
-                    <p class="font-medium text-slate-800 mt-0.5 capitalize">{{ $program->status }}</p>
+                    <span class="text-slate-400 text-xs">Aktif Kelas</span>
+                    <p class="font-medium text-slate-800 mt-0.5">{{ $program->status === 'active' ? 'Aktif' : 'Tidak Aktif' }}</p>
+                </div>
+                <div>
+                    <span class="text-slate-400 text-xs">Gelar Sertifikat</span>
+                    <p class="font-medium text-slate-800 mt-0.5">{{ $program->certificate_degree_label }}</p>
+                </div>
+                <div>
+                    <span class="text-slate-400 text-xs">Masa Berlaku Sertifikat</span>
+                    <p class="font-medium text-slate-800 mt-0.5">{{ $program->validity_years ?? config('certificate.default_validity_years') }} tahun</p>
                 </div>
                 <div>
                     <span class="text-slate-400 text-xs">Start Date</span>
@@ -160,12 +168,10 @@
                     <span class="text-slate-400 text-xs">End Date</span>
                     <p class="font-medium text-slate-800 mt-0.5">{{ $program->end_date->format('d M Y') }}</p>
                 </div>
-                @if($program->capacity)
                 <div>
-                    <span class="text-slate-400 text-xs">Capacity</span>
-                    <p class="font-medium text-slate-800 mt-0.5">{{ $program->capacity }} participants</p>
+                    <span class="text-slate-400 text-xs">Kapasitas Kelas</span>
+                    <p class="font-medium text-slate-800 mt-0.5">{{ $program->classCount() }}/{{ $program->capacity }} kelas</p>
                 </div>
-                @endif
             </div>
         </div>
 

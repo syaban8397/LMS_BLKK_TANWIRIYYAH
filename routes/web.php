@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\ClassController;
+use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
+use App\Http\Controllers\Admin\CertificateController as AdminCertificateController;
 use App\Http\Controllers\Instruktur\ClassController as InstruktorClassController;
 use App\Http\Controllers\Instruktur\ClassStreamController as InstruktorClassStreamController;
 use App\Http\Controllers\Instruktur\MaterialController as InstruktorMaterialController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\Instruktur\AnnouncementController as InstruktorAnnounce
 use App\Http\Controllers\Instruktur\AssignmentController as InstruktorAssignmentController;
 use App\Http\Controllers\Instruktur\AttendanceController as InstrukturAttendanceController;
 use App\Http\Controllers\Instruktur\GradeController as InstrukturGradeController;
+use App\Http\Controllers\Instruktur\CertificateController as InstrukturCertificateController;
 use App\Http\Controllers\Instruktur\DashboardController as InstrukturDashboardController;
 use App\Http\Controllers\Peserta\DashboardController as PesertaDashboardController;
 use App\Http\Controllers\Peserta\ClassController as PesertaClassController;
@@ -21,11 +24,15 @@ use App\Http\Controllers\Peserta\MaterialController as PesertaMaterialController
 use App\Http\Controllers\Peserta\AssignmentController as PesertaAssignmentController;
 use App\Http\Controllers\Peserta\AttendanceController as PesertaAttendanceController;
 use App\Http\Controllers\Peserta\SubmissionController as PesertaSubmissionController;
+use App\Http\Controllers\Peserta\CertificateController as PesertaCertificateController;
+use App\Http\Controllers\CertificateVerifyController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/verify/certificate/{number}', [CertificateVerifyController::class, 'show'])->name('certificates.verify');
 
 /*
 |--------------------------------------------------------------------------
@@ -63,7 +70,21 @@ Route::middleware(['auth', 'role.check:admin'])
         Route::patch('users/{user}/status', [UserController::class, 'updateStatus'])->name('users.update-status');
 
         Route::resource('programs', ProgramController::class);
+        Route::get('classes/preview-code', [ClassController::class, 'previewCode'])->name('classes.preview-code');
         Route::resource('classes', ClassController::class);
+
+        Route::get('/announcements', [AdminAnnouncementController::class, 'index'])->name('announcements.index');
+        Route::get('/classes/{class}/announcements', [AdminAnnouncementController::class, 'show'])->name('announcements.show');
+        Route::post('/classes/{class}/announcements', [AdminAnnouncementController::class, 'store'])->name('announcements.store');
+        Route::put('/classes/{class}/announcements/{announcement}', [AdminAnnouncementController::class, 'update'])->name('announcements.update');
+        Route::delete('/classes/{class}/announcements/{announcement}', [AdminAnnouncementController::class, 'destroy'])->name('announcements.destroy');
+
+        Route::get('/certificates', [AdminCertificateController::class, 'index'])->name('certificates.index');
+        Route::get('/classes/{class}/certificates', [AdminCertificateController::class, 'show'])->name('certificates.show');
+        Route::post('/classes/{class}/certificates/statuses', [AdminCertificateController::class, 'saveStatuses'])->name('certificates.save-statuses');
+        Route::post('/classes/{class}/certificates/bulk-issue', [AdminCertificateController::class, 'bulkIssue'])->name('certificates.bulk-issue');
+        Route::get('/classes/{class}/certificates/export', [AdminCertificateController::class, 'exportExcel'])->name('certificates.export');
+        Route::get('/certificates/{certificate}/download', [AdminCertificateController::class, 'download'])->name('certificates.download');
     });
 
 /*
@@ -124,6 +145,13 @@ Route::middleware(['auth', 'role.check:instruktur'])
         Route::put('/classes/{class}/attendances/{meetingNumber}', [InstrukturAttendanceController::class, 'update'])->name('attendances.update');
         Route::delete('/classes/{class}/attendances/{meetingNumber}', [InstrukturAttendanceController::class, 'destroy'])->name('attendances.destroy');
         Route::get('/classes/{class}/attendances-report', [InstrukturAttendanceController::class, 'report'])->name('attendances.report');
+
+        Route::get('/certificates', [InstrukturCertificateController::class, 'index'])->name('certificates.index');
+        Route::get('/classes/{class}/certificates', [InstrukturCertificateController::class, 'show'])->name('certificates.show');
+        Route::post('/classes/{class}/certificates/statuses', [InstrukturCertificateController::class, 'saveStatuses'])->name('certificates.save-statuses');
+        Route::post('/classes/{class}/certificates/bulk-issue', [InstrukturCertificateController::class, 'bulkIssue'])->name('certificates.bulk-issue');
+        Route::get('/classes/{class}/certificates/export', [InstrukturCertificateController::class, 'exportExcel'])->name('certificates.export');
+        Route::get('/certificates/{certificate}/download', [InstrukturCertificateController::class, 'download'])->name('certificates.download');
     });
 
 /*
@@ -164,6 +192,9 @@ Route::middleware(['auth', 'role.check:peserta'])
         Route::get('/classes/{class}/attendances', [PesertaAttendanceController::class, 'index'])->name('attendances.index');
         Route::get('/classes/{class}/attendances/{meetingNumber}', [PesertaAttendanceController::class, 'show'])->name('attendances.show');
         Route::post('/classes/{class}/attendances/{meetingNumber}/submit', [PesertaAttendanceController::class, 'submit'])->name('attendances.submit');
+
+        Route::get('/certificates', [PesertaCertificateController::class, 'index'])->name('certificates.index');
+        Route::get('/certificates/{certificate}/download', [PesertaCertificateController::class, 'download'])->name('certificates.download');
     });
 
 /*

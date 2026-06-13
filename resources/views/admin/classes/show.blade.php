@@ -7,6 +7,14 @@
                 <p class="text-sm text-slate-500 mt-0.5">Class code: <span class="font-semibold">{{ $class->code }}</span></p>
             </div>
             <div class="flex gap-2">
+                <a href="{{ route('admin.certificates.show', $class) }}"
+                   class="btn-action px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition shadow-sm">
+                    📜 Sertifikat
+                </a>
+                <a href="{{ route('admin.announcements.show', $class) }}"
+                   class="btn-action px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
+                    📢 Pengumuman
+                </a>
                 <a href="{{ route('admin.classes.edit', $class) }}" 
                    class="btn-action px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition shadow-sm">
                     ✏️ Edit

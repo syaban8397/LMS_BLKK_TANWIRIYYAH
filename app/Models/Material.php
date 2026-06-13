@@ -9,6 +9,7 @@ class Material extends Model
     protected $fillable = [
         'class_id',
         'title',
+        'material_code',
         'description',
         'meeting_number',
         'file_path',

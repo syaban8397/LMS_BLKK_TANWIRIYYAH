@@ -29,15 +29,14 @@ class AssignmentController extends Controller
         'description' => 'required',
         'attachment' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,zip,rar,jpg,jpeg,png|max:102400',
         'deadline' => 'required|date_format:Y-m-d\TH:i',
+        'late_submission_allowed' => 'sometimes|boolean', // TAMBAHKAN
     ]);
 
-    // Konversi deadline ke format datetime untuk database
     $deadline = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $validated['deadline'])->format('Y-m-d H:i:s');
 
     $attachmentPath = null;
     if ($request->hasFile('attachment')) {
         $file = $request->file('attachment');
-        // Sanitasi nama file
         $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file->getClientOriginalName());
         $attachmentPath = $file->storeAs('assignments', $fileName, 'public');
     }
@@ -49,6 +48,7 @@ class AssignmentController extends Controller
         'description' => $validated['description'],
         'attachment' => $attachmentPath,
         'deadline' => $deadline,
+        'late_submission_allowed' => $request->boolean('late_submission_allowed'),
     ]);
 
     return redirect()
@@ -70,43 +70,44 @@ class AssignmentController extends Controller
         );
     }
 
-    public function update(Request $request, ClassModel $class, Assignment $assignment)
-    {
-        $this->authorizeInstructor($class);
+   public function update(Request $request, ClassModel $class, Assignment $assignment)
+{
+    $this->authorizeInstructor($class);
 
-        if ($assignment->class_id !== $class->id) {
-            abort(404);
-        }
-
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'attachment' => 'nullable|file|max:102400',
-            'deadline' => 'required|date_format:Y-m-d H:i',
-        ]);
-
-        $attachmentPath = $assignment->attachment;
-        if ($request->hasFile('attachment')) {
-            if ($assignment->attachment) {
-                Storage::disk('public')->delete($assignment->attachment);
-            }
-
-            $file = $request->file('attachment');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $attachmentPath = $file->storeAs('assignments', $fileName, 'public');
-        }
-
-        $assignment->update([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'attachment' => $attachmentPath,
-            'deadline' => $validated['deadline'],
-        ]);
-
-        return redirect()
-            ->route('instruktur.classes.stream', $class)
-            ->with('success', 'Assignment berhasil diperbarui.');
+    if ($assignment->class_id !== $class->id) {
+        abort(404);
     }
+
+    $validated = $request->validate([
+        'title' => 'required|max:255',
+        'description' => 'required',
+        'attachment' => 'nullable|file|max:102400',
+        'deadline' => 'required|date_format:Y-m-d\TH:i',
+        'late_submission_allowed' => 'sometimes|boolean', // TAMBAHKAN
+    ]);
+
+    $attachmentPath = $assignment->attachment;
+    if ($request->hasFile('attachment')) {
+        if ($assignment->attachment) {
+            Storage::disk('public')->delete($assignment->attachment);
+        }
+        $file = $request->file('attachment');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $attachmentPath = $file->storeAs('assignments', $fileName, 'public');
+    }
+
+    $assignment->update([
+        'title' => $validated['title'],
+        'description' => $validated['description'],
+        'attachment' => $attachmentPath,
+        'deadline' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $validated['deadline'])->format('Y-m-d H:i:s'),
+        'late_submission_allowed' => $request->boolean('late_submission_allowed'),
+    ]);
+
+    return redirect()
+        ->route('instruktur.classes.stream', $class)
+        ->with('success', 'Assignment berhasil diperbarui.');
+}
 
     public function destroy(ClassModel $class, Assignment $assignment)
     {

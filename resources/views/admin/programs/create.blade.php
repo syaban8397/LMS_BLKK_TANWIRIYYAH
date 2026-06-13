@@ -160,21 +160,11 @@
                                class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm" required>
                     </div>
 
-                    {{-- Status --}}
-                    <div class="input-group">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Status</label>
-                        <select name="status" class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm">
-                            <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                        </select>
-                    </div>
+                    {{-- Status, Gelar, Masa Berlaku --}}
+                    @include('admin.programs._certificate-fields', ['program' => new \App\Models\Program()])
 
-                    {{-- Capacity (opsional) --}}
-                    <div class="input-group">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">Capacity (optional)</label>
-                        <input type="number" name="capacity" value="{{ old('capacity') }}" 
-                               class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm">
-                    </div>
+                    {{-- Kapasitas Kelas --}}
+                    @include('admin.programs._capacity-field', ['program' => new \App\Models\Program()])
                 </div>
 
                 {{-- Action Buttons --}}

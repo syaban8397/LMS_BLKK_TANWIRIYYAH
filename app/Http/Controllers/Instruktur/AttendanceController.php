@@ -168,11 +168,28 @@ class AttendanceController extends Controller
         
         $validated = $request->validate([
             'attendance_date' => 'required|date',
+            'extend_deadline_minutes' => 'nullable|integer|min:0|max:1440',
             'attendances' => 'required|array',
             'attendances.*.participant_id' => 'required|exists:users,id',
             'attendances.*.status' => 'required|in:present,permission,sick,absent',
             'attendances.*.notes' => 'nullable|string',
         ]);
+        
+        $first = Attendance::where('class_id', $class->id)
+            ->where('meeting_number', $meetingNumber)
+            ->first();
+
+        $newStart = \Carbon\Carbon::parse($validated['attendance_date']);
+        $extendMinutes = (int) ($validated['extend_deadline_minutes'] ?? 0);
+        $newDeadline = $first && $first->attendance_deadline
+            ? $first->attendance_deadline->copy()->addMinutes($extendMinutes)
+            : $newStart->copy()->addMinutes(60);
+
+        if ($newStart->gt($newDeadline)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Jam mulai tidak boleh setelah batas waktu absensi. Perpanjang deadline terlebih dahulu.');
+        }
         
         DB::beginTransaction();
         try {
@@ -186,7 +203,8 @@ class AttendanceController extends Controller
                     $attendance->update([
                         'status'          => $attendanceData['status'],
                         'notes'           => $attendanceData['notes'] ?? null,
-                        'attendance_date' => $validated['attendance_date'],
+                        'attendance_date' => $newStart,
+                        'attendance_deadline' => $newDeadline,
                         'submission_type' => 'instructor',
                         'updated_by'      => auth()->id(),
                     ]);
@@ -194,8 +212,12 @@ class AttendanceController extends Controller
             }
             
             DB::commit();
+            $message = 'Attendance updated successfully.';
+            if ($extendMinutes > 0) {
+                $message .= ' Deadline diperpanjang ' . $extendMinutes . ' menit (baru: ' . $newDeadline->format('d/m/Y H:i') . ').';
+            }
             return redirect()->route('instruktur.attendances.show', [$class, $meetingNumber])
-                ->with('success', 'Attendance updated successfully.');
+                ->with('success', $message);
                 
         } catch (\Exception $e) {
             DB::rollBack();

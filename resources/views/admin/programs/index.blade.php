@@ -190,7 +190,7 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 text-center text-slate-700 font-medium text-xs">
-                                    {{ $program->classes()->count() }}
+                                    {{ $program->classes_count }}/{{ $program->capacity }} kelas
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex justify-center gap-1.5">

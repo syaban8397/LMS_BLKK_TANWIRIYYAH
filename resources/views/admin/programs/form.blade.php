@@ -180,26 +180,9 @@
                         </div>
                     </div>
 
-                    <!-- STATUS -->
-                    <div class="form-group">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Program Status
-                        </label>
-                        <select name="status" class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
-                            <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                        </select>
-                    </div>
+                    @include('admin.programs._certificate-fields', ['program' => new \App\Models\Program()])
 
-                    <!-- CAPACITY (optional) -->
-                    <div class="form-group">
-                        <label class="block text-xs font-medium text-slate-500 mb-1">
-                            Capacity (optional)
-                        </label>
-                        <input type="number" name="capacity" value="{{ old('capacity') }}" 
-                               placeholder="Maximum number of participants"
-                               class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
-                    </div>
+                    @include('admin.programs._capacity-field', ['program' => new \App\Models\Program()])
                 </div>
 
                 {{-- Action Buttons --}}

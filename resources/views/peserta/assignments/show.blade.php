@@ -38,9 +38,9 @@
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
         }
-        .submission-card:nth-child(1) { animation-delay: 0.05s; } /* detail assignment */
-        .submission-card:nth-child(2) { animation-delay: 0.1s; } /* submit section */
-        .submission-card:nth-child(3) { animation-delay: 0.15s; } /* your submission content */
+        .submission-card:nth-child(1) { animation-delay: 0.05s; }
+        .submission-card:nth-child(2) { animation-delay: 0.1s; }
+        .submission-card:nth-child(3) { animation-delay: 0.15s; }
 
         /* Tombol 3D */
         .btn-3d {
@@ -87,6 +87,9 @@
         @if(session('error'))
             <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('error') }}</div>
         @endif
+        @if(session('info'))
+            <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('info') }}</div>
+        @endif
 
         {{-- Assignment Details Card --}}
         <div class="detail-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
@@ -103,11 +106,18 @@
                         <span>📅 Posted {{ $assignment->created_at->format('d M Y') }}</span>
                         <span>⏰ Deadline {{ $assignment->deadline->format('d M Y H:i') }}</span>
                     </div>
-                    @if($assignment->deadline->isFuture())
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>
-                    @else
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Closed</span>
-                    @endif
+                    <div class="flex flex-wrap gap-2">
+                        @if($assignment->deadline->isFuture())
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Closed</span>
+                            @if($assignment->late_submission_allowed)
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">⚠️ Late allowed</span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">⛔ No late submission</span>
+                            @endif
+                        @endif
+                    </div>
                 </div>
 
                 <div class="info-section pt-2 border-t border-slate-100">
@@ -135,13 +145,17 @@
         {{-- Submission Section (3D Card dengan warna sesuai status) --}}
         @php
             $submission = $assignment->submissions->where('participant_id', auth()->id())->first();
+            $canSubmit = $assignment->allowsSubmission();
         @endphp
 
-        @if($assignment->deadline->isFuture())
-            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 border-l-blue-500">
-                <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
+        @if($canSubmit)
+            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 {{ $assignment->deadline->isFuture() ? 'border-l-blue-500' : 'border-l-orange-500' }}">
+                <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r {{ $assignment->deadline->isFuture() ? 'from-blue-50' : 'from-orange-50' }} to-white">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <span>📤</span> Submit Your Work
+                        @if($assignment->deadline->isPast() && $assignment->late_submission_allowed)
+                            <span class="text-xs text-orange-600 font-medium bg-orange-100 px-2 py-0.5 rounded-full">Late submission allowed</span>
+                        @endif
                     </h3>
                 </div>
                 <div class="p-5 space-y-4">
@@ -152,7 +166,6 @@
                                     <span class="text-green-600 text-lg">✅</span>
                                     <div>
                                         <p class="text-green-800 font-medium">Your submission has been graded</p>
-                                        <!-- Score dihapus, hanya feedback -->
                                         @if($submission->feedback)
                                             <p class="text-sm text-green-700 mt-2">Feedback: {{ $submission->feedback }}</p>
                                         @endif
@@ -160,12 +173,21 @@
                                 </div>
                             </div>
                         @else
-                            <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
+                            <div class="{{ $submission->status == 'late' ? 'bg-orange-50 border-orange-200' : 'bg-yellow-50 border-yellow-200' }} rounded-xl p-4 border">
                                 <div class="flex items-start gap-2">
-                                    <span class="text-yellow-600 text-lg">📋</span>
+                                    <span class="{{ $submission->status == 'late' ? 'text-orange-600' : 'text-yellow-600' }} text-lg">📋</span>
                                     <div>
-                                        <p class="text-yellow-800 font-medium">Submitted on {{ $submission->submitted_at->format('d M Y H:i') }}</p>
-                                        <p class="text-yellow-700 text-sm">You can edit until the deadline.</p>
+                                        <p class="{{ $submission->status == 'late' ? 'text-orange-800' : 'text-yellow-800' }} font-medium">
+                                            Submitted on {{ $submission->submitted_at->format('d M Y H:i') }}
+                                            @if($submission->status == 'late')
+                                                <span class="ml-2 text-xs bg-orange-200 px-1.5 py-0.5 rounded-full">Late</span>
+                                            @endif
+                                        </p>
+                                        @if($assignment->deadline->isFuture())
+                                            <p class="text-yellow-700 text-sm">You can edit until the deadline.</p>
+                                        @elseif($assignment->late_submission_allowed)
+                                            <p class="text-orange-700 text-sm">Deadline has passed, but you can still edit your submission (will be marked as late).</p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -176,7 +198,11 @@
                             </div>
                         @endif
                     @else
-                        <p class="text-blue-800 text-sm">Submit your assignment before the deadline. You can update your submission anytime before the deadline closes.</p>
+                        @if($assignment->deadline->isFuture())
+                            <p class="text-blue-800 text-sm">Submit your assignment before the deadline. You can update your submission anytime before the deadline closes.</p>
+                        @else
+                            <p class="text-orange-800 text-sm">Deadline has passed, but late submissions are allowed. Your submission will be marked as "Late".</p>
+                        @endif
                         <a href="{{ route('peserta.submissions.create', [$class, $assignment]) }}" class="btn-3d inline-flex items-center gap-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
                             Submit Assignment
                         </a>
@@ -184,39 +210,22 @@
                 </div>
             </div>
         @else
-            @if($submission)
-                <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
-                    <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                            <span>📊</span> Submission Status
-                        </h3>
-                    </div>
-                    <div class="p-5 space-y-3">
-                        <p class="text-slate-700 text-sm">Submitted on: <strong>{{ $submission->submitted_at->format('d M Y H:i') }}</strong></p>
-                        @if($submission->isGraded())
-                            <div class="bg-green-50 rounded-xl p-3 border border-green-200">
-                                <!-- Score dihapus, hanya feedback -->
-                                <p class="text-green-800">Feedback: {{ $submission->feedback ?? 'No feedback provided.' }}</p>
-                            </div>
-                        @else
-                            <div class="bg-amber-50 rounded-xl p-3 border border-amber-200">
-                                <p class="text-amber-700">Not graded yet. Please wait for the instructor's feedback.</p>
-                            </div>
-                        @endif
-                    </div>
+            {{-- Deadline passed and no late submission allowed --}}
+            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 border-l-red-500">
+                <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-red-50 to-white">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                        <span>⛔</span> Submission Closed
+                    </h3>
                 </div>
-            @else
-                <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 border-l-red-500">
-                    <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-red-50 to-white">
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                            <span>⚠️</span> Deadline Passed
-                        </h3>
-                    </div>
-                    <div class="p-5 text-center">
-                        <p class="text-red-700">You did not submit this assignment.</p>
-                    </div>
+                <div class="p-5 text-center">
+                    <div class="text-5xl mb-3">⛔</div>
+                    <h4 class="text-lg font-bold text-red-800 mb-2">Submission Not Available</h4>
+                    <p class="text-red-700">The deadline for this assignment has passed and late submissions are not allowed.</p>
+                    @if($assignment->deadline)
+                        <p class="text-sm text-red-600 mt-3">Deadline was: {{ $assignment->deadline->format('d M Y H:i') }}</p>
+                    @endif
                 </div>
-            @endif
+            </div>
         @endif
 
         {{-- Show submitted content if exists (file/url/notes) --}}
@@ -225,6 +234,9 @@
                 <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <span>📎</span> Your Submission
+                        @if($submission->status == 'late')
+                            <span class="text-xs text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">Late</span>
+                        @endif
                     </h3>
                 </div>
                 <div class="p-5 space-y-3">
@@ -244,6 +256,29 @@
                         <div class="p-3 bg-slate-50 rounded-lg">
                             <p class="text-sm text-slate-700"><strong>Notes:</strong> {{ $submission->notes }}</p>
                         </div>
+                    @endif
+                    @if($submission->isGraded() && $submission->feedback)
+                        <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                            <p class="text-sm text-green-800"><strong>Instructor Feedback:</strong></p>
+                            <p class="text-sm text-green-700 mt-1">{{ $submission->feedback }}</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endif
+
+        {{-- Jika ada submission yang sudah di-graded, tampilkan score --}}
+        @if($submission && $submission->isGraded() && $submission->score)
+            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-green-50 to-white">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                        <span>🏆</span> Your Score
+                    </h3>
+                </div>
+                <div class="p-5 text-center">
+                    <div class="text-4xl font-bold text-green-600">{{ $submission->score }}<span class="text-lg text-slate-500">/100</span></div>
+                    @if($submission->feedback)
+                        <p class="text-slate-600 text-sm mt-2">{{ $submission->feedback }}</p>
                     @endif
                 </div>
             </div>

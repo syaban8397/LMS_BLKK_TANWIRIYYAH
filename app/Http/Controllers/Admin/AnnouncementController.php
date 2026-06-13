@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Announcement;
+use App\Models\ClassModel;
+use Illuminate\Http\Request;
+
+class AnnouncementController extends Controller
+{
+    public function index()
+    {
+        $classes = ClassModel::with(['program', 'instructor'])
+            ->withCount('announcements')
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.announcements.index', compact('classes'));
+    }
+
+    public function show(ClassModel $class)
+    {
+        $class->load(['program', 'instructor']);
+
+        $announcements = Announcement::where('class_id', $class->id)
+            ->with('creator')
+            ->latest()
+            ->get();
+
+        return view('admin.announcements.show', compact('class', 'announcements'));
+    }
+
+    public function store(Request $request, ClassModel $class)
+    {
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'required',
+        ]);
+
+        Announcement::create([
+            'class_id' => $class->id,
+            'created_by' => auth()->id(),
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+        ]);
+
+        return redirect()
+            ->route('admin.announcements.show', $class)
+            ->with('success', 'Pengumuman berhasil ditambahkan.');
+    }
+
+    public function update(Request $request, ClassModel $class, Announcement $announcement)
+    {
+        if ($announcement->class_id !== $class->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'required',
+        ]);
+
+        $announcement->update($validated);
+
+        return redirect()
+            ->route('admin.announcements.show', $class)
+            ->with('success', 'Pengumuman berhasil diperbarui.');
+    }
+
+    public function destroy(ClassModel $class, Announcement $announcement)
+    {
+        if ($announcement->class_id !== $class->id) {
+            abort(404);
+        }
+
+        $announcement->delete();
+
+        return redirect()
+            ->route('admin.announcements.show', $class)
+            ->with('success', 'Pengumuman berhasil dihapus.');
+    }
+}
