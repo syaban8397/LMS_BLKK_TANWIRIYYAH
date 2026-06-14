@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Instruktur;
 
+use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 
 class ClassStreamController extends Controller
 {
+    use AuthorizesInstructorClass;
+
     public function stream(ClassModel $class)
     {
         $this->authorizeInstructor($class);
@@ -22,12 +25,5 @@ class ClassStreamController extends Controller
             'instruktur.classes.stream',
             compact('class', 'announcements', 'materials', 'assignments')
         );
-    }
-
-    protected function authorizeInstructor(ClassModel $class)
-    {
-        if ($class->instructor_id !== auth()->id()) {
-            abort(403, 'Unauthorized');
-        }
     }
 }

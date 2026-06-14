@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Instruktur;
 
+use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
+use App\Http\Controllers\Concerns\ManagesClassCertificates;
 use App\Http\Controllers\Controller;
 use App\Models\Certificate;
 use App\Models\ClassModel;
-use App\Models\ClassParticipant;
 use App\Services\CertificateService;
 use App\Exports\ClassCertificateExport;
 use Illuminate\Http\Request;
@@ -13,6 +14,9 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class CertificateController extends Controller
 {
+    use AuthorizesInstructorClass;
+    use ManagesClassCertificates;
+
     public function __construct(protected CertificateService $certificateService) {}
 
     public function index()
@@ -39,17 +43,10 @@ class CertificateController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        $validated = $request->validate([
-            'status' => 'nullable|array',
-            'status.*' => 'in:pass,fail',
-        ]);
-
-        $statuses = array_filter(
-            $validated['status'] ?? [],
-            fn ($status) => in_array($status, ['pass', 'fail'], true)
+        $count = $this->certificateService->bulkUpdateStatus(
+            $class,
+            $this->validatedCertificateStatuses($request)
         );
-
-        $count = $this->certificateService->bulkUpdateStatus($class, $statuses);
 
         return redirect()
             ->route('instruktur.certificates.show', $class)
@@ -60,29 +57,16 @@ class CertificateController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        $validated = $request->validate([
-            'selected' => 'required|array|min:1',
-            'selected.*' => 'integer',
-        ]);
+        $participantIds = $this->resolveClassParticipantIds(
+            $class,
+            $this->validatedBulkIssueSelection($request)
+        );
 
-        $participantIds = ClassParticipant::where('class_id', $class->id)
-            ->whereIn('participant_id', $validated['selected'])
-            ->pluck('participant_id')
-            ->all();
-
-        $result = $this->certificateService->bulkIssue($class, $participantIds);
-
-        $message = count($result['issued']) . ' sertifikat berhasil diterbitkan.';
-        if (!empty($result['errors'])) {
-            return redirect()
-                ->route('instruktur.certificates.show', $class)
-                ->with('success', $message)
-                ->with('error', implode(' ', array_unique($result['errors'])));
-        }
-
-        return redirect()
-            ->route('instruktur.certificates.show', $class)
-            ->with('success', $message);
+        return $this->redirectAfterBulkIssue(
+            $class,
+            $this->certificateService->bulkIssue($class, $participantIds),
+            'instruktur.certificates.show'
+        );
     }
 
     public function download(Certificate $certificate)
@@ -107,15 +91,10 @@ class CertificateController extends Controller
         $this->authorizeInstructor($class);
         $class->load(['program', 'instructor']);
         $students = $this->certificateService->getClassStats($class);
-        $filename = 'laporan-sertifikat-' . $class->code . '-' . now()->format('Ymd') . '.xlsx';
 
-        return Excel::download(new ClassCertificateExport($class, $students), $filename);
-    }
-
-    protected function authorizeInstructor(ClassModel $class)
-    {
-        if ($class->instructor_id !== auth()->id()) {
-            abort(403, 'Unauthorized');
-        }
+        return Excel::download(
+            new ClassCertificateExport($class, $students),
+            $this->certificateExportFilename($class)
+        );
     }
 }

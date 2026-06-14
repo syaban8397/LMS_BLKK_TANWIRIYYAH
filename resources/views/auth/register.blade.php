@@ -26,24 +26,22 @@
             }
         }
 
-        /* Card Register 3D mewah - tanpa scroll, ukuran pas */
+        /* Card Register — profesional */
         .register-card {
             background: #ffffff;
-            border-radius: 2rem;
-            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.15);
-            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-            transform: perspective(1200px) rotateX(0deg) rotateY(0deg);
+            border-radius: 1.25rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 40px -16px rgba(15, 23, 42, 0.12);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
             animation: fadeInUp 0.7s ease-out forwards;
             opacity: 0;
-            /* Ukuran pas - tidak perlu scroll */
             width: 100%;
             max-width: 1000px;
         }
 
         .register-card:hover {
-            transform: perspective(1200px) rotateX(3deg) rotateY(5deg) translateY(-8px);
-            box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 24px 48px -16px rgba(15, 23, 42, 0.16);
         }
 
         /* Input field modern */

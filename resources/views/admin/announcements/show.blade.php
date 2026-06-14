@@ -92,7 +92,7 @@
                                 Edit
                             </button>
                             <form action="{{ route('admin.announcements.destroy', [$class, $announcement]) }}" method="POST"
-                                  onsubmit="return confirm('Hapus pengumuman ini?');" class="inline">
+                                  data-lms-confirm="Hapus pengumuman ini?" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="px-3 py-1 text-xs bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition">

@@ -7,7 +7,6 @@ use App\Models\ClassModel;
 use App\Models\Program;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class ClassController extends Controller
 {
@@ -38,9 +37,7 @@ class ClassController extends Controller
     {
         $programs = Program::withCount('classes')->orderBy('name')->get();
 
-        $instructors = User::where('role', 'instruktur')
-            ->where('is_active', true)
-            ->get();
+        $instructors = $this->activeInstructors();
 
         return view(
             'admin.classes.create',
@@ -50,21 +47,12 @@ class ClassController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'program_id' => 'required|exists:programs,id',
-            'instructor_id' => 'required|exists:users,id',
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'quota' => 'required|integer|min:1',
-            'status' => 'required|in:draft,active,completed,cancelled',
-        ]);
+        $validated = $this->validatedClassAttributes($request);
 
         $validated['code'] = ClassModel::generateCode($validated['title']);
 
         $program = Program::findOrFail($validated['program_id']);
-        $this->assertProgramHasClassCapacity($program);
+        $program->ensureHasAvailableClassSlot();
 
         ClassModel::create($validated);
 
@@ -89,9 +77,7 @@ class ClassController extends Controller
 
         $programs = Program::withCount('classes')->orderBy('name')->get();
 
-        $instructors = User::where('role', 'instruktur')
-            ->where('is_active', true)
-            ->get();
+        $instructors = $this->activeInstructors();
 
         return view(
             'admin.classes.edit',
@@ -101,16 +87,7 @@ class ClassController extends Controller
 
     public function update(Request $request, ClassModel $class)
     {
-        $validated = $request->validate([
-            'program_id' => 'required|exists:programs,id',
-            'instructor_id' => 'required|exists:users,id',
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'quota' => 'required|integer|min:1',
-            'status' => 'required|in:draft,active,completed,cancelled',
-        ]);
+        $validated = $this->validatedClassAttributes($request);
 
         if ($class->title !== $validated['title']) {
             $validated['code'] = ClassModel::generateCode($validated['title'], $class->id);
@@ -118,7 +95,7 @@ class ClassController extends Controller
 
         if ((int) $validated['program_id'] !== (int) $class->program_id) {
             $program = Program::findOrFail($validated['program_id']);
-            $this->assertProgramHasClassCapacity($program);
+            $program->ensureHasAvailableClassSlot();
         }
 
         $class->update($validated);
@@ -152,14 +129,24 @@ class ClassController extends Controller
         ]);
     }
 
-    private function assertProgramHasClassCapacity(Program $program): void
+    private function validatedClassAttributes(Request $request): array
     {
-        if ($program->hasAvailableClassSlot()) {
-            return;
-        }
-
-        throw ValidationException::withMessages([
-            'program_id' => 'Program "' . $program->name . '" sudah penuh. Maksimal ' . $program->capacity . ' kelas.',
+        return $request->validate([
+            'program_id' => 'required|exists:programs,id',
+            'instructor_id' => 'required|exists:users,id',
+            'title' => 'required|max:255',
+            'description' => 'required',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'quota' => 'required|integer|min:1',
+            'status' => 'required|in:draft,active,completed,cancelled',
         ]);
+    }
+
+    private function activeInstructors()
+    {
+        return User::where('role', 'instruktur')
+            ->where('is_active', true)
+            ->get();
     }
 }

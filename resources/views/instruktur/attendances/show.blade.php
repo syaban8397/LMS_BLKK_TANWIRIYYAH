@@ -1,118 +1,5 @@
 <x-app-layout>
-    <style>
-        /* Animasi 3D untuk container utama */
-        @keyframes fadeInUp3D {
-            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0); }
-        }
-        /* Animasi untuk card dan summary */
-        @keyframes cardPop3D {
-            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
-            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
-        }
-        /* Animasi untuk baris tabel */
-        @keyframes rowFadeIn {
-            0% { opacity: 0; transform: translateX(-8px); }
-            100% { opacity: 1; transform: translateX(0); }
-        }
-
-        .show-attendance-wrapper {
-            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-            transform-style: preserve-3d;
-            perspective: 800px;
-        }
-
-        /* Summary cards */
-        .summary-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-        }
-        .summary-card:hover {
-            transform: translateY(-6px) rotateX(2deg) rotateY(2deg);
-            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.15);
-        }
-        /* Stagger delay untuk 4 summary cards */
-        .summary-card:nth-child(1) { animation-delay: 0.05s; }
-        .summary-card:nth-child(2) { animation-delay: 0.1s; }
-        .summary-card:nth-child(3) { animation-delay: 0.15s; }
-        .summary-card:nth-child(4) { animation-delay: 0.2s; }
-
-        /* Table card 3D */
-        .table-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            animation-delay: 0.25s;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-        }
-        .table-card:hover {
-            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
-            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Baris tabel */
-        .attendance-row {
-            animation: rowFadeIn 0.3s ease forwards;
-            opacity: 0;
-            transition: all 0.2s ease;
-        }
-        .attendance-row:hover {
-            background-color: #f8fafc;
-            transform: scale(1.01);
-            box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
-        }
-        /* Stagger delay untuk baris (maksimal 50) */
-        .attendance-row:nth-child(1) { animation-delay: 0.3s; }
-        .attendance-row:nth-child(2) { animation-delay: 0.33s; }
-        .attendance-row:nth-child(3) { animation-delay: 0.36s; }
-        .attendance-row:nth-child(4) { animation-delay: 0.39s; }
-        .attendance-row:nth-child(5) { animation-delay: 0.42s; }
-        .attendance-row:nth-child(6) { animation-delay: 0.45s; }
-        .attendance-row:nth-child(7) { animation-delay: 0.48s; }
-        .attendance-row:nth-child(8) { animation-delay: 0.51s; }
-        .attendance-row:nth-child(9) { animation-delay: 0.54s; }
-        .attendance-row:nth-child(10) { animation-delay: 0.57s; }
-        .attendance-row:nth-child(11) { animation-delay: 0.6s; }
-        .attendance-row:nth-child(12) { animation-delay: 0.63s; }
-        .attendance-row:nth-child(13) { animation-delay: 0.66s; }
-        .attendance-row:nth-child(14) { animation-delay: 0.69s; }
-        .attendance-row:nth-child(15) { animation-delay: 0.72s; }
-        .attendance-row:nth-child(16) { animation-delay: 0.75s; }
-        .attendance-row:nth-child(17) { animation-delay: 0.78s; }
-        .attendance-row:nth-child(18) { animation-delay: 0.81s; }
-        .attendance-row:nth-child(19) { animation-delay: 0.84s; }
-        .attendance-row:nth-child(20) { animation-delay: 0.87s; }
-
-        /* Tombol 3D */
-        .btn-3d {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform: translateY(0);
-            display: inline-flex;
-            align-items: center;
-        }
-        .btn-3d:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-
-        /* Info deadline box */
-        .deadline-info {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            animation-delay: 0.03s;
-            transition: all 0.3s ease;
-        }
-        .deadline-info:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-
-    <div class="show-attendance-wrapper space-y-6">
+<div class="show-attendance-wrapper space-y-6">
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -131,14 +18,10 @@
 
         {{-- Flash Messages --}}
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">
-                {{ session('success') }}
-            </div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">
-                {{ session('error') }}
-            </div>
+            <x-lms-flash type="error">{{ session('error') }}</x-lms-flash>
         @endif
 
         {{-- Deadline Info --}}

@@ -1,151 +1,62 @@
 <x-app-layout>
-    <style>
-        @keyframes fadeInUp3D {
-            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0); }
-        }
-        @keyframes cardPop3D {
-            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
-            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
-        }
-        @keyframes fadeSlideUp {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes rowFadeIn {
-            0% { opacity: 0; transform: translateX(-8px); }
-            100% { opacity: 1; transform: translateX(0); }
-        }
-
-        .materials-wrapper {
-            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-            transform-style: preserve-3d;
-            perspective: 800px;
-        }
-
-        .dashboard-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
-            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
-        }
-
-        .material-row {
-            animation: rowFadeIn 0.3s ease forwards;
-            opacity: 0;
-            transition: all 0.2s ease;
-        }
-        .material-row:hover {
-            background-color: #f8fafc;
-            transform: scale(1.01);
-            box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
-        }
-        .material-row:nth-child(1) { animation-delay: 0.1s; }
-        .material-row:nth-child(2) { animation-delay: 0.15s; }
-        .material-row:nth-child(3) { animation-delay: 0.2s; }
-        .material-row:nth-child(4) { animation-delay: 0.25s; }
-        .material-row:nth-child(5) { animation-delay: 0.3s; }
-        .material-row:nth-child(6) { animation-delay: 0.35s; }
-        .material-row:nth-child(7) { animation-delay: 0.4s; }
-        .material-row:nth-child(8) { animation-delay: 0.45s; }
-        .material-row:nth-child(9) { animation-delay: 0.5s; }
-        .material-row:nth-child(10) { animation-delay: 0.55s; }
-
-        .btn-3d {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform: translateY(0);
-        }
-        .btn-3d:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-    </style>
-
-    <div class="materials-wrapper max-w-7xl mx-auto">
-        {{-- Tombol aksi di kanan atas --}}
-        <div class="flex justify-end gap-3 mb-6">
-            <a href="{{ route('instruktur.materials.create', $class) }}" class="btn-3d inline-flex items-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                New Material
-            </a>
-            <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d inline-flex items-center gap-1 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Back to Stream
-            </a>
-        </div>
+    <div class="materials-wrapper lms-page-shell max-w-7xl mx-auto">
+        <x-lms-page-header
+            title="Materials Library"
+            :subtitle="$class->title"
+            :back-url="route('instruktur.classes.stream', $class)"
+            back-label="← Back to Stream"
+        >
+            <x-slot:actions>
+                <a href="{{ route('instruktur.materials.create', $class) }}" class="lms-btn-primary btn-3d">+ New Material</a>
+            </x-slot:actions>
+        </x-lms-page-header>
 
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse mb-6">
-                {{ session('success') }}
-            </div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
 
-        {{-- Card daftar materi --}}
-        <div class="dashboard-card bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
-            <div class="bg-gradient-to-r from-gray-50 to-white px-5 py-3 border-b border-slate-200 flex justify-between items-center flex-wrap gap-2">
-                <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    Materials Library
-                </h3>
-                <div class="text-xs text-slate-500">Total: {{ $materials->total() }} items</div>
-            </div>
-
+        <x-lms-card class="materials-card" title="Materials Library" :meta="'Total: ' . $materials->total() . ' items'">
             @if($materials->count() > 0)
-                <div class="divide-y divide-slate-100">
+                <div class="divide-y divide-slate-100 dark:divide-slate-700/55">
                     @foreach($materials as $material)
-                    <div class="material-row p-5 hover:bg-slate-50 transition group">
-                        <div class="flex flex-wrap md:flex-nowrap items-start justify-between gap-3">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex flex-wrap items-center gap-2 mb-2">
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium {{ $material->meeting_number % 2 == 0 ? 'bg-purple-100 text-purple-700' : 'bg-emerald-100 text-emerald-700' }}">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                        Meeting {{ $material->meeting_number }}
-                                    </span>
-                                    @if($material->file_path)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs">📎 {{ strtoupper($material->file_type) }}</span>
+                        <div class="material-row p-5 transition group">
+                            <div class="flex flex-wrap md:flex-nowrap items-start justify-between gap-3">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                                        <span class="lms-badge lms-badge--info">Meeting {{ $material->meeting_number }}</span>
+                                        @if($material->file_path)
+                                            <span class="lms-badge lms-badge--success">📎 {{ strtoupper($material->file_type) }}</span>
+                                        @endif
+                                        @if($material->youtube_url)
+                                            <span class="lms-badge lms-badge--danger">🎥 YouTube</span>
+                                        @endif
+                                    </div>
+                                    <h4 class="font-bold text-slate-800 dark:text-slate-100 text-lg mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">{{ $material->title }}</h4>
+                                    @if($material->description)
+                                        <p class="text-slate-600 dark:text-slate-300 text-sm line-clamp-2">{{ $material->description }}</p>
                                     @endif
-                                    @if($material->youtube_url)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 rounded-lg text-xs">🎥 YouTube</span>
-                                    @endif
+                                    <p class="mt-2 text-xs text-slate-400 dark:text-slate-500">Uploaded {{ $material->created_at->diffForHumans() }}</p>
                                 </div>
-                                <h4 class="font-bold text-slate-800 text-lg mb-1 group-hover:text-blue-600 transition">{{ $material->title }}</h4>
-                                @if($material->description)
-                                    <p class="text-slate-600 text-sm line-clamp-2">{{ $material->description }}</p>
-                                @endif
-                                <p class="mt-2 text-xs text-slate-400">Uploaded {{ $material->created_at->diffForHumans() }}</p>
-                            </div>
-                            <div class="flex gap-2 flex-shrink-0">
-                                <a href="{{ route('instruktur.materials.show', [$class, $material]) }}" class="btn-3d inline-flex items-center gap-1 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-sm">View</a>
-                                <a href="{{ route('instruktur.materials.edit', [$class, $material]) }}" class="btn-3d inline-flex items-center gap-1 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-medium transition shadow-sm">Edit</a>
-                                <form action="{{ route('instruktur.materials.destroy', [$class, $material]) }}" method="POST" onsubmit="return confirm('Delete this material? This action cannot be undone.');" class="inline">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn-3d inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition shadow-sm">Delete</button>
-                                </form>
+                                <div class="flex gap-2 flex-shrink-0">
+                                    <a href="{{ route('instruktur.materials.show', [$class, $material]) }}" class="action-btn px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-xs font-medium">View</a>
+                                    <a href="{{ route('instruktur.materials.edit', [$class, $material]) }}" class="action-btn px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-medium">Edit</a>
+                                    <form action="{{ route('instruktur.materials.destroy', [$class, $material]) }}" method="POST" data-lms-confirm="Delete this material? This action cannot be undone." class="inline">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="action-btn px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium">Delete</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @endforeach
                 </div>
-                <div class="px-5 py-3 border-t border-slate-100 bg-slate-50">
+                <div class="px-5 py-3 border-t border-slate-100 dark:border-slate-700/55 bg-slate-50 dark:bg-slate-800/40">
                     {{ $materials->links() }}
                 </div>
             @else
-                <div class="p-12 text-center">
-                    <div class="flex flex-col items-center gap-2 text-slate-400">
-                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                        <p class="font-semibold">No materials added yet</p>
-                        <p class="text-sm">Start by creating your first learning material.</p>
-                        <a href="{{ route('instruktur.materials.create', $class) }}" class="btn-3d mt-2 inline-flex items-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">Create Material</a>
-                    </div>
-                </div>
+                <x-lms-empty-state icon="📚" title="No materials added yet" description="Start by creating your first learning material." class="border-0 shadow-none !py-10">
+                    <a href="{{ route('instruktur.materials.create', $class) }}" class="lms-btn-primary btn-3d mt-2">Create Material</a>
+                </x-lms-empty-state>
             @endif
-        </div>
+        </x-lms-card>
     </div>
 </x-app-layout>

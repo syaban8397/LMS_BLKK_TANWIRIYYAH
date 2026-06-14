@@ -1,98 +1,108 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      class="h-full"
+      data-authenticated-app="1"
+      data-user-role="{{ auth()->user()->role ?? 'guest' }}"
+      data-user-id="{{ auth()->id() ?? '' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>LMS BLKK Tanwiriyyah</title>
 
+    {{-- Navigation loader — sync with sessionStorage from previous page --}}
+    <script>
+        (function () {
+            try {
+                if (sessionStorage.getItem('lms-nav-active') === '1') {
+                    document.documentElement.classList.add('lms-nav-loading');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <script>
+        (function () {
+            try {
+                var role = @json(auth()->user()->role ?? 'guest');
+                var uid = @json(auth()->id() ?? '');
+                var base = 'lms-theme-' + role;
+                var key = uid ? base + '-' + uid : base;
+                var theme = localStorage.getItem(key) || localStorage.getItem(base) || 'light';
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {}
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <style>
-        /* Modern professional style */
-        body {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e6f0fa 100%);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        /* Smooth sidebar transition */
-        #sidebar {
-            transition: width 0.3s ease;
-        }
-
-        /* Hover effects for cards (only on hover) */
-        .dashboard-card {
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
-        .dashboard-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #e2e8f0;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2b4f8c;
-            border-radius: 10px;
-        }
-    </style>
 </head>
-<body class="antialiased">
+<body class="antialiased min-h-screen">
+
+<x-lms-page-loader />
 
 <!-- SIDEBAR -->
-<div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-900 via-indigo-900 to-slate-900 shadow-2xl transition-all duration-300 overflow-hidden">
+<div id="sidebar" class="premium-sidebar w-64">
     @include('layouts.navigation')
 </div>
 
 <!-- MAIN CONTENT -->
 <div id="mainContent" class="ml-64 min-h-screen transition-all duration-300">
     <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div class="h-16 px-6 flex items-center justify-between">
+    <header class="glass-nav h-16">
+        <div class="h-full px-6 flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <button id="toggleSidebarBtn" class="text-2xl text-slate-600 hover:text-blue-600 transition">
+                <button id="toggleSidebarBtn"
+                        class="theme-toggle-btn w-9 h-9 text-lg text-slate-600 dark:text-slate-300"
+                        aria-label="Toggle sidebar">
                     ☰
                 </button>
-                <h1 class="text-lg font-bold text-slate-800">LMS BLKK Tanwiriyyah</h1>
+                <div>
+                    <h1 class="text-base font-bold text-slate-800 dark:text-slate-100">LMS BLKK Tanwiriyyah</h1>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider">Learning Management System</p>
+                </div>
             </div>
 
-            <div class="flex items-center gap-5">
+            <div class="flex items-center gap-4">
+                <!-- Theme Toggle -->
+                <x-theme-toggle />
+
                 <!-- Clock -->
-                <div class="text-right">
-                    <div id="current-date" class="text-xs text-slate-500"></div>
-                    <div id="current-time" class="font-bold text-blue-700 text-sm"></div>
+                <div class="hidden sm:block text-right glass-panel px-3 py-1.5 rounded-xl border border-slate-200/60 dark:border-slate-600/50">
+                    <div id="current-date" class="text-[10px] text-slate-500 dark:text-slate-400"></div>
+                    <div id="current-time" class="font-bold text-brand-700 dark:text-brand-300 text-sm tabular-nums"></div>
                 </div>
 
-                <!-- Profile Dropdown dengan Foto -->
+                <!-- Profile Dropdown -->
                 <div class="relative">
-                    <button id="profileButton" class="flex items-center gap-3 hover:bg-slate-100 rounded-xl px-3 py-2 transition">
+                    <button id="profileButton"
+                            class="flex items-center gap-3 glass-panel hover:ring-2 hover:ring-brand-500/20 rounded-xl px-3 py-2 transition-all duration-300">
                         @php $user = Auth::user(); @endphp
                         @if($user->photo)
-                            <img src="{{ Storage::url($user->photo) }}" class="w-10 h-10 rounded-full object-cover">
+                            <img src="{{ Storage::url($user->photo) }}" class="w-9 h-9 rounded-xl object-cover ring-2 ring-white/20" alt="">
                         @else
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-700 flex items-center justify-center text-white font-bold text-sm shadow-3d-sm">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                         @endif
-                        <div class="text-left">
-                            <div class="font-semibold text-slate-800">{{ $user->name }}</div>
-                            <div class="text-xs text-slate-500">{{ ucfirst($user->role) }}</div>
+                        <div class="text-left hidden md:block">
+                            <div class="font-semibold text-sm text-slate-800 dark:text-slate-100">{{ $user->name }}</div>
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 capitalize">{{ $user->role }}</div>
                         </div>
-                        <span class="text-slate-500">▼</span>
+                        <span class="text-slate-400 text-xs hidden md:inline">▼</span>
                     </button>
 
-                    <div id="profileMenu" class="hidden absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border overflow-hidden">
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-3 hover:bg-slate-100">👤 Profile</a>
-                        <a href="{{ route(auth()->user()->role.'.dashboard') }}" class="block px-4 py-3 hover:bg-slate-100">📊 Dashboard</a>
+                    <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 premium-card py-1 z-50 border border-slate-200/80 dark:border-slate-600/60">
+                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-brand-50 dark:hover:bg-slate-700/60 transition">👤 Profile</a>
+                        <a href="{{ route(auth()->user()->role.'.dashboard') }}" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-brand-50 dark:hover:bg-slate-700/60 transition">📊 Dashboard</a>
+                        <div class="border-t border-slate-100 dark:border-slate-700/60 my-1"></div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="w-full text-left px-4 py-3 hover:bg-red-50 text-red-600">🚪 Logout</button>
+                            <button type="submit" class="w-full text-left px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition">🚪 Logout</button>
                         </form>
                     </div>
                 </div>
@@ -101,7 +111,7 @@
     </header>
 
     <!-- Page Content -->
-    <main class="p-6">
+    <main class="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto page-content-3d">
         @isset($header)
             <div class="mb-6">{{ $header }}</div>
         @endisset
@@ -109,12 +119,14 @@
     </main>
 </div>
 
+<x-lms-dialog />
+
 <script>
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
     let sidebarOpen;
 
-    if(localStorage.getItem('sidebarOpen') === null) {
+    if (localStorage.getItem('sidebarOpen') === null) {
         sidebarOpen = true;
         localStorage.setItem('sidebarOpen', true);
     } else {
@@ -122,7 +134,7 @@
     }
 
     function applySidebarState() {
-        if(sidebarOpen) {
+        if (sidebarOpen) {
             sidebar.classList.remove('w-20');
             sidebar.classList.add('w-64');
             mainContent.classList.remove('ml-20');
@@ -146,23 +158,32 @@
     });
 
     document.getElementById('profileButton').addEventListener('click', (e) => {
+        e.stopPropagation();
         document.getElementById('profileMenu').classList.toggle('hidden');
     });
 
     window.addEventListener('click', (e) => {
         const menu = document.getElementById('profileMenu');
         const button = document.getElementById('profileButton');
-        if(!button.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+        if (!button.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
     });
 
     function updateClock() {
         const now = new Date();
-        document.getElementById('current-date').innerHTML = now.toLocaleDateString('id-ID', {
-            weekday:'long', day:'numeric', month:'long', year:'numeric'
-        });
-        document.getElementById('current-time').innerHTML = now.toLocaleTimeString('id-ID', {
-            hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'
-        });
+        const dateEl = document.getElementById('current-date');
+        const timeEl = document.getElementById('current-time');
+        if (dateEl) {
+            dateEl.innerHTML = now.toLocaleDateString('id-ID', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            });
+        }
+        if (timeEl) {
+            timeEl.innerHTML = now.toLocaleTimeString('id-ID', {
+                hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {

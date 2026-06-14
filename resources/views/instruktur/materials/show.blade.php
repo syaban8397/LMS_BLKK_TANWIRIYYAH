@@ -1,88 +1,5 @@
 <x-app-layout>
-    <style>
-        /* Animasi 3D */
-        @keyframes fadeInUp3D {
-            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0); }
-        }
-        @keyframes cardPop3D {
-            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
-            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
-        }
-        @keyframes fadeSlideUp {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .show-wrapper {
-            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-            transform-style: preserve-3d;
-            perspective: 800px;
-        }
-
-        /* Card utama */
-        .detail-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-        }
-        .detail-card:hover {
-            transform: translateY(-6px) rotateX(2deg) rotateY(1deg);
-            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Stagger untuk card (muncul bertahap) */
-        .detail-card:nth-child(1) { animation-delay: 0.05s; } /* info */
-        .detail-card:nth-child(2) { animation-delay: 0.15s; } /* file */
-        .detail-card:nth-child(3) { animation-delay: 0.25s; } /* youtube */
-        .detail-card:nth-child(4) { animation-delay: 0.35s; } /* warning */
-
-        /* Animasi untuk konten di dalam card */
-        .info-row {
-            animation: fadeSlideUp 0.4s ease forwards;
-            opacity: 0;
-        }
-        .info-row:nth-child(1) { animation-delay: 0.1s; }
-        .info-row:nth-child(2) { animation-delay: 0.15s; }
-        .info-row:nth-child(3) { animation-delay: 0.2s; }
-
-        /* Tombol 3D */
-        .btn-3d {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform: translateY(0);
-            display: inline-flex;
-            align-items: center;
-        }
-        .btn-3d:hover {
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 10px 18px -6px rgba(0, 0, 0, 0.2);
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-
-        /* File preview hover */
-        .file-preview {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-        }
-        .file-preview:hover {
-            transform: translateY(-3px) scale(1.01);
-            background-color: #f1f5f9;
-            box-shadow: 0 8px 16px -6px rgba(0,0,0,0.1);
-        }
-
-        /* Video embed hover */
-        .video-wrapper {
-            transition: all 0.3s ease;
-        }
-        .video-wrapper:hover {
-            transform: scale(1.01) rotateX(2deg);
-            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.2);
-        }
-    </style>
-
-    <div class="show-wrapper max-w-5xl mx-auto">
+<div class="show-wrapper max-w-5xl mx-auto">
         {{-- Tombol aksi di kanan atas --}}
         <div class="flex justify-end gap-3 mb-6">
             <a href="{{ route('instruktur.materials.edit', [$class, $material]) }}" class="btn-3d inline-flex items-center gap-1 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition shadow-sm">
@@ -96,14 +13,10 @@
         </div>
 
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse mb-6">
-                {{ session('success') }}
-            </div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse mb-6">
-                {{ session('error') }}
-            </div>
+            <x-lms-flash type="error">{{ session('error') }}</x-lms-flash>
         @endif
 
         {{-- 1. Material Information Card --}}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Instruktur;
 
+use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\Material;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Storage;
 
 class MaterialController extends Controller
 {
+    use AuthorizesInstructorClass;
+
     public function index(ClassModel $class)
     {
         $this->authorizeInstructor($class);
@@ -180,12 +183,5 @@ class MaterialController extends Controller
         return redirect()
             ->route('instruktur.materials.index', $class)
             ->with('success', 'Materi berhasil dihapus.');
-    }
-
-    protected function authorizeInstructor(ClassModel $class)
-    {
-        if ($class->instructor_id !== auth()->id()) {
-            abort(403, 'Unauthorized');
-        }
     }
 }

@@ -1,93 +1,5 @@
 <x-app-layout>
-    <style>
-        /* Animasi 3D untuk container utama */
-        @keyframes fadeInUp3D {
-            0% {
-                opacity: 0;
-                transform: translateY(30px) rotateX(10deg);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) rotateX(0);
-            }
-        }
-
-        /* Animasi untuk setiap card */
-        @keyframes cardPop3D {
-            0% {
-                opacity: 0;
-                transform: scale(0.95) translateY(20px) rotateX(5deg);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0) rotateX(0);
-            }
-        }
-
-        /* Wrapper utama */
-        .show-program-wrapper {
-            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-            transform-style: preserve-3d;
-            perspective: 800px;
-        }
-
-        /* Stat card 3D */
-        .stat-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-        }
-        .stat-card:hover {
-            transform: translateY(-6px) rotateX(2deg) rotateY(2deg) scale(1.02);
-            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Stagger delay untuk stat card (3 kartu) */
-        .stat-card:nth-child(1) { animation-delay: 0.05s; }
-        .stat-card:nth-child(2) { animation-delay: 0.1s; }
-        .stat-card:nth-child(3) { animation-delay: 0.15s; }
-
-        /* Info card dan deskripsi */
-        .info-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-        }
-        .info-card:hover {
-            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
-            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15);
-        }
-
-        .info-card:nth-child(1) { animation-delay: 0.2s; }  /* Program Information */
-        .info-card:nth-child(2) { animation-delay: 0.25s; } /* Description */
-        .info-card:nth-child(3) { animation-delay: 0.3s; }  /* Action Buttons */
-
-        /* Tombol aksi 3D */
-        .btn-action {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform: translateY(0);
-            display: inline-block;
-        }
-        .btn-action:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
-        }
-        .btn-action:active {
-            transform: translateY(1px);
-        }
-
-        /* Badge status */
-        .status-badge {
-            transition: all 0.2s ease;
-        }
-        .status-badge:hover {
-            transform: translateY(-1px) scale(1.02);
-        }
-    </style>
-
-    <div class="show-program-wrapper space-y-5">
+<div class="show-program-wrapper space-y-5">
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -190,7 +102,7 @@
                    class="btn-action px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition shadow-sm">
                     ✏️ Edit Program
                 </a>
-                <form action="{{ route('admin.programs.destroy', $program) }}" method="POST" onsubmit="return confirm('Delete this training program?')" class="inline">
+                <form action="{{ route('admin.programs.destroy', $program) }}" method="POST" data-lms-confirm="Delete this training program?" class="inline">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn-action px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition shadow-sm">
                         🗑️ Delete Program

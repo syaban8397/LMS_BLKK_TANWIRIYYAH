@@ -1,86 +1,5 @@
 <x-app-layout>
-    <style>
-        /* Animasi 3D untuk container utama */
-        @keyframes fadeInUp3D {
-            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0); }
-        }
-        @keyframes cardPop3D {
-            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
-            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
-        }
-        @keyframes fadeSlideUp {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .peserta-submission-edit-wrapper {
-            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-            transform-style: preserve-3d;
-            perspective: 800px;
-        }
-
-        /* Form card 3D */
-        .form-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-        }
-        .form-card:hover {
-            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
-            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Setiap grup input */
-        .form-group {
-            animation: fadeSlideUp 0.4s ease forwards;
-            opacity: 0;
-        }
-        .form-group:nth-child(1) { animation-delay: 0.1s; }  /* File upload */
-        .form-group:nth-child(2) { animation-delay: 0.15s; } /* URL */
-        .form-group:nth-child(3) { animation-delay: 0.2s; }  /* Notes */
-        .form-group:nth-child(4) { animation-delay: 0.25s; } /* Deadline reminder */
-        .form-group:nth-child(5) { animation-delay: 0.3s; }  /* Delete button section */
-
-        /* Input field 3D */
-        .input-3d {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-        }
-        .input-3d:focus {
-            transform: scale(1.01) translateZ(3px);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-            border-color: #3b82f6;
-            outline: none;
-        }
-
-        /* Tombol 3D */
-        .btn-3d {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform: translateY(0);
-        }
-        .btn-3d:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-
-        /* Link delete 3D */
-        .delete-link {
-            transition: all 0.2s ease;
-            transform: translateY(0);
-            display: inline-flex;
-            align-items: center;
-        }
-        .delete-link:hover {
-            transform: translateY(-2px) scale(1.02);
-            color: #dc2626;
-        }
-    </style>
-
-    <div class="peserta-submission-edit-wrapper space-y-6">
+<div class="peserta-submission-edit-wrapper space-y-6">
         {{-- Header Sederhana dengan Tombol Back --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -155,7 +74,7 @@
 
                 {{-- Delete Form --}}
                 <div class="form-group mt-6 pt-4 border-t border-slate-200">
-                    <form action="{{ route('peserta.submissions.destroy', [$class, $assignment, $submission]) }}" method="POST" onsubmit="return confirm('Delete your submission permanently? This action cannot be undone.')">
+                    <form action="{{ route('peserta.submissions.destroy', [$class, $assignment, $submission]) }}" method="POST" data-lms-confirm="Delete your submission permanently? This action cannot be undone.">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="delete-link text-red-600 text-sm hover:text-red-700 transition flex items-center gap-1">

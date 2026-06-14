@@ -1,110 +1,5 @@
 <x-app-layout>
-    <style>
-        /* Animasi 3D untuk container utama */
-        @keyframes fadeInUp3D {
-            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0); }
-        }
-        /* Animasi untuk setiap card */
-        @keyframes cardPop3D {
-            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
-            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
-        }
-        /* Animasi untuk baris timeline */
-        @keyframes fadeSlideUp {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .stream-wrapper {
-            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-            transform-style: preserve-3d;
-            perspective: 800px;
-        }
-
-        /* Card 3D */
-        .dashboard-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
-            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Stagger delay untuk sidebar cards */
-        .sidebar-card:first-child { animation-delay: 0.05s; }
-        .sidebar-card:last-child { animation-delay: 0.1s; }
-
-        /* Announcement form */
-        .form-card { animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards; opacity: 0; animation-delay: 0.15s; }
-
-        /* Quick create buttons (3 kartu horizontal) */
-        .quick-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-        }
-        .quick-card:hover {
-            transform: translateY(-6px) rotateX(2deg) rotateY(2deg);
-            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.25);
-        }
-        .quick-card:nth-child(1) { animation-delay: 0.2s; }
-        .quick-card:nth-child(2) { animation-delay: 0.25s; }
-        .quick-card:nth-child(3) { animation-delay: 0.3s; }
-
-        /* Timeline item */
-        .timeline-item {
-            animation: fadeSlideUp 0.4s ease forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-        }
-        .timeline-item:hover {
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.1);
-        }
-        /* Stagger delay untuk timeline items (maksimal 20) */
-        .timeline-item:nth-child(1) { animation-delay: 0.35s; }
-        .timeline-item:nth-child(2) { animation-delay: 0.4s; }
-        .timeline-item:nth-child(3) { animation-delay: 0.45s; }
-        .timeline-item:nth-child(4) { animation-delay: 0.5s; }
-        .timeline-item:nth-child(5) { animation-delay: 0.55s; }
-        .timeline-item:nth-child(6) { animation-delay: 0.6s; }
-        .timeline-item:nth-child(7) { animation-delay: 0.65s; }
-        .timeline-item:nth-child(8) { animation-delay: 0.7s; }
-        .timeline-item:nth-child(9) { animation-delay: 0.75s; }
-        .timeline-item:nth-child(10) { animation-delay: 0.8s; }
-
-        /* Input field 3D */
-        .input-3d {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-        }
-        .input-3d:focus {
-            transform: scale(1.01) translateZ(3px);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-            border-color: #3b82f6;
-            outline: none;
-        }
-
-        /* Tombol 3D */
-        .btn-3d {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform: translateY(0);
-            display: inline-flex;
-            align-items: center;
-        }
-        .btn-3d:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-    </style>
-
-    <div class="stream-wrapper space-y-6">
+<div class="stream-wrapper space-y-6">
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -119,9 +14,7 @@
         </div>
 
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">
-                {{ session('success') }}
-            </div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
 
         <div class="grid lg:grid-cols-4 gap-6">
@@ -213,7 +106,7 @@
                             </div>
                             <div class="flex gap-2">
                                 <button onclick="showEditForm({{ $announcement->id }}, '{{ addslashes($announcement->title) }}', '{{ addslashes($announcement->description) }}')" class="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded-md hover:bg-amber-200 transition">Edit</button>
-                                <form action="{{ route('instruktur.announcements.destroy', [$class, $announcement]) }}" method="POST" onsubmit="return confirm('Delete?');" class="inline">
+                                <form action="{{ route('instruktur.announcements.destroy', [$class, $announcement]) }}" method="POST" data-lms-confirm="Delete?" class="inline">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition">Delete</button>
                                 </form>
@@ -253,7 +146,7 @@
                     <div class="timeline-item dashboard-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
                         <div class="flex items-start justify-between">
                             <div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white">📝</div><div><p class="font-semibold text-slate-800">{{ $assignment->creator?->name }}</p><p class="text-xs text-slate-400">Due: {{ $assignment->deadline->format('d M Y H:i') }}</p></div></div>
-                            <div class="flex gap-2"><a href="{{ route('instruktur.assignments.edit', [$class, $assignment]) }}" class="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded-md hover:bg-amber-200 transition">Edit</a><a href="{{ route('instruktur.grades.index', [$class, $assignment]) }}" class="px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded-md hover:bg-purple-200 transition">Submissions ({{ $submittedCount }})</a><form action="{{ route('instruktur.assignments.destroy', [$class, $assignment]) }}" method="POST" onsubmit="return confirm('Delete?');" class="inline">@csrf @method('DELETE')<button class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition">Delete</button></form></div>
+                            <div class="flex gap-2"><a href="{{ route('instruktur.assignments.edit', [$class, $assignment]) }}" class="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded-md hover:bg-amber-200 transition">Edit</a><a href="{{ route('instruktur.grades.index', [$class, $assignment]) }}" class="px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded-md hover:bg-purple-200 transition">Submissions ({{ $submittedCount }})</a><form action="{{ route('instruktur.assignments.destroy', [$class, $assignment]) }}" method="POST" data-lms-confirm="Delete?" class="inline">@csrf @method('DELETE')<button class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition">Delete</button></form></div>
                         </div>
                         <h4 class="font-bold text-slate-800 mt-3">{{ $assignment->title }}</h4>
                         <p class="text-slate-600 text-sm mt-1">{{ $assignment->description }}</p>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Instruktur;
 
+use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\Assignment;
@@ -11,6 +12,8 @@ use Illuminate\Http\Request;
 
 class GradeController extends Controller
 {
+    use AuthorizesInstructorClass;
+
     public function index(ClassModel $class, Assignment $assignment)
     {
         $this->authorizeInstructor($class);
@@ -81,10 +84,5 @@ class GradeController extends Controller
         $finalGrade->final_score = ($average * 0.7) + ($finalGrade->attendance_score * 0.3);
         $finalGrade->status = $finalGrade->final_score >= 70 ? 'pass' : 'fail';
         $finalGrade->save();
-    }
-
-    protected function authorizeInstructor(ClassModel $class)
-    {
-        if ($class->instructor_id !== auth()->id()) abort(403);
     }
 }

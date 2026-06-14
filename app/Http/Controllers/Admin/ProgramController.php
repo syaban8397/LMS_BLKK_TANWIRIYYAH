@@ -42,16 +42,7 @@ class ProgramController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'required',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'required|in:active,inactive',
-            'certificate_degree' => 'nullable|in:' . implode(',', Program::certificateDegreeCodes()),
-            'validity_years' => 'nullable|integer|min:1|max:10',
-            'capacity' => 'required|integer|min:1|max:999',
-        ]);
+        $validated = $request->validate(Program::validationRules());
 
         $validated['validity_years'] = $validated['validity_years'] ?? config('certificate.default_validity_years');
 
@@ -86,16 +77,7 @@ class ProgramController extends Controller
         Program $program
     ) {
 
-        $validated = $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'required',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'required|in:active,inactive',
-            'certificate_degree' => 'nullable|in:' . implode(',', Program::certificateDegreeCodes()),
-            'validity_years' => 'nullable|integer|min:1|max:10',
-            'capacity' => 'required|integer|min:1|max:999',
-        ]);
+        $validated = $request->validate(Program::validationRules());
 
         $validated['validity_years'] = $validated['validity_years'] ?? config('certificate.default_validity_years');
 

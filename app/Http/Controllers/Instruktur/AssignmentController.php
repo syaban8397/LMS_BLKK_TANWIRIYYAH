@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Instruktur;
 
+use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\Assignment;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Storage;
 
 class AssignmentController extends Controller
 {
+    use AuthorizesInstructorClass;
+
     public function create(ClassModel $class)
     {
         $this->authorizeInstructor($class);
@@ -126,12 +129,5 @@ class AssignmentController extends Controller
         return redirect()
             ->route('instruktur.classes.stream', $class)
             ->with('success', 'Assignment berhasil dihapus.');
-    }
-
-    protected function authorizeInstructor(ClassModel $class)
-    {
-        if ($class->instructor_id !== auth()->id()) {
-            abort(403, 'Unauthorized');
-        }
     }
 }

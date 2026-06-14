@@ -42,6 +42,20 @@ class Program extends Model
         return array_keys(self::certificateDegreeOptions());
     }
 
+    public static function validationRules(): array
+    {
+        return [
+            'name' => 'required|max:255',
+            'description' => 'required',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'required|in:active,inactive',
+            'certificate_degree' => 'nullable|in:' . implode(',', self::certificateDegreeCodes()),
+            'validity_years' => 'nullable|integer|min:1|max:10',
+            'capacity' => 'required|integer|min:1|max:999',
+        ];
+    }
+
     public function getCertificateDegreeLabelAttribute(): string
     {
         $degrees = self::certificateDegreeOptions();
@@ -72,5 +86,16 @@ class Program extends Model
     public function hasAvailableClassSlot(?int $excludeClassId = null): bool
     {
         return $this->remainingClassSlots($excludeClassId) > 0;
+    }
+
+    public function ensureHasAvailableClassSlot(): void
+    {
+        if ($this->hasAvailableClassSlot()) {
+            return;
+        }
+
+        throw \Illuminate\Validation\ValidationException::withMessages([
+            'program_id' => 'Program "' . $this->name . '" sudah penuh. Maksimal ' . $this->capacity . ' kelas.',
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\ValidatesAnnouncement;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\ClassModel;
@@ -9,6 +10,8 @@ use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
 {
+    use ValidatesAnnouncement;
+
     public function index()
     {
         $classes = ClassModel::with(['program', 'instructor'])
@@ -33,10 +36,7 @@ class AnnouncementController extends Controller
 
     public function store(Request $request, ClassModel $class)
     {
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-        ]);
+        $validated = $this->validatedAnnouncement($request);
 
         Announcement::create([
             'class_id' => $class->id,
@@ -56,10 +56,7 @@ class AnnouncementController extends Controller
             abort(404);
         }
 
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-        ]);
+        $validated = $this->validatedAnnouncement($request);
 
         $announcement->update($validated);
 

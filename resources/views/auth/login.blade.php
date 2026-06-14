@@ -27,22 +27,20 @@
             }
         }
 
-        /* Card Login 3D mewah dengan perspektif tinggi */
+        /* Card Login — profesional, tidak berlebihan */
         .login-card {
             background: #ffffff;
-            border-radius: 2rem;
-            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.15);
-            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-            transform: perspective(1200px) rotateX(0deg) rotateY(0deg);
+            border-radius: 1.25rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 40px -16px rgba(15, 23, 42, 0.12);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
             animation: fadeInUp 0.7s ease-out forwards;
             opacity: 0;
         }
 
-        /* Efek 3D yang sangat terasa saat hover */
         .login-card:hover {
-            transform: perspective(1200px) rotateX(5deg) rotateY(8deg) translateY(-12px);
-            box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 24px 48px -16px rgba(15, 23, 42, 0.18);
         }
 
         /* Input field modern dengan efek 3D saat focus */
@@ -181,8 +179,6 @@
         .register-link:hover {
             color: #1e3a8a;
             text-decoration: underline;
-            transform: translateY(-1px);
-            display: inline-block;
         }
     </style>
 

@@ -24,29 +24,45 @@
         @endif
 
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
-            Centang peserta, pilih status <strong>Lulus</strong> atau <strong>Tidak Lulus</strong>, lalu simpan.
-            Untuk menerbitkan sertifikat, centang peserta yang sudah lulus lalu klik <strong>Terbitkan Terpilih</strong>.
+            Centang peserta → pilih status <strong>Lulus</strong> / <strong>Tidak Lulus</strong> (per baris atau massal) → klik <strong>Confirm</strong> untuk menyimpan.
+            Peserta lulus dapat diterbitkan sertifikat via <strong>Terbitkan Terpilih</strong>.
             Gelar: <strong>{{ $class->program->certificate_degree_label }}</strong>
         </div>
 
         <form id="certificate-form" method="POST" action="{{ route($routePrefix . '.save-statuses', $class) }}">
             @csrf
 
-            <div class="flex flex-wrap items-center gap-3 mb-3">
-                <button type="submit"
-                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">
-                    Simpan Status
-                </button>
-                <button type="submit"
-                        formaction="{{ route($routePrefix . '.bulk-issue', $class) }}"
-                        class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium"
-                        onclick="return confirm('Terbitkan sertifikat untuk peserta terpilih yang sudah lulus?')">
-                    Terbitkan Terpilih
-                </button>
-                <a href="{{ route($routePrefix . '.export', $class) }}"
-                   class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium">
-                    Export Excel
-                </a>
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 mb-3">
+                <div class="flex flex-wrap items-end gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1">Status Massal (peserta tercentang)</label>
+                        <select id="bulk-status" class="rounded-lg border-slate-200 text-sm px-3 py-2 min-w-[160px]">
+                            <option value="">— Pilih Status —</option>
+                            <option value="pass">Lulus</option>
+                            <option value="fail">Tidak Lulus</option>
+                        </select>
+                    </div>
+                    <button type="button" id="apply-bulk-status"
+                            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium">
+                        Terapkan ke Terpilih
+                    </button>
+                    <div class="flex-1"></div>
+                    <button type="submit" id="confirm-save"
+                            class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-sm"
+                            data-lms-confirm="Simpan status kelulusan semua peserta?">
+                        Confirm
+                    </button>
+                    <button type="submit"
+                            formaction="{{ route($routePrefix . '.bulk-issue', $class) }}"
+                            class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium"
+                            data-lms-confirm="Terbitkan sertifikat untuk peserta terpilih yang sudah lulus?">
+                        Terbitkan Terpilih
+                    </button>
+                    <a href="{{ route($routePrefix . '.export', $class) }}"
+                       class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium">
+                        Export Excel
+                    </a>
+                </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
@@ -59,8 +75,7 @@
                             <th class="px-4 py-3 text-left">Peserta</th>
                             <th class="px-4 py-3 text-center">Absensi</th>
                             <th class="px-4 py-3 text-center">Pengumpulan Tugas</th>
-                            <th class="px-4 py-3 text-center">Lulus</th>
-                            <th class="px-4 py-3 text-center">Tidak Lulus</th>
+                            <th class="px-4 py-3 text-center w-44">Status Kelulusan</th>
                             <th class="px-4 py-3 text-center">Sertifikat</th>
                             <th class="px-4 py-3 text-center">Download</th>
                         </tr>
@@ -92,16 +107,13 @@
                                     <span class="text-slate-400">/ {{ $row['total_assignments'] }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-center">
-                                    <input type="checkbox"
-                                           class="status-pass rounded border-green-300 text-green-600"
-                                           data-participant="{{ $pid }}"
-                                           {{ $status === 'pass' ? 'checked' : '' }}>
-                                </td>
-                                <td class="px-4 py-3 text-center">
-                                    <input type="checkbox"
-                                           class="status-fail rounded border-red-300 text-red-600"
-                                           data-participant="{{ $pid }}"
-                                           {{ $status === 'fail' ? 'checked' : '' }}>
+                                    <select name="status[{{ $pid }}]"
+                                            class="status-select rounded-lg border-slate-200 text-sm px-2 py-1.5 w-full max-w-[140px] mx-auto"
+                                            data-participant="{{ $pid }}">
+                                        <option value="" {{ empty($status) ? 'selected' : '' }}>— Belum —</option>
+                                        <option value="pass" {{ $status === 'pass' ? 'selected' : '' }}>Lulus</option>
+                                        <option value="fail" {{ $status === 'fail' ? 'selected' : '' }}>Tidak Lulus</option>
+                                    </select>
                                 </td>
                                 <td class="px-4 py-3 text-center text-xs">
                                     @if($certificate?->pdf_file)
@@ -110,7 +122,6 @@
                                     @else
                                         <span class="text-slate-400">-</span>
                                     @endif
-                                    <input type="hidden" name="status[{{ $pid }}]" id="status-input-{{ $pid }}" value="{{ $status ?? '' }}">
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     @if($certificate?->pdf_file)
@@ -122,7 +133,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="8" class="py-10 text-center text-slate-400">Belum ada peserta di kelas ini.</td></tr>
+                            <tr><td colspan="7" class="py-10 text-center text-slate-400">Belum ada peserta di kelas ini.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -134,39 +145,8 @@
         document.addEventListener('DOMContentLoaded', function () {
             const selectAll = document.getElementById('select-all');
             const rowSelects = document.querySelectorAll('.row-select');
-
-            function syncHiddenInput(participantId) {
-                const passCb = document.querySelector('.status-pass[data-participant="' + participantId + '"]');
-                const failCb = document.querySelector('.status-fail[data-participant="' + participantId + '"]');
-                const hidden = document.getElementById('status-input-' + participantId);
-                if (!hidden) return;
-
-                if (passCb?.checked) hidden.value = 'pass';
-                else if (failCb?.checked) hidden.value = 'fail';
-                else hidden.value = '';
-            }
-
-            document.querySelectorAll('.status-pass').forEach(function (cb) {
-                cb.addEventListener('change', function () {
-                    const id = this.dataset.participant;
-                    if (this.checked) {
-                        const failCb = document.querySelector('.status-fail[data-participant="' + id + '"]');
-                        if (failCb) failCb.checked = false;
-                    }
-                    syncHiddenInput(id);
-                });
-            });
-
-            document.querySelectorAll('.status-fail').forEach(function (cb) {
-                cb.addEventListener('change', function () {
-                    const id = this.dataset.participant;
-                    if (this.checked) {
-                        const passCb = document.querySelector('.status-pass[data-participant="' + id + '"]');
-                        if (passCb) passCb.checked = false;
-                    }
-                    syncHiddenInput(id);
-                });
-            });
+            const bulkStatus = document.getElementById('bulk-status');
+            const applyBulkBtn = document.getElementById('apply-bulk-status');
 
             if (selectAll) {
                 selectAll.addEventListener('change', function () {
@@ -185,10 +165,31 @@
                 });
             });
 
-            document.querySelectorAll('[id^="status-input-"]').forEach(function (input) {
-                const id = input.id.replace('status-input-', '');
-                syncHiddenInput(id);
-            });
+            if (applyBulkBtn && bulkStatus) {
+                applyBulkBtn.addEventListener('click', function () {
+                    const value = bulkStatus.value;
+
+                    if (!value) {
+                        window.LmsDialog.alert('Pilih status Lulus atau Tidak Lulus terlebih dahulu.');
+                        return;
+                    }
+
+                    const selected = Array.from(rowSelects).filter(function (cb) { return cb.checked; });
+
+                    if (selected.length === 0) {
+                        window.LmsDialog.alert('Centang minimal satu peserta.');
+                        return;
+                    }
+
+                    selected.forEach(function (cb) {
+                        const row = cb.closest('tr');
+                        const statusSelect = row?.querySelector('.status-select');
+                        if (statusSelect) {
+                            statusSelect.value = value;
+                        }
+                    });
+                });
+            }
         });
     </script>
 </x-app-layout>

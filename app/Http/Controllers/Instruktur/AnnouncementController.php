@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Instruktur;
 
+use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
+use App\Http\Controllers\Concerns\ValidatesAnnouncement;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\Announcement;
@@ -9,14 +11,14 @@ use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
 {
+    use AuthorizesInstructorClass;
+    use ValidatesAnnouncement;
+
     public function store(Request $request, ClassModel $class)
     {
         $this->authorizeInstructor($class);
 
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-        ]);
+        $validated = $this->validatedAnnouncement($request);
 
         Announcement::create([
             'class_id' => $class->id,
@@ -53,10 +55,7 @@ class AnnouncementController extends Controller
             abort(404);
         }
 
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-        ]);
+        $validated = $this->validatedAnnouncement($request);
 
         $announcement->update($validated);
 
@@ -78,12 +77,5 @@ class AnnouncementController extends Controller
         return redirect()
             ->route('instruktur.classes.stream', $class)
             ->with('success', 'Pengumuman berhasil dihapus.');
-    }
-
-    protected function authorizeInstructor(ClassModel $class)
-    {
-        if ($class->instructor_id !== auth()->id()) {
-            abort(403, 'Unauthorized');
-        }
     }
 }

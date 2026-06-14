@@ -131,20 +131,4 @@
             </div>
         </div>
     </div>
-
-    <style>
-        .dashboard-card {
-            transition: all 0.2s ease;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
-        }
-        .btn-action {
-            transition: all 0.2s ease;
-        }
-        .btn-action:active {
-            transform: translateY(1px);
-        }
-    </style>
 </x-app-layout>

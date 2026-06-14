@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Instruktur;
 
+use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\ClassParticipant;
@@ -10,6 +11,8 @@ use Illuminate\Http\Request;
 
 class ClassController extends Controller
 {
+    use AuthorizesInstructorClass;
+
     public function index()
     {
         $classes = ClassModel::where('instructor_id', auth()->id())
@@ -140,12 +143,5 @@ class ClassController extends Controller
         return redirect()
             ->route('instruktur.classes.add-student', $class)
             ->with('success', 'Status siswa berhasil diperbarui.');
-    }
-
-    protected function authorizeInstructor(ClassModel $class)
-    {
-        if ($class->instructor_id !== auth()->id()) {
-            abort(403, 'Unauthorized');
-        }
     }
 }

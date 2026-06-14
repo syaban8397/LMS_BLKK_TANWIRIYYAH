@@ -39,18 +39,34 @@ class CertificateService
             ->get()
             ->keyBy('participant_id');
 
-        return $students->map(function ($enrollment) use ($class, $totalMeetings, $totalAssignments, $finalGrades, $certificates) {
+        $attendanceCounts = Attendance::where('class_id', $class->id)
+            ->whereIn('status', ['present', 'permission', 'sick'])
+            ->selectRaw('participant_id, COUNT(*) as aggregate')
+            ->groupBy('participant_id')
+            ->pluck('aggregate', 'participant_id');
+
+        $assignmentIds = Assignment::where('class_id', $class->id)->pluck('id');
+
+        $submissionCounts = $assignmentIds->isEmpty()
+            ? collect()
+            : Submission::whereIn('assignment_id', $assignmentIds)
+                ->whereIn('status', ['submitted', 'late', 'graded'])
+                ->selectRaw('participant_id, COUNT(*) as aggregate')
+                ->groupBy('participant_id')
+                ->pluck('aggregate', 'participant_id');
+
+        return $students->map(function ($enrollment) use (
+            $totalMeetings,
+            $totalAssignments,
+            $finalGrades,
+            $certificates,
+            $attendanceCounts,
+            $submissionCounts
+        ) {
             $participantId = $enrollment->participant_id;
 
-            $attendanceCount = Attendance::where('class_id', $class->id)
-                ->where('participant_id', $participantId)
-                ->whereIn('status', ['present', 'permission', 'sick'])
-                ->count();
-
-            $submissionCount = Submission::where('participant_id', $participantId)
-                ->whereHas('assignment', fn ($q) => $q->where('class_id', $class->id))
-                ->whereIn('status', ['submitted', 'late', 'graded'])
-                ->count();
+            $attendanceCount = (int) ($attendanceCounts[$participantId] ?? 0);
+            $submissionCount = (int) ($submissionCounts[$participantId] ?? 0);
 
             $attendancePercentage = $totalMeetings > 0
                 ? round(($attendanceCount / $totalMeetings) * 100, 2)
@@ -72,21 +88,39 @@ class CertificateService
 
     public function updateStatus(ClassModel $class, int $participantId, string $status): FinalGrade
     {
-        $stats = collect($this->getClassStats($class))
-            ->first(fn ($row) => $row['participant']->id === $participantId);
+        $attendancePercentage = $this->attendancePercentageForParticipant($class, $participantId);
 
         $finalGrade = FinalGrade::firstOrNew([
             'class_id' => $class->id,
             'participant_id' => $participantId,
         ]);
 
-        $finalGrade->attendance_score = $stats['attendance_percentage'] ?? 0;
+        $finalGrade->attendance_score = $attendancePercentage;
         $finalGrade->assignment_score = $finalGrade->assignment_score ?? 0;
         $finalGrade->final_score = $finalGrade->final_score ?? $finalGrade->attendance_score;
         $finalGrade->status = $status;
         $finalGrade->save();
 
         return $finalGrade;
+    }
+
+    protected function attendancePercentageForParticipant(ClassModel $class, int $participantId): float
+    {
+        $totalMeetings = Attendance::where('class_id', $class->id)
+            ->select('meeting_number')
+            ->distinct()
+            ->count();
+
+        if ($totalMeetings === 0) {
+            return 0;
+        }
+
+        $attendanceCount = Attendance::where('class_id', $class->id)
+            ->where('participant_id', $participantId)
+            ->whereIn('status', ['present', 'permission', 'sick'])
+            ->count();
+
+        return round(($attendanceCount / $totalMeetings) * 100, 2);
     }
 
     public function bulkUpdateStatus(ClassModel $class, array $statuses): int
@@ -181,7 +215,12 @@ class CertificateService
     protected function storeQrCode(string $number, string $url): string
     {
         $path = 'certificates/qr/' . $number . '.svg';
-        $svg = QrCode::format('svg')->size(200)->margin(1)->generate($url);
+        $svg = QrCode::format('svg')
+            ->size(200)
+            ->margin(1)
+            ->color(0, 64, 113)
+            ->backgroundColor(255, 255, 255)
+            ->generate($url);
         Storage::disk('public')->put($path, $svg);
 
         return $path;
@@ -209,13 +248,14 @@ class CertificateService
     protected function certificateLogos(): array
     {
         return [
+            'sidebar_bg' => $this->imageBase64('sidebar-bg.png'),
             'kemnaker' => $this->imageBase64('logo-kemnaker.png'),
+            'kemnaker_mark' => $this->imageBase64('logo-kemnaker-mark.png'),
             'ymt' => $this->imageBase64('logo-ymt-creatorbase.png'),
             'vokasi' => $this->imageBase64('logo-pelatihan-vokasi.png'),
-            'indonesia_skills' => $this->imageBase64('logo-indonesia-skills.png'),
+            'skills_swoosh' => $this->imageBase64('logo-skills-swoosh.png'),
             'siapkerja' => $this->imageBase64('logo-siapkerja.png'),
-            'watermark' => $this->imageBase64('logo-blkk.png'),
-            'materials_watermark' => $this->imageBase64('modules-watermark.png'),
+            'page2_watermark' => $this->imageBase64('page2-watermark.png'),
         ];
     }
 
@@ -244,6 +284,7 @@ class CertificateService
             'materials' => $materials,
             'degree' => $degree,
             'validityYears' => $validityYears,
+            'trainingYear' => $class->end_date->format('Y'),
             'qrDataUri' => $this->qrDataUri($qrPath),
             'logos' => $logos,
             'organization' => config('certificate.organization', 'YMT Creator Base BLKK Tanwiriyyah - Kementerian Ketenagakerjaan RI'),
@@ -251,7 +292,10 @@ class CertificateService
             'directorName' => config('certificate.director_name', 'Zaid Ahmad, S.Kom.'),
             'directorTitleLine1' => config('certificate.director_title_line1', 'Direktur YMT Creator Base'),
             'directorTitleLine2' => config('certificate.director_title_line2', 'BLKK Tanwiriyyah'),
-        ])->setPaper('a4', 'landscape');
+        ])
+            ->setPaper('a4', 'landscape')
+            ->setOption('dpi', 150)
+            ->setOption('isHtml5ParserEnabled', true);
 
         $path = 'certificates/pdf/' . $certificate->certificate_number . '.pdf';
         Storage::disk('public')->put($path, $pdf->output());

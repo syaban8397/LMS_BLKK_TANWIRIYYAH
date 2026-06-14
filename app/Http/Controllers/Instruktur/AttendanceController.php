@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers\Instruktur;
 
+use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\Attendance;
 use App\Models\ClassParticipant;
+use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
+    use AuthorizesInstructorClass;
+
+    public function __construct(protected ReportService $reportService) {}
+
     // Daftar sesi absensi (per meeting)
     public function index(ClassModel $class)
     {
@@ -242,48 +248,9 @@ class AttendanceController extends Controller
     public function report(ClassModel $class)
     {
         $this->authorizeInstructor($class);
-        
-        $students = ClassParticipant::where('class_id', $class->id)
-            ->where('status', 'active')
-            ->with('participant')
-            ->get();
-        
-        $meetings = Attendance::where('class_id', $class->id)
-            ->select('meeting_number', 'attendance_date')
-            ->distinct()
-            ->orderBy('meeting_number')
-            ->get();
-        
-        $attendanceMatrix = [];
-        foreach ($students as $student) {
-            $attendanceMatrix[$student->participant_id] = [
-                'name' => $student->participant->name,
-                'attendances' => [],
-                'present_count' => 0,
-                'permission_count' => 0,
-                'sick_count' => 0,
-                'absent_count' => 0,
-            ];
-        }
-        
-        $allAttendances = Attendance::where('class_id', $class->id)
-            ->with('participant')
-            ->get();
-        
-        foreach ($allAttendances as $attendance) {
-            if (isset($attendanceMatrix[$attendance->participant_id])) {
-                $attendanceMatrix[$attendance->participant_id]['attendances'][$attendance->meeting_number] = $attendance->status;
-                $attendanceMatrix[$attendance->participant_id][$attendance->status . '_count']++;
-            }
-        }
-        
-        return view('instruktur.attendances.report', compact('class', 'students', 'meetings', 'attendanceMatrix'));
-    }
-    
-    protected function authorizeInstructor(ClassModel $class)
-    {
-        if ($class->instructor_id !== auth()->id()) {
-            abort(403, 'Unauthorized');
-        }
+
+        $report = $this->reportService->buildAttendanceMatrix($class);
+
+        return view('instruktur.attendances.report', array_merge(compact('class'), $report));
     }
 }

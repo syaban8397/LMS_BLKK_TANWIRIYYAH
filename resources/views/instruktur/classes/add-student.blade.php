@@ -1,90 +1,5 @@
 <x-app-layout>
-    <style>
-        /* Animasi 3D untuk container utama */
-        @keyframes fadeInUp3D {
-            0% { opacity: 0; transform: translateY(30px) rotateX(10deg); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0); }
-        }
-        /* Animasi untuk setiap card */
-        @keyframes cardPop3D {
-            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
-            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
-        }
-        /* Animasi untuk baris tabel */
-        @keyframes rowFadeIn {
-            0% { opacity: 0; transform: translateX(-8px); }
-            100% { opacity: 1; transform: translateX(0); }
-        }
-
-        .manage-wrapper {
-            animation: fadeInUp3D 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-            transform-style: preserve-3d;
-            perspective: 800px;
-        }
-
-        /* Card 3D */
-        .dashboard-card {
-            animation: cardPop3D 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform-style: preserve-3d;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-4px) rotateX(1deg) rotateY(1deg);
-            box-shadow: 0 15px 25px -10px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Stagger delay untuk dua card */
-        .dashboard-card:first-of-type { animation-delay: 0.05s; }
-        .dashboard-card:last-of-type { animation-delay: 0.15s; }
-
-        /* Baris tabel */
-        .student-row {
-            animation: rowFadeIn 0.3s ease forwards;
-            opacity: 0;
-            transition: all 0.2s ease;
-        }
-        .student-row:hover {
-            background-color: #f8fafc;
-            transform: scale(1.01);
-        }
-        /* Stagger delay untuk baris (maksimal 10) */
-        .student-row:nth-child(1) { animation-delay: 0.1s; }
-        .student-row:nth-child(2) { animation-delay: 0.15s; }
-        .student-row:nth-child(3) { animation-delay: 0.2s; }
-        .student-row:nth-child(4) { animation-delay: 0.25s; }
-        .student-row:nth-child(5) { animation-delay: 0.3s; }
-        .student-row:nth-child(6) { animation-delay: 0.35s; }
-        .student-row:nth-child(7) { animation-delay: 0.4s; }
-        .student-row:nth-child(8) { animation-delay: 0.45s; }
-        .student-row:nth-child(9) { animation-delay: 0.5s; }
-        .student-row:nth-child(10) { animation-delay: 0.55s; }
-
-        /* Tombol 3D */
-        .btn-3d {
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-            transform: translateY(0);
-            display: inline-flex;
-            align-items: center;
-        }
-        .btn-3d:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15);
-        }
-        .btn-3d:active {
-            transform: translateY(1px);
-        }
-
-        /* Checkbox styling */
-        input[type="checkbox"] {
-            transition: all 0.2s ease;
-        }
-        input[type="checkbox"]:hover {
-            transform: scale(1.05);
-        }
-    </style>
-
-    <div class="manage-wrapper space-y-6">
+<div class="manage-wrapper space-y-6">
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
@@ -100,14 +15,10 @@
 
         {{-- Flash Messages --}}
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">
-                {{ session('success') }}
-            </div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">
-                {{ session('error') }}
-            </div>
+            <x-lms-flash type="error">{{ session('error') }}</x-lms-flash>
         @endif
 
         {{-- Enrolled Students Table --}}
@@ -161,7 +72,7 @@
                                     </form>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <form action="{{ route('instruktur.classes.remove-student', [$class, $participant]) }}" method="POST" onsubmit="return confirm('Remove this student from class?')" style="display:inline;">
+                                    <form action="{{ route('instruktur.classes.remove-student', [$class, $participant]) }}" method="POST" data-lms-confirm="Remove this student from class?" style="display:inline;">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="btn-3d px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition shadow-sm">Remove</button>
                                     </form>

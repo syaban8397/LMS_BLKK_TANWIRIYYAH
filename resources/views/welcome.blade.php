@@ -13,10 +13,7 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e6f0fa 100%);
-            overflow-x: hidden;
-        }
+        body { overflow-x: hidden; background: #ffffff; }
 
         /* Animasi 3D utama */
         @keyframes fadeInUp3D {
@@ -167,14 +164,14 @@
                     <img src="{{ asset('storage/images/Logo.png') }}" alt="YMT Creator Base" class="h-14 w-auto drop-shadow-lg">
                 </div>
                 <div class="hidden lg:flex items-center gap-8">
-                    <a href="#tentang" class="text-slate-700 hover:text-blue-700 font-medium transition transform hover:-translate-y-0.5">Tentang</a>
-                    <a href="#program" class="text-slate-700 hover:text-blue-700 font-medium transition transform hover:-translate-y-0.5">Program</a>
-                    <a href="#fasilitas" class="text-slate-700 hover:text-blue-700 font-medium transition transform hover:-translate-y-0.5">Fasilitas</a>
-                    <a href="#kontak" class="text-slate-700 hover:text-blue-700 font-medium transition transform hover:-translate-y-0.5">Kontak</a>
+                    <a href="#tentang" class="text-slate-700 hover:text-blue-700 font-medium transition">Tentang</a>
+                    <a href="#program" class="text-slate-700 hover:text-blue-700 font-medium transition">Program</a>
+                    <a href="#fasilitas" class="text-slate-700 hover:text-blue-700 font-medium transition">Fasilitas</a>
+                    <a href="#kontak" class="text-slate-700 hover:text-blue-700 font-medium transition">Kontak</a>
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
                     <a href="{{ route('login') }}" class="px-5 py-2.5 rounded-xl text-blue-700 font-semibold hover:bg-blue-50 transition btn-outline">Login</a>
-                    <a href="{{ route('register') }}" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition btn-primary">Register</a>
+                    <a href="{{ route('register') }}" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition btn-primary btn-3d">Register</a>
                 </div>
             </div>
         </div>

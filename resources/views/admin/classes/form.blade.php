@@ -127,19 +127,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    /* Efek 3D pada input (sama dengan gaya sebelumnya) */
-    .input-3d {
-        transition: all 0.2s ease;
-    }
-    .input-3d:focus {
-        transform: scale(1.01);
-        box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
-        border-color: #3b82f6;
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const titleInput = document.getElementById('class-title');

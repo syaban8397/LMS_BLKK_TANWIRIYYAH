@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\ClassController;
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\CertificateController as AdminCertificateController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Instruktur\ClassController as InstruktorClassController;
 use App\Http\Controllers\Instruktur\ClassStreamController as InstruktorClassStreamController;
 use App\Http\Controllers\Instruktur\MaterialController as InstruktorMaterialController;
@@ -85,6 +86,23 @@ Route::middleware(['auth', 'role.check:admin'])
         Route::post('/classes/{class}/certificates/bulk-issue', [AdminCertificateController::class, 'bulkIssue'])->name('certificates.bulk-issue');
         Route::get('/classes/{class}/certificates/export', [AdminCertificateController::class, 'exportExcel'])->name('certificates.export');
         Route::get('/certificates/{certificate}/download', [AdminCertificateController::class, 'download'])->name('certificates.download');
+
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/participants', [ReportController::class, 'participants'])->name('reports.participants');
+        Route::get('/reports/participants/export', [ReportController::class, 'exportParticipants'])->name('reports.participants.export');
+        Route::get('/reports/instructors', [ReportController::class, 'instructors'])->name('reports.instructors');
+        Route::get('/reports/instructors/export', [ReportController::class, 'exportInstructors'])->name('reports.instructors.export');
+        Route::get('/reports/classes', [ReportController::class, 'classes'])->name('reports.classes');
+        Route::get('/reports/classes/export/all', [ReportController::class, 'exportClasses'])->name('reports.classes.export');
+        Route::get('/reports/classes/{class}', [ReportController::class, 'showClass'])->name('reports.classes.show');
+        Route::get('/reports/classes/{class}/export', [ReportController::class, 'exportClass'])->name('reports.classes.export-class');
+        Route::get('/reports/attendance', [ReportController::class, 'attendance'])->name('reports.attendance');
+        Route::get('/reports/attendance/{class}', [ReportController::class, 'showAttendance'])->name('reports.attendance.show');
+        Route::get('/reports/attendance/{class}/export', [ReportController::class, 'exportAttendance'])->name('reports.attendance.export');
+        Route::get('/reports/grades', [ReportController::class, 'grades'])->name('reports.grades');
+        Route::get('/reports/grades/export', [ReportController::class, 'exportGrades'])->name('reports.grades.export');
+        Route::get('/reports/certificates', [ReportController::class, 'certificates'])->name('reports.certificates');
+        Route::get('/reports/certificates/export', [ReportController::class, 'exportCertificates'])->name('reports.certificates.export');
     });
 
 /*
