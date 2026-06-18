@@ -27,7 +27,23 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('peserta.dashboard', absolute: false));
+    }
+
+    public function test_pending_users_cannot_login(): void
+    {
+        $user = User::factory()->create([
+            'is_active' => false,
+            'approval_status' => 'pending',
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors('email');
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
@@ -50,5 +66,20 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
         $response->assertRedirect('/');
+    }
+
+    public function test_users_can_login_with_remember_me(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+            'remember' => '1',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('peserta.dashboard', absolute: false));
+        $this->assertNotNull($user->fresh()->remember_token);
     }
 }

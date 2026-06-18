@@ -77,6 +77,11 @@ window.LmsLoader = {
     },
 
     _showUi(persist = true) {
+        const main = document.querySelector('.page-content-3d');
+        if (main) {
+            main.classList.add('lms-page-exiting');
+        }
+
         if (isLoaderVisible()) {
             return;
         }
@@ -111,6 +116,11 @@ window.LmsLoader = {
         this._finishing = true;
 
         document.documentElement.classList.remove('lms-nav-loading');
+
+        const main = document.querySelector('.page-content-3d');
+        if (main) {
+            main.classList.remove('lms-page-exiting');
+        }
 
         if (this._el) {
             this._el.classList.remove('is-active');

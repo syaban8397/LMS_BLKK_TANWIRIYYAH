@@ -2,43 +2,42 @@
 
 namespace App\Http\Controllers\Peserta;
 
+use App\Http\Controllers\Concerns\AuthorizesActiveEnrollment;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\Assignment;
-use App\Models\ClassParticipant;
 
 class AssignmentController extends Controller
 {
-    // Daftar semua assignment di kelas ini
+    use AuthorizesActiveEnrollment;
+
     public function index(ClassModel $class)
     {
-        $this->authorizeStudent($class);
-        $assignments = $class->assignments()->with('submissions')->latest()->paginate(10);
+        $this->authorizeActiveStudent($class);
+        $assignments = $class->assignments()
+            ->where('is_active', true)
+            ->with([
+                'submissions' => fn ($query) => $query->where('participant_id', auth()->id()),
+            ])
+            ->latest()
+            ->paginate(10);
+
         return view('peserta.assignments.index', compact('class', 'assignments'));
     }
 
-    // Detail assignment + form submit
     public function show(ClassModel $class, Assignment $assignment)
     {
-        $this->authorizeStudent($class);
+        $this->authorizeActiveStudent($class);
 
-        if ($assignment->class_id !== $class->id) {
+        if ($assignment->class_id !== $class->id || !$assignment->is_active) {
             abort(404);
         }
 
-        $assignment->load('creator', 'submissions');
+        $assignment->load([
+            'creator',
+            'submissions' => fn ($query) => $query->where('participant_id', auth()->id()),
+        ]);
 
         return view('peserta.assignments.show', compact('class', 'assignment'));
-    }
-
-    protected function authorizeStudent(ClassModel $class)
-    {
-        $isEnrolled = ClassParticipant::where('class_id', $class->id)
-            ->where('participant_id', auth()->id())
-            ->exists();
-
-        if (!$isEnrolled) {
-            abort(403, 'You are not enrolled in this class');
-        }
     }
 }

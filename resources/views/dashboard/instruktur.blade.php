@@ -85,16 +85,16 @@
                 <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">{{ __('lms.dashboard.instructor_tools') }}</span>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
+                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn">
                     🏫 {{ __('lms.dashboard.my_classes') }}
                 </a>
-                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
+                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn">
                     📖 {{ __('lms.dashboard.materials') }}
                 </a>
-                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
+                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn">
                     📝 {{ __('lms.dashboard.assignments') }}
                 </a>
-                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
+                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn">
                     📅 {{ __('lms.dashboard.attendance_sessions') }}
                 </a>
             </div>
@@ -115,7 +115,7 @@
                         <p class="font-medium text-slate-800">{{ $class->title }}</p>
                         <p class="text-xs text-slate-500">{{ $class->code }} • {{ $class->participants->count() }}/{{ $class->quota }} {{ __('lms.dashboard.students') }}</p>
                     </div>
-                    <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-action px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-md text-xs transition shadow-sm hover:shadow">{{ __('lms.dashboard.view_class') }}</a>
+                    <a href="{{ route('instruktur.classes.stream', $class) }}" class="lms-action-btn lms-action-btn--view">{{ __('lms.dashboard.view_class') }}</a>
                 </div>
                 @endforeach
             </div>

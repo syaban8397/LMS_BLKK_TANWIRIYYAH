@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\SecureStorage;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -18,7 +19,6 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
      protected $fillable = [
-        'role',
         'name',
         'email',
         'password',
@@ -80,6 +80,20 @@ class User extends Authenticatable
     public function certificates()
     {
         return $this->hasMany(Certificate::class, 'participant_id');
+    }
+
+    public function hasProfilePhoto(): bool
+    {
+        return SecureStorage::exists($this->photo);
+    }
+
+    public function profilePhotoUrl(): string
+    {
+        if ($this->hasProfilePhoto()) {
+            return route('secure.photos.show', $this);
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&size=120&background=3B82F6&color=fff';
     }
 
 }

@@ -91,7 +91,7 @@
         </div>
         @endif
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
             <div class="progress-card p-5">
                 <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.dashboard.completed_classes') }}</p>
                 <h3 class="text-3xl font-bold text-green-600 mt-1 counter" data-value="{{ $completedClasses ?? 0 }}">0</h3>
@@ -103,8 +103,13 @@
                 <div class="mt-2 text-xs text-slate-500">{{ __('lms.dashboard.pending_assignments_hint') }}</div>
             </div>
             <div class="progress-card p-5">
+                <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.material.progress_title') }}</p>
+                <h3 class="text-3xl font-bold text-indigo-600 mt-1"><span class="counter" data-value="{{ $materialProgressPercentage ?? 0 }}">0</span>%</h3>
+                <div class="mt-2 text-xs text-slate-500">{{ __('lms.material.progress_summary', ['completed' => $completedMaterials ?? 0, 'total' => $materials ?? 0]) }}</div>
+            </div>
+            <div class="progress-card p-5">
                 <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.dashboard.attendance_rate') }}</p>
-                <h3 class="text-3xl font-bold text-blue-600 mt-1 counter" data-value="{{ $attendancePercentage ?? 0 }}">0</h3>
+                <h3 class="text-3xl font-bold text-blue-600 mt-1"><span class="counter" data-value="{{ $attendancePercentage ?? 0 }}">0</span>%</h3>
                 <div class="mt-2 text-xs text-slate-500">{{ __('lms.dashboard.attendance_rate_hint') }}</div>
             </div>
         </div>
@@ -117,17 +122,32 @@
                 <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">{{ __('lms.dashboard.participant_menu') }}</span>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <a href="{{ route('peserta.classes.index') }}" class="quick-btn bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
-                    🏫 {{ __('lms.dashboard.my_classes') }}
+                <a href="{{ route('peserta.classes.index') }}" class="lms-quick-link">
+                    <span class="lms-quick-link__icon">🏫</span>
+                    <span>{{ __('lms.dashboard.my_classes') }}</span>
                 </a>
-                <a href="{{ route('peserta.classes.index') }}" class="quick-btn bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
-                    📖 {{ __('lms.dashboard.materials') }}
-                </a>
-                <a href="{{ route('peserta.classes.index') }}" class="quick-btn bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
-                    📝 {{ __('lms.dashboard.assignments') }}
-                </a>
-                <a href="{{ route('peserta.certificates.index') }}" class="quick-btn bg-orange-600 hover:bg-orange-700 text-white p-3 rounded-lg text-sm font-medium text-center transition shadow-md hover:shadow-lg">
-                    📜 {{ __('lms.nav.certificates') }}
+                @if($primaryClass)
+                    <a href="{{ route('peserta.materials.index', $primaryClass) }}" class="lms-quick-link">
+                        <span class="lms-quick-link__icon">📖</span>
+                        <span>{{ __('lms.dashboard.materials') }}</span>
+                    </a>
+                    <a href="{{ route('peserta.assignments.index', $primaryClass) }}" class="lms-quick-link">
+                        <span class="lms-quick-link__icon">📝</span>
+                        <span>{{ __('lms.dashboard.assignments') }}</span>
+                    </a>
+                @else
+                    <a href="{{ route('peserta.classes.index') }}" class="lms-quick-link lms-quick-link--muted" title="{{ __('lms.dashboard.enroll_first_hint') }}">
+                        <span class="lms-quick-link__icon">📖</span>
+                        <span>{{ __('lms.dashboard.materials') }}</span>
+                    </a>
+                    <a href="{{ route('peserta.classes.index') }}" class="lms-quick-link lms-quick-link--muted" title="{{ __('lms.dashboard.enroll_first_hint') }}">
+                        <span class="lms-quick-link__icon">📝</span>
+                        <span>{{ __('lms.dashboard.assignments') }}</span>
+                    </a>
+                @endif
+                <a href="{{ route('peserta.certificates.index') }}" class="lms-quick-link">
+                    <span class="lms-quick-link__icon">📜</span>
+                    <span>{{ __('lms.nav.certificates') }}</span>
                 </a>
             </div>
         </div>

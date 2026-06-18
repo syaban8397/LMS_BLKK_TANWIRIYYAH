@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,6 +30,7 @@ class RegistrationTest extends TestCase
             'address' => 'Jl. Test No. 1',
             'password' => 'password',
             'password_confirmation' => 'password',
+            'terms_accepted' => '1',
         ]);
 
         $this->assertGuest();
@@ -38,5 +40,18 @@ class RegistrationTest extends TestCase
             'nik' => '3201010101010001',
             'approval_status' => 'pending',
         ]);
+    }
+
+    public function test_registration_requires_terms_acceptance(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $response->assertSessionHasErrors('terms_accepted');
+        $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
     }
 }

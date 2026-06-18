@@ -3,71 +3,132 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Support\PasswordResetToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_reset_password_link_screen_can_be_rendered(): void
+    public function test_forgot_password_screen_can_be_rendered(): void
     {
-        $response = $this->get('/forgot-password');
+        $response = $this->get(route('password.request'));
 
         $response->assertStatus(200);
     }
 
-    public function test_reset_password_link_can_be_requested(): void
+    public function test_user_can_verify_with_matching_email_and_nik(): void
     {
-        Notification::fake();
+        $user = User::factory()->create([
+            'nik' => '3201010101010001',
+            'is_active' => true,
+            'approval_status' => 'approved',
+        ]);
 
-        $user = User::factory()->create();
+        $response = $this->post(route('password.verify'), [
+            'email' => $user->email,
+            'nik' => $user->nik,
+        ]);
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $response->assertSessionHas('popup_success');
 
-        Notification::assertSentTo($user, ResetPassword::class);
+        $token = session('reset_token');
+        $this->assertIsString($token);
+        $this->assertSame($user->id, PasswordResetToken::userIdFor($token));
     }
 
-    public function test_reset_password_screen_can_be_rendered(): void
+    public function test_verify_fails_when_email_and_nik_do_not_match(): void
     {
-        Notification::fake();
+        User::factory()->create([
+            'email' => 'a@example.com',
+            'nik' => '1111111111111111',
+            'is_active' => true,
+            'approval_status' => 'approved',
+        ]);
 
-        $user = User::factory()->create();
+        User::factory()->create([
+            'email' => 'b@example.com',
+            'nik' => '2222222222222222',
+            'is_active' => true,
+            'approval_status' => 'approved',
+        ]);
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $response = $this->post(route('password.verify'), [
+            'email' => 'a@example.com',
+            'nik' => '2222222222222222',
+        ]);
 
-        Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
-            $response = $this->get('/reset-password/'.$notification->token);
-
-            $response->assertStatus(200);
-
-            return true;
-        });
+        $response->assertSessionHas('popup_error');
+        $response->assertSessionHas('popup_error', __('lms.auth_popup.verify_failed_generic'));
+        $this->assertNull(session('reset_token'));
     }
 
-    public function test_password_can_be_reset_with_valid_token(): void
+    public function test_verify_uses_same_generic_error_for_unknown_email(): void
     {
-        Notification::fake();
+        $response = $this->post(route('password.verify'), [
+            'email' => 'unknown@example.com',
+            'nik' => '3201010101019999',
+        ]);
 
-        $user = User::factory()->create();
+        $response->assertSessionHas('popup_error', __('lms.auth_popup.verify_failed_generic'));
+    }
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+    public function test_reset_password_screen_requires_verified_session(): void
+    {
+        $response = $this->get(route('password.form'));
 
-        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
-            $response = $this->post('/reset-password', [
-                'token' => $notification->token,
-                'email' => $user->email,
-                'password' => 'password',
-                'password_confirmation' => 'password',
-            ]);
+        $response->assertRedirect(route('password.request'));
+    }
 
-            $response
-                ->assertSessionHasNoErrors()
-                ->assertRedirect(route('login'));
+    public function test_reset_password_screen_rejects_expired_token(): void
+    {
+        $user = User::factory()->create([
+            'nik' => '3201010101010003',
+            'is_active' => true,
+            'approval_status' => 'approved',
+        ]);
 
-            return true;
-        });
+        $token = PasswordResetToken::create($user->id);
+        Cache::forget('password_reset:' . $token);
+
+        $response = $this->withSession(['reset_token' => $token])
+            ->get(route('password.form'));
+
+        $response->assertRedirect(route('password.request'));
+    }
+
+    public function test_password_can_be_reset_after_verification(): void
+    {
+        $user = User::factory()->create([
+            'nik' => '3201010101010002',
+            'is_active' => true,
+            'approval_status' => 'approved',
+        ]);
+
+        $this->post(route('password.verify'), [
+            'email' => $user->email,
+            'nik' => $user->nik,
+        ]);
+
+        $token = session('reset_token');
+
+        $response = $this->post(route('password.reset.custom'), [
+            'reset_token' => $token,
+            'password' => 'new-password-123',
+            'password_confirmation' => 'new-password-123',
+        ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('login'));
+
+        $this->assertTrue(
+            \Illuminate\Support\Facades\Hash::check('new-password-123', $user->fresh()->password)
+        );
+
+        $this->assertNull(session('reset_token'));
+        $this->assertNull(PasswordResetToken::userIdFor($token));
     }
 }

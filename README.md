@@ -1,15 +1,15 @@
 # LMS BLKK Tanwiriyyah
 
-Sistem Learning Management System untuk Balai Latihan Kerja Komunitas (BLKK) Tanwiriyyah.
+Sistem Learning Management System untuk **Balai Latihan Kerja Komunitas (BLKK) Tanwiriyyah** — platform pembelajaran vokasi di bawah naungan **Kementerian Ketenagakerjaan RI**.
 
 ## Persyaratan
 
 - PHP 8.2+
 - Composer
 - Node.js 18+
-- MySQL / MariaDB (atau SQLite untuk development)
+- MySQL / MariaDB (SQLite untuk development/testing)
 
-## Instalasi
+## Instalasi (Development)
 
 ```bash
 composer install
@@ -17,46 +17,100 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed
 php artisan storage:link
-```
-
-Upload logo ke `storage/app/public/images/Logo.png`, lalu pastikan symlink `public/storage` aktif.
-
-```bash
 npm install
-node --max-old-space-size=8192 ./node_modules/vite/bin/vite.js build
+npm run build
 ```
 
-## Menjalankan
+Upload logo ke `storage/app/public/images/Logo.png`.
 
 ```bash
 php artisan serve
+# Terminal terpisah: npm run dev
 ```
 
-## Akun Default
+## Akun Default (Setelah Seed)
 
-Setelah `php artisan db:seed`, login admin:
+| Field | Nilai |
+|---|---|
+| Email | `admin@blkk.test` |
+| Password | `ChangeMeOnFirstLogin!` |
 
-- Email: `admin@blkk.test`
-- Password: (lihat `database/seeders/AdminSeeder.php`)
+**Ganti password admin segera setelah login pertama.**
 
 ## Deploy Production
 
-1. Set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` ke domain production
-2. `php artisan migrate --force`
-3. `php artisan storage:link`
-4. Build assets Vite
-5. Set permission `storage/` dan `bootstrap/cache/` writable
-6. Konfigurasi mail SMTP untuk notifikasi (opsional)
+### Checklist
+
+```bash
+# 1. Environment
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://domain-anda.go.id
+SESSION_ENCRYPT=true
+SESSION_SECURE_COOKIE=true
+
+# 2. Perintah deploy
+composer install --no-dev --optimize-autoloader
+php artisan migrate --force
+php artisan storage:link
+npm ci && npm run build
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# 3. Verifikasi
+php artisan lms:doctor
+```
+
+Pastikan `storage/` dan `bootstrap/cache/` writable oleh web server.
+
+### Aset Wajib
+
+| Aset | Lokasi |
+|---|---|
+| Logo instansi | `storage/app/public/images/Logo.png` |
+| Template sertifikat | `public/images/certificates/` |
+| Build frontend | `public/build/` (dari `npm run build`) |
+
+### Keamanan File
+
+File sensitif (submission, materi, tugas, foto profil, PDF sertifikat) disimpan di disk **private** dan diunduh lewat route autentikasi `/secure/*`. Symlink `public/storage` hanya untuk logo publik.
 
 ## Fitur Utama
 
 - Manajemen program, kelas, peserta, instruktur
-- Materi, tugas, submission, penilaian
-- Absensi dan laporan Excel
-- Sertifikat PDF + verifikasi QR
-- Laporan peserta data lengkap dari database
+- Stream kelas: materi, tugas, pengumuman, absensi
+- Penilaian manual instruktur (tanpa ujian online)
+- Sertifikat PDF bilingual + verifikasi QR publik
+- Laporan Excel & PDF
 - Dukungan bahasa Indonesia / English
+- Reset password via **Email + NIK** (tanpa ketergantungan SMTP)
 
-## Bahasa
+## Reset Password
 
-Pengguna dapat mengganti bahasa via tombol **ID / EN** di appbar atau halaman guest.
+Alur: verifikasi Email + NIK → token aman (15 menit) → buat password baru.  
+SMTP **tidak wajib** untuk fitur ini. Konfigurasi SMTP di Admin Settings hanya untuk kebutuhan email opsional ke depan.
+
+## Pemeriksaan Kesiapan
+
+```bash
+php artisan lms:doctor
+```
+
+Memeriksa APP_KEY, storage link, logo, asset sertifikat, dan build Vite.
+
+## Testing
+
+```bash
+php artisan test
+```
+
+72+ automated tests: auth, role access, enrollment, tugas, absensi, sertifikat, laporan, keamanan file.
+
+## Health Check
+
+Endpoint bawaan Laravel: `GET /up`
+
+## Lisensi & Naungan
+
+Platform ini dikembangkan untuk operasional BLKK Tanwiriyyah. Penyelenggaraan pelatihan mengacu pada ketentuan **Kementerian Ketenagakerjaan RI**.

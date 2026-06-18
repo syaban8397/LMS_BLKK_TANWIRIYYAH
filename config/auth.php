@@ -114,4 +114,12 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Email + NIK Password Reset Token TTL (minutes)
+    |--------------------------------------------------------------------------
+    */
+
+    'password_reset_token_ttl' => env('AUTH_PASSWORD_RESET_TOKEN_TTL', 15),
+
 ];

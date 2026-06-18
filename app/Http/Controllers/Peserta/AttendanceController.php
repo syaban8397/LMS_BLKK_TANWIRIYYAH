@@ -80,7 +80,7 @@ class AttendanceController extends Controller
             ->exists();
         
         if (!$isParticipant) {
-            abort(403, 'Anda tidak terdaftar di kelas ini.');
+            abort(403, __('lms.access.not_enrolled'));
         }
     }
 }

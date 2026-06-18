@@ -1,30 +1,26 @@
-<x-app-layout>
+﻿<x-app-layout>
 
-    <div class="lms-page-shell space-y-5">
+    <div class="lms-page-shell lms-module-shell lms-report-shell space-y-5">
 
         @include('admin.reports._header', [
-
             'title' => __('lms.report.classes'),
-
             'description' => __('lms.report.classes_desc'),
-
+            'breadcrumbs' => [
+                ['label' => __('lms.report.index_title'), 'url' => route('admin.reports.index')],
+                ['label' => __('lms.report.classes')],
+            ],
         ])
 
-
+        <x-lms-session-flash />
 
         <div class="flex justify-end">
-
-            <a href="{{ route('admin.reports.classes.export') }}" class="lms-btn-success btn-3d">
-
-                {{ __('lms.export_excel') }}
-
-            </a>
-
+            @include('admin.reports._export-actions', [
+                'excelRoute' => 'admin.reports.classes.export',
+                'pdfRoute' => 'admin.reports.classes.export-pdf',
+            ])
         </div>
 
-
-
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+        <div class="lms-report-table-wrap bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
 
             <table class="w-full text-sm">
 
@@ -112,7 +108,7 @@
 
                                 <a href="{{ route('admin.reports.classes.show', $class) }}"
 
-                                   class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium">{{ __('lms.report.detail') }}</a>
+                                   class="lms-action-btn lms-action-btn--view">{{ __('lms.report.detail') }}</a>
 
                             </td>
 
@@ -133,4 +129,3 @@
     </div>
 
 </x-app-layout>
-

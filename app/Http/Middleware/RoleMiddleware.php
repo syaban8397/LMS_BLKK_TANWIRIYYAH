@@ -15,7 +15,7 @@ class RoleMiddleware
         }
 
         if (auth()->user()->role !== $role) {
-            abort(403, 'Unauthorized');
+            abort(403, __('lms.access.unauthorized'));
         }
 
         return $next($request);

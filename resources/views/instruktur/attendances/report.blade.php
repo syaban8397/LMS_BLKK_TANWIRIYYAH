@@ -1,31 +1,32 @@
 <x-app-layout>
-<div class="report-wrapper lms-page-shell space-y-6">
+<div class="report-wrapper lms-module-shell space-y-6">
         <x-lms-page-header
-            title="Laporan Kehadiran"
-            :subtitle="$class->title . ' • Matriks kehadiran peserta'"
+            :title="__('lms.attendance.report')"
+            :subtitle="__('lms.attendance.report_subtitle', ['title' => $class->title])"
             :back-url="route('instruktur.attendances.index', $class)"
-            back-label="← Kembali ke Sesi"
+            :back-label="__('lms.attendance.back_to_sessions')"
+            :breadcrumbs="[
+                ['label' => __('lms.nav.my_classes'), 'url' => route('instruktur.classes.index')],
+                ['label' => $class->title, 'url' => route('instruktur.classes.stream', $class)],
+                ['label' => __('lms.attendance.sessions'), 'url' => route('instruktur.attendances.index', $class)],
+                ['label' => __('lms.attendance.report')],
+            ]"
         />
 
-        @if(session('success'))
-            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
-        @endif
-        @if(session('error'))
-            <x-lms-flash type="error">{{ session('error') }}</x-lms-flash>
-        @endif
+        <x-lms-session-flash />
 
         {{-- Report Card --}}
         <div class="report-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
-                <h3 class="font-bold text-slate-800">Student Attendance Matrix</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Per meeting status summary for all students</p>
+                <h3 class="font-bold text-slate-800">{{ __('lms.attendance.matrix_title') }}</h3>
+                <p class="text-xs text-slate-500 mt-0.5">{{ __('lms.attendance.matrix_hint') }}</p>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full min-w-[800px]">
                     <thead class="bg-slate-50 text-slate-600 text-sm">
                         <tr>
-                            <th class="px-4 py-3 text-left">Student</th>
+                            <th class="px-4 py-3 text-left">{{ __('lms.attendance.student') }}</th>
                             @foreach($meetings as $meeting)
                                 <th class="px-3 py-3 text-center">
                                     M{{ $meeting->meeting_number }}<br>

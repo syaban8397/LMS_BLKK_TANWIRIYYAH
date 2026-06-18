@@ -7,7 +7,7 @@
             <p class="text-6xl font-extrabold text-blue-700">404</p>
             <h1 class="mt-4 text-2xl font-bold text-slate-800">{{ __('lms.errors_page.404_title') }}</h1>
             <p class="mt-2 text-slate-500">{{ __('lms.errors_page.404_desc') }}</p>
-            <a href="{{ url('/') }}" class="inline-block mt-8 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition">
+            <a href="{{ url('/') }}" class="inline-block mt-8 lms-btn-primary px-6 py-3">
                 {{ __('lms.errors_page.back_home') }}
             </a>
         </div>

@@ -10,18 +10,11 @@
                 <span class="lms-badge lms-badge--info">{{ __('lms.common.program_management') }}</span>
             </x-slot:actions>
         </x-lms-page-header>
-        @if ($errors->any())
-            <x-lms-flash type="error">
-                <ul class="list-disc list-inside space-y-1">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </x-lms-flash>
-        @endif
 
-        {{-- Form Card --}}
-        <div class="form-card bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+        <x-lms-session-flash />
+        <x-lms-validation-errors />
+
+        <x-lms-form-card>
             <form action="{{ route('admin.programs.store') }}" method="POST">
                 @csrf
 
@@ -61,18 +54,11 @@
                     @include('admin.programs._capacity-field', ['program' => new \App\Models\Program()])
                 </div>
 
-                {{-- Action Buttons --}}
-                <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
-                    <a href="{{ route('admin.programs.index') }}" 
-                       class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                        {{ __('lms.cancel') }}
-                    </a>
-                    <button type="submit" 
-                            class="btn-3d px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm hover:shadow-md">
-                        {{ __('lms.common.save_program') }}
-                    </button>
-                </div>
+                <x-lms-form-actions>
+                    <x-ds.button tag="a" variant="secondary" :href="route('admin.programs.index')">{{ __('lms.cancel') }}</x-ds.button>
+                    <x-ds.button type="submit" variant="primary">{{ __('lms.common.save_program') }}</x-ds.button>
+                </x-lms-form-actions>
             </form>
-        </div>
+        </x-lms-form-card>
     </div>
 </x-app-layout>

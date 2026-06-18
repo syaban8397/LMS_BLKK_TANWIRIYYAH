@@ -1,30 +1,26 @@
 <x-app-layout>
 
-    <div class="lms-page-shell space-y-5">
+    <div class="lms-page-shell lms-module-shell lms-report-shell space-y-5">
 
         @include('admin.reports._header', [
-
             'title' => __('lms.report.grades'),
-
             'description' => __('lms.report.grades_desc'),
-
+            'breadcrumbs' => [
+                ['label' => __('lms.report.index_title'), 'url' => route('admin.reports.index')],
+                ['label' => __('lms.report.grades')],
+            ],
         ])
 
-
+        <x-lms-session-flash />
 
         <div class="flex justify-end">
-
-            <a href="{{ route('admin.reports.grades.export') }}" class="lms-btn-success btn-3d">
-
-                {{ __('lms.export_excel') }}
-
-            </a>
-
+            @include('admin.reports._export-actions', [
+                'excelRoute' => 'admin.reports.grades.export',
+                'pdfRoute' => 'admin.reports.grades.export-pdf',
+            ])
         </div>
 
-
-
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+        <div class="lms-report-table-wrap bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
 
             <table class="w-full text-sm min-w-[1200px]">
 
@@ -111,4 +107,3 @@
     </div>
 
 </x-app-layout>
-

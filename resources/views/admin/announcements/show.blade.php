@@ -1,12 +1,12 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="lms-page-shell space-y-5">
         <x-lms-page-header
-            :title="'Pengumuman — ' . $class->title"
-            :subtitle="$class->code . ' · Instruktur: ' . $class->instructor->name"
+            :title="__('lms.admin_page.announcements_title', ['title' => $class->title])"
+            :subtitle="__('lms.admin_page.instructor_line', ['code' => $class->code, 'name' => $class->instructor->name])"
             :back-url="route('admin.announcements.index')"
         >
             <x-slot:actions>
-                <a href="{{ route('admin.classes.show', $class) }}" class="lms-btn-secondary btn-3d">Detail Kelas</a>
+                <a href="{{ route('admin.classes.show', $class) }}" class="lms-btn-secondary">{{ __('lms.admin_page.class_detail_btn') }}</a>
             </x-slot:actions>
         </x-lms-page-header>
 
@@ -27,23 +27,23 @@
         {{-- Form tambah pengumuman --}}
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
             <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                <span>📢</span> Buat Pengumuman Baru
+                <span>📢</span> {{ __('lms.admin_page.create_announcement') }}
             </h3>
             <form action="{{ route('admin.announcements.store', $class) }}" method="POST" class="space-y-3">
                 @csrf
                 <div>
-                    <label class="block text-xs font-medium text-slate-500 mb-1">Judul <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" value="{{ old('title') }}" placeholder="Judul pengumuman..." required
+                    <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.admin_page.title_label') }} <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" value="{{ old('title') }}" placeholder="{{ __('lms.common.announcement_title_ph') }}" required
                            class="w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-500 mb-1">Isi Pengumuman <span class="text-red-500">*</span></label>
-                    <textarea name="description" rows="4" placeholder="Tulis pengumuman untuk kelas ini..." required
+                    <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.admin_page.body_label') }} <span class="text-red-500">*</span></label>
+                    <textarea name="description" rows="4" placeholder="{{ __('lms.admin_page.body_ph') }}" required
                               class="w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">{{ old('description') }}</textarea>
                 </div>
                 <div class="flex justify-end">
-                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
-                        Publikasikan
+                    <button type="submit" class="lms-btn-primary">
+                        {{ __('lms.admin_page.publish') }}
                     </button>
                 </div>
             </form>
@@ -52,7 +52,7 @@
         {{-- Daftar pengumuman --}}
         <div class="space-y-4">
             <h3 class="text-base font-semibold text-slate-800 flex items-center gap-2">
-                <span>📋</span> Daftar Pengumuman ({{ $announcements->count() }})
+                <span>📋</span> {{ __('lms.admin_page.announcement_list', ['count' => $announcements->count()]) }}
             </h3>
 
             @forelse($announcements as $announcement)
@@ -63,14 +63,14 @@
                                 {{ strtoupper(substr($announcement->creator?->name ?? 'A', 0, 1)) }}
                             </div>
                             <div>
-                                <p class="font-semibold text-slate-800">{{ $announcement->creator?->name ?? 'Unknown' }}</p>
+                                <p class="font-semibold text-slate-800">{{ $announcement->creator?->name ?? __('lms.admin_page.unknown') }}</p>
                                 <p class="text-xs text-slate-400">
                                     {{ $announcement->created_at->format('d M Y H:i') }}
                                     ·
                                     @if($announcement->creator?->role === 'admin')
-                                        <span class="text-purple-600 font-medium">Admin</span>
+                                        <span class="text-purple-600 font-medium">{{ __('lms.roles.admin') }}</span>
                                     @else
-                                        <span class="text-blue-600 font-medium">Instruktur</span>
+                                        <span class="text-blue-600 font-medium">{{ __('lms.roles.instruktur') }}</span>
                                     @endif
                                 </p>
                             </div>
@@ -78,14 +78,14 @@
                         <div class="flex gap-2">
                             <button type="button" onclick="showEditForm({{ $announcement->id }})"
                                     class="px-3 py-1 text-xs bg-amber-100 text-amber-700 rounded-md hover:bg-amber-200 transition">
-                                Edit
+                                {{ __('lms.edit') }}
                             </button>
                             <form action="{{ route('admin.announcements.destroy', [$class, $announcement]) }}" method="POST"
-                                  data-lms-confirm="Hapus pengumuman ini?" class="inline">
+                                  data-lms-confirm="{{ __('lms.admin_page.delete_announcement_confirm') }}" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="px-3 py-1 text-xs bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition">
-                                    Hapus
+                                    {{ __('lms.delete') }}
                                 </button>
                             </form>
                         </div>
@@ -105,16 +105,16 @@
                             <textarea name="description" rows="4"
                                       class="w-full rounded-lg border-slate-200 text-sm px-3 py-2">{{ $announcement->description }}</textarea>
                             <div class="flex gap-2">
-                                <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs">Simpan</button>
+                                <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs">{{ __('lms.save') }}</button>
                                 <button type="button" onclick="cancelEdit({{ $announcement->id }})"
-                                        class="px-3 py-1.5 bg-slate-200 rounded-md text-xs">Batal</button>
+                                        class="px-3 py-1.5 bg-slate-200 rounded-md text-xs">{{ __('lms.cancel') }}</button>
                             </div>
                         </form>
                     </div>
                 </div>
             @empty
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-8 text-center text-slate-400 text-sm">
-                    Belum ada pengumuman di kelas ini.
+                    {{ __('lms.admin_page.no_announcements_class') }}
                 </div>
             @endforelse
         </div>

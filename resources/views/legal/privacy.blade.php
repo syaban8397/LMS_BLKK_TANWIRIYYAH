@@ -10,6 +10,7 @@
                 <p>{{ __('lms.legal.privacy_p1') }}</p>
                 <p>{{ __('lms.legal.privacy_p2') }}</p>
                 <p>{{ __('lms.legal.privacy_p3') }}</p>
+                <p>{{ __('lms.legal.privacy_p4') }}</p>
             </div>
             <a href="{{ url('/') }}" class="inline-block mt-8 text-sm text-brand-600 hover:underline">← {{ __('lms.app_name') }}</a>
         </div>

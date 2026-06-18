@@ -46,25 +46,15 @@
                     <span class="sidebar-nav-icon">📜</span>
                     <span class="menu-text">{{ __('lms.nav.certificates') }}</span>
                 </a>
-                <a href="{{ route('admin.reports.classes') }}"
-                   class="sidebar-nav-link {{ request()->routeIs('admin.reports.classes*') ? 'sidebar-nav-link--active' : '' }}">
-                    <span class="sidebar-nav-icon">📖</span>
-                    <span class="menu-text">{{ __('lms.nav.report_classes') }}</span>
-                </a>
-                <a href="{{ route('admin.reports.grades') }}"
-                   class="sidebar-nav-link {{ request()->routeIs('admin.reports.grades*') ? 'sidebar-nav-link--active' : '' }}">
-                    <span class="sidebar-nav-icon">📝</span>
-                    <span class="menu-text">{{ __('lms.nav.report_grades') }}</span>
-                </a>
-                <a href="{{ route('admin.reports.attendance') }}"
-                   class="sidebar-nav-link {{ request()->routeIs('admin.reports.attendance*') ? 'sidebar-nav-link--active' : '' }}">
-                    <span class="sidebar-nav-icon">📅</span>
-                    <span class="menu-text">{{ __('lms.nav.report_attendance') }}</span>
-                </a>
                 <a href="{{ route('admin.reports.index') }}"
-                   class="sidebar-nav-link {{ request()->routeIs('admin.reports.index') || request()->routeIs('admin.reports.participants*') || request()->routeIs('admin.reports.instructors*') || request()->routeIs('admin.reports.certificates*') ? 'sidebar-nav-link--active' : '' }}">
+                   class="sidebar-nav-link {{ request()->routeIs('admin.reports.*') ? 'sidebar-nav-link--active' : '' }}">
                     <span class="sidebar-nav-icon">📈</span>
                     <span class="menu-text">{{ __('lms.nav.reports') }}</span>
+                </a>
+                <a href="{{ route('admin.settings.edit') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.settings.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">⚙️</span>
+                    <span class="menu-text">{{ __('lms.nav.settings') }}</span>
                 </a>
             @endif
 

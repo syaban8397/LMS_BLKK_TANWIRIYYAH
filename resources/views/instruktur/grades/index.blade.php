@@ -1,117 +1,87 @@
 <x-app-layout>
-<div class="submissions-wrapper lms-page-shell space-y-6">
+    <div class="submissions-wrapper lms-module-shell space-y-6">
         <x-lms-page-header
-            :title="$assignment->title . ' — Pengumpulan'"
+            :title="__('lms.grade.submissions_title', ['title' => $assignment->title])"
             :subtitle="$class->title"
             :back-url="route('instruktur.classes.stream', $class)"
-            back-label="← Kembali ke Kelas"
+            :back-label="__('lms.common.back_to_class')"
+            :breadcrumbs="[
+                ['label' => __('lms.nav.my_classes'), 'url' => route('instruktur.classes.index')],
+                ['label' => $class->title, 'url' => route('instruktur.classes.stream', $class)],
+                ['label' => __('lms.grade.submissions')],
+            ]"
         />
 
-        @if(session('success'))
-            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
-        @endif
-        @if(session('error'))
-            <x-lms-flash type="error">{{ session('error') }}</x-lms-flash>
-        @endif
+        <x-lms-session-flash />
 
-        {{-- Stats Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="stats-card bg-white rounded-xl p-4 shadow-md border border-slate-200 text-center">
-                <p class="text-slate-500 text-sm">Total</p>
-                <p class="text-3xl font-bold text-slate-800 counter" data-value="{{ $stats['total'] }}">0</p>
-            </div>
-            <div class="stats-card bg-green-50 rounded-xl p-4 shadow-md border border-green-200 text-center">
-                <p class="text-green-600 text-sm">Submitted</p>
-                <p class="text-3xl font-bold text-green-700 counter" data-value="{{ $stats['submitted'] }}">0</p>
-            </div>
-            <div class="stats-card bg-yellow-50 rounded-xl p-4 shadow-md border border-yellow-200 text-center">
-                <p class="text-yellow-600 text-sm">Late</p>
-                <p class="text-3xl font-bold text-yellow-700 counter" data-value="{{ $stats['late'] }}">0</p>
-            </div>
-            <div class="stats-card bg-blue-50 rounded-xl p-4 shadow-md border border-blue-200 text-center">
-                <p class="text-blue-600 text-sm">Graded</p>
-                <p class="text-3xl font-bold text-blue-700 counter" data-value="{{ $stats['graded'] }}">0</p>
-            </div>
-        </div>
+        <x-lms-stat-grid>
+            <x-lms-stat-card
+                :label="__('lms.common.total')"
+                :value="$stats['total']"
+                icon="📋"
+                tone="blue"
+            />
+            <x-lms-stat-card
+                :label="__('lms.common.submitted')"
+                :value="$stats['submitted']"
+                icon="✅"
+                tone="green"
+            />
+            <x-lms-stat-card
+                :label="__('lms.grade.late')"
+                :value="$stats['late']"
+                icon="⏰"
+                tone="amber"
+            />
+            <x-lms-stat-card
+                :label="__('lms.common.graded')"
+                :value="$stats['graded']"
+                icon="📝"
+                tone="indigo"
+            />
+        </x-lms-stat-grid>
 
-        {{-- Submissions Table --}}
-        <div class="table-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
-                <h3 class="font-bold text-slate-800">Student Submissions</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Grade each student's assignment</p>
-            </div>
+        <x-lms-card class="table-card p-0 overflow-hidden" :title="__('lms.grade.submissions')" :meta="__('lms.grade.index_hint')">
+            <x-lms-data-table :paginator="$submissions" :skeleton-cols="5">
+                <x-slot:head>
+                    <tr>
+                        <th class="lms-data-table__th lms-data-table__th--left">{{ __('lms.attendance.student') }}</th>
+                        <th class="lms-data-table__th lms-data-table__th--left">{{ __('lms.grade.submitted_at') }}</th>
+                        <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.common.status') }}</th>
+                        <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.grade.score_label') }}</th>
+                        <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.common.actions') }}</th>
+                    </tr>
+                </x-slot:head>
 
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-slate-50 text-slate-600 text-sm">
-                        <tr>
-                            <th class="px-6 py-4 text-left">Student</th>
-                            <th class="px-6 py-4 text-left">Submitted At</th>
-                            <th class="px-6 py-4 text-center">Status</th>
-                            <th class="px-6 py-4 text-center">Score</th>
-                            <th class="px-6 py-4 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @forelse($submissions as $s)
-                            <tr class="submission-row hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 text-slate-800 font-medium">{{ $s->participant->name }}</td>
-                                <td class="px-6 py-4 text-slate-600 text-sm">{{ $s->submitted_at?->format('d M Y H:i') ?? '-' }}</td>
-                                <td class="px-6 py-4 text-center">
-                                    @if($s->status == 'graded')
-                                        <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Graded</span>
-                                    @elseif($s->status == 'late')
-                                        <span class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Late</span>
-                                    @else
-                                        <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Submitted</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-center font-semibold text-slate-700">{{ $s->score ?? '-' }}</td>
-                                <td class="px-6 py-4 text-center">
-                                    <a href="{{ route('instruktur.grades.show', [$class, $assignment, $s]) }}" class="btn-3d px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-sm">
-                                        Grade
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-6 py-12 text-center text-slate-500">
-                                    <div class="text-4xl mb-2">📝</div>
-                                    <p>No submissions yet.</p>
-                                    <p class="text-xs text-slate-400 mt-1">Students haven't submitted this assignment.</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            @if($submissions->hasPages())
-                <div class="px-6 py-3 border-t border-slate-100 bg-slate-50">
-                    {{ $submissions->links() }}
-                </div>
-            @endif
-        </div>
+                @forelse($submissions as $s)
+                    <tr class="submission-row transition">
+                        <td class="px-6 py-4 text-slate-800 dark:text-slate-100 font-medium">{{ $s->participant->name }}</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-300 text-sm">{{ $s->submitted_at?->format('d M Y H:i') ?? '-' }}</td>
+                        <td class="px-6 py-4 text-center">
+                            @if($s->status == 'graded')
+                                <span class="lms-badge lms-badge--success">{{ __('lms.common.graded') }}</span>
+                            @elseif($s->status == 'late')
+                                <span class="lms-badge lms-badge--danger">{{ __('lms.grade.late') }}</span>
+                            @else
+                                <span class="lms-badge lms-badge--info">{{ __('lms.common.submitted') }}</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-center font-semibold text-slate-700 dark:text-slate-200">{{ $s->score ?? '-' }}</td>
+                        <td class="px-6 py-4 text-center">
+                            <x-lms-row-actions>
+                                <x-lms-action-btn variant="view" :href="route('instruktur.grades.show', [$class, $assignment, $s])">{{ __('lms.grade.grade_btn') }}</x-lms-action-btn>
+                            </x-lms-row-actions>
+                        </td>
+                    </tr>
+                @empty
+                    <x-lms-table-empty
+                        :colspan="5"
+                        :message="__('lms.grade.no_submissions')"
+                        :description="__('lms.grade.no_submissions_hint')"
+                        icon="📝"
+                    />
+                @endforelse
+            </x-lms-data-table>
+        </x-lms-card>
     </div>
-
-    <script>
-        function animateCounter(el, value) {
-            let start = 0;
-            let end = parseInt(value);
-            let step = Math.ceil(end / 40);
-            let interval = setInterval(() => {
-                start += step;
-                if (start >= end) {
-                    start = end;
-                    clearInterval(interval);
-                }
-                el.innerText = start;
-            }, 20);
-        }
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll('.counter').forEach(el => {
-                animateCounter(el, el.dataset.value);
-            });
-        });
-    </script>
 </x-app-layout>

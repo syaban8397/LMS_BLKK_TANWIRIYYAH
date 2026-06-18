@@ -171,7 +171,7 @@ class AttendanceController extends Controller
         /*
         $first = Attendance::where('class_id', $class->id)->where('meeting_number', $meetingNumber)->first();
         if ($first && now()->gt($first->attendance_deadline)) {
-            return redirect()->back()->with('error', 'Sesi absensi sudah ditutup. Tidak dapat mengubah status.');
+            return redirect()->back()->with('error', __('lms.flash.attendance_session_closed'));
         }
         */
         

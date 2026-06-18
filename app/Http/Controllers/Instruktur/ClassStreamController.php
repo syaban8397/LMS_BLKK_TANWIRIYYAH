@@ -16,10 +16,9 @@ class ClassStreamController extends Controller
 
         $class->load(['program', 'instructor', 'participants']);
 
-        // Get all content in chronological order
-        $announcements = $class->announcements()->latest()->get();
-        $materials = $class->materials()->orderBy('meeting_number')->get();
-        $assignments = $class->assignments()->latest()->get();
+        $announcements = $class->announcements()->with('creator')->latest()->get();
+        $materials = $class->materials()->with('creator')->orderBy('meeting_number')->get();
+        $assignments = $class->assignments()->with(['creator', 'submissions'])->latest()->get();
 
         return view(
             'instruktur.classes.stream',

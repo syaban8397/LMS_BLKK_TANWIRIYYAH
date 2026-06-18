@@ -1,0 +1,300 @@
+/**
+ * LMS Module UI — Google Classroom / Coursera inspired
+ * Visual-only: preserves legacy class names used by JS
+ */
+
+@layer components {
+    /* ── Module shell ── */
+    .lms-module-shell {
+        @apply space-y-5;
+    }
+
+    .lms-module-shell > .lms-breadcrumb + .page-header {
+        @apply mt-0;
+    }
+
+    /* ── Breadcrumb ── */
+    .lms-breadcrumb {
+        @apply flex flex-wrap items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400;
+    }
+
+    .lms-breadcrumb__item {
+        @apply inline-flex items-center gap-1.5;
+    }
+
+    .lms-breadcrumb__link {
+        @apply text-slate-600 dark:text-slate-300 transition-colors duration-200 hover:text-brand-600 dark:hover:text-brand-400;
+    }
+
+    .lms-breadcrumb__sep {
+        @apply text-slate-300 dark:text-slate-600 select-none;
+    }
+
+    .lms-breadcrumb__current {
+        @apply text-slate-900 dark:text-slate-100 font-semibold truncate max-w-[14rem] sm:max-w-none;
+    }
+
+    /* ── Page header hierarchy ── */
+    .lms-module-shell .page-header h1 {
+        @apply text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100;
+    }
+
+    .lms-module-shell .page-header p {
+        @apply text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed;
+    }
+
+    /* ── Modern module cards (legacy aliases) ── */
+    .dashboard-card,
+    .sidebar-card,
+    .form-card,
+    .info-card,
+    .grade-card,
+    .summary-card,
+    .stats-card,
+    .materials-card,
+    .assignments-card,
+    .attendance-card {
+        border-radius: var(--ds-radius, 1rem);
+        border: 1px solid var(--color-border);
+        background: var(--color-surface-elevated);
+        box-shadow: var(--ds-shadow-soft);
+        transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .dashboard-card:hover,
+    .sidebar-card:hover,
+    .info-card:hover,
+    .grade-card:hover {
+        box-shadow: var(--ds-shadow-soft-lg);
+    }
+
+    /* ── Stream layout ── */
+    .stream-wrapper,
+    .peserta-stream-wrapper {
+        @apply space-y-5;
+    }
+
+    .stream-wrapper .lms-stream-action,
+    .peserta-stream-wrapper .lms-stream-action {
+        @apply relative overflow-hidden border text-left;
+        border-radius: var(--ds-radius);
+        border-color: var(--color-border);
+        background: var(--color-surface-elevated);
+        box-shadow: var(--ds-shadow-soft);
+        padding: 1.15rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stream-wrapper .lms-stream-action:hover,
+    .peserta-stream-wrapper .lms-stream-action:hover {
+        transform: translateY(-2px) scale(1.01);
+        border-color: rgba(37, 99, 235, 0.35);
+        box-shadow: var(--ds-shadow-soft-lg);
+    }
+
+    .lms-stream-action__icon {
+        @apply flex h-10 w-10 items-center justify-center rounded-2xl text-lg;
+        background: linear-gradient(145deg, #eff6ff, #dbeafe);
+    }
+
+    .lms-stream-action__title {
+        @apply mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100;
+    }
+
+    .lms-stream-action__desc {
+        @apply mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed;
+    }
+
+    /* ── Timeline feed ── */
+    .lms-timeline {
+        @apply relative space-y-3 pl-0;
+    }
+
+    .timeline-item {
+        @apply relative;
+        border-radius: var(--ds-radius);
+        border: 1px solid var(--color-border);
+        background: var(--color-surface-elevated);
+        box-shadow: var(--ds-shadow-soft);
+        animation: lmsTimelineIn 0.25s ease both;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .timeline-item:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--ds-shadow-soft-lg);
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        border-radius: var(--ds-radius) 0 0 var(--ds-radius);
+        background: linear-gradient(180deg, #3b82f6, #6366f1);
+        opacity: 0.85;
+    }
+
+    .lms-timeline-item--announcement::before { background: linear-gradient(180deg, #3b82f6, #6366f1); }
+    .lms-timeline-item--material::before { background: linear-gradient(180deg, #10b981, #14b8a6); }
+    .lms-timeline-item--assignment::before { background: linear-gradient(180deg, #a855f7, #ec4899); }
+    .lms-timeline-item--attendance::before { background: linear-gradient(180deg, #22c55e, #0d9488); }
+
+    @keyframes lmsTimelineIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Progress bars ── */
+    .lms-progress {
+        @apply w-full overflow-hidden;
+        height: 0.4rem;
+        border-radius: 9999px;
+        background: rgba(226, 232, 240, 0.9);
+    }
+
+    html.dark .lms-progress {
+        background: rgba(51, 65, 85, 0.8);
+    }
+
+    .lms-progress__fill {
+        @apply h-full rounded-full transition-all duration-300 ease-out;
+        background: linear-gradient(90deg, #2563eb, #6366f1);
+    }
+
+    .lms-progress__fill--success { background: linear-gradient(90deg, #16a34a, #22c55e); }
+    .lms-progress__fill--warning { background: linear-gradient(90deg, #d97706, #f59e0b); }
+    .lms-progress__fill--purple { background: linear-gradient(90deg, #9333ea, #a855f7); }
+
+    .lms-progress-meta {
+        @apply flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5;
+    }
+
+    /* ── Module list rows ── */
+    .material-row,
+    .assignment-row {
+        transition: background-color 0.2s ease;
+    }
+
+    .lms-list-card__body .material-row,
+    .lms-list-card__body .assignment-row {
+        @apply border-l-2 border-transparent;
+    }
+
+    .lms-list-card__body .material-row:hover,
+    .lms-list-card__body .assignment-row:hover {
+        @apply border-l-brand-500 bg-slate-50/60 dark:bg-slate-800/30;
+    }
+
+    /* ── Show / detail pages ── */
+    .info-card > .bg-slate-50,
+    .grade-card > .bg-slate-50,
+    .info-card > [class*="border-b"] {
+        @apply px-5 py-3.5 border-b;
+        border-color: var(--color-border);
+        background: linear-gradient(to right, rgba(248, 250, 252, 0.95), transparent);
+    }
+
+    html.dark .info-card > .bg-slate-50,
+    html.dark .grade-card > .bg-slate-50 {
+        background: linear-gradient(to right, rgba(30, 41, 59, 0.6), transparent);
+    }
+
+    .info-card > .p-5,
+    .grade-card > .p-5 {
+        padding: 1.25rem;
+    }
+
+    .summary-card {
+        padding: 1.25rem;
+    }
+
+    /* ── Reports ── */
+    .lms-report-shell {
+        @apply space-y-5;
+    }
+
+    .lms-report-table-wrap {
+        @apply overflow-hidden border;
+        border-radius: var(--ds-radius);
+        border-color: var(--color-border);
+        background: var(--color-surface-elevated);
+        box-shadow: var(--ds-shadow-soft);
+    }
+
+    .lms-report-table-wrap table {
+        @apply w-full text-sm;
+    }
+
+    .lms-report-table-wrap thead th {
+        @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 bg-slate-50/90 dark:bg-slate-800/60 border-b;
+        border-color: var(--color-border);
+    }
+
+    .lms-report-table-wrap tbody td {
+        @apply px-4 py-3 border-b text-slate-700 dark:text-slate-200;
+        border-color: var(--color-border);
+    }
+
+    .lms-report-table-wrap tbody tr:hover td {
+        @apply bg-slate-50/70 dark:bg-slate-800/35;
+    }
+
+    /* ── Error state ── */
+    .lms-error-state {
+        @apply flex flex-col items-center text-center py-10 px-6 border;
+        border-radius: var(--ds-radius);
+        border-color: rgba(239, 68, 68, 0.25);
+        background: rgba(254, 242, 242, 0.5);
+        box-shadow: var(--ds-shadow-soft);
+    }
+
+    html.dark .lms-error-state {
+        background: rgba(127, 29, 29, 0.15);
+        border-color: rgba(248, 113, 113, 0.25);
+    }
+
+    .lms-error-state__icon {
+        @apply text-3xl mb-3 opacity-80;
+    }
+
+    .lms-error-state__title {
+        @apply text-base font-semibold text-red-800 dark:text-red-200;
+    }
+
+    .lms-error-state__desc {
+        @apply text-sm text-red-600/80 dark:text-red-300/80 mt-1 max-w-md;
+    }
+
+    /* ── Stagger animation for cards ── */
+    .lms-module-shell .lms-stat-grid > *,
+    .lms-module-shell .lms-data-table,
+    .lms-module-shell .lms-list-card,
+    .lms-module-shell .timeline-item:nth-child(1) { animation-delay: 0ms; }
+    .lms-module-shell .timeline-item:nth-child(2) { animation-delay: 40ms; }
+    .lms-module-shell .timeline-item:nth-child(3) { animation-delay: 80ms; }
+    .lms-module-shell .timeline-item:nth-child(4) { animation-delay: 120ms; }
+
+    /* ── Page transition (content only) ── */
+    html[data-authenticated-app="1"] .page-content-3d.lms-page-exiting {
+        animation: pageExit 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+        pointer-events: none;
+    }
+
+    @keyframes pageExit {
+        from { opacity: 1; transform: translateY(0) scale(1); }
+        to { opacity: 0; transform: translateY(8px) scale(0.99); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .timeline-item,
+        .lms-stream-action,
+        .dashboard-card,
+        html[data-authenticated-app="1"] .page-content-3d {
+            animation: none !important;
+            transition: none !important;
+        }
+    }
+}

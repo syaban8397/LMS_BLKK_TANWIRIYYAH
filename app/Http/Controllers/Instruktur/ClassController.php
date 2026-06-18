@@ -42,22 +42,6 @@ class ClassController extends Controller
         );
     }
 
-    public function show(ClassModel $class)
-    {
-        $this->authorizeInstructor($class);
-
-        $class->load(['program', 'instructor', 'participants.participant']);
-
-        $participants = $class->participants()
-            ->with('participant')
-            ->paginate(15);
-
-        return view(
-            'instruktur.classes.show',
-            compact('class', 'participants')
-        );
-    }
-
     public function addStudentForm(ClassModel $class)
     {
         $this->authorizeInstructor($class);
@@ -72,6 +56,7 @@ class ClassController extends Controller
 
         $availableStudents = User::where('role', 'peserta')
             ->where('is_active', true)
+            ->where('approval_status', 'approved')
             ->whereNotIn('id', $enrolledIds)
             ->get();
 
@@ -87,11 +72,18 @@ class ClassController extends Controller
 
         $validated = $request->validate([
             'participant_ids' => 'required|array|min:1',
-            'participant_ids.*' => 'required|exists:users,id',
+            'participant_ids.*' => [
+                'required',
+                'integer',
+                \Illuminate\Validation\Rule::exists('users', 'id')->where(function ($query) {
+                    $query->where('role', 'peserta')
+                        ->where('is_active', true)
+                        ->where('approval_status', 'approved');
+                }),
+            ],
         ]);
 
         foreach ($validated['participant_ids'] as $participantId) {
-            // Check if already enrolled
             $exists = ClassParticipant::where('class_id', $class->id)
                 ->where('participant_id', $participantId)
                 ->exists();

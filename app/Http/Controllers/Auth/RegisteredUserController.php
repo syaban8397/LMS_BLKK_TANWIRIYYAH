@@ -14,19 +14,11 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -37,7 +29,7 @@ class RegisteredUserController extends Controller
                 'lowercase',
                 'email',
                 'max:255',
-                'unique:users,email'
+                'unique:users,email',
             ],
             'nik' => ['nullable', 'string', 'max:50', 'unique:users,nik'],
             'phone' => ['nullable', 'string', 'max:20'],
@@ -48,39 +40,33 @@ class RegisteredUserController extends Controller
             'password' => [
                 'required',
                 'confirmed',
-                Rules\Password::defaults()
+                Rules\Password::defaults(),
             ],
+            'terms_accepted' => ['accepted'],
         ]);
 
-        $user = User::create([
-            'role' => 'peserta',
-
+        $user = new User([
             'name' => $request->name,
             'email' => $request->email,
-
             'nik' => $request->nik,
             'phone' => $request->phone,
             'gender' => $request->gender,
             'birth_place' => $request->birth_place,
             'birth_date' => $request->birth_date,
             'address' => $request->address,
-
             'photo' => null,
             'bio' => null,
-
             'is_active' => false,
             'approval_status' => 'pending',
-
             'password' => Hash::make($request->password),
         ]);
+        $user->role = 'peserta';
+        $user->save();
 
         event(new Registered($user));
 
         return redirect()
             ->route('login')
-            ->with(
-                'success',
-                __('lms.auth.registration_success')
-            );
+            ->with('success', __('lms.auth.registration_success'));
     }
 }

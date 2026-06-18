@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\SecureStorage;
+use App\Support\UploadRules;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -11,14 +13,10 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * User List
-     */
     public function index(Request $request): View
     {
         $query = User::query();
 
-        // Search
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->search}%")
@@ -27,7 +25,6 @@ class UserController extends Controller
             });
         }
 
-        // Filter Role
         if ($request->filled('role')) {
             $query->where('role', $request->role);
         }
@@ -37,83 +34,71 @@ class UserController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $userStats = [
+            'active' => User::where('is_active', 1)->count(),
+            'pending' => User::where('approval_status', 'pending')->count(),
+            'instructors' => User::where('role', 'instruktur')->count(),
+        ];
+
         return view(
             'admin.users.index',
-            compact('users')
+            compact('users', 'userStats')
         );
     }
 
-    /**
-     * Create Form
-     */
     public function create(): View
     {
         return view('admin.users.create');
     }
 
-    /**
-     * Store User
-     */
-    public function store(
-    Request $request
-): RedirectResponse {
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'role' => 'required|in:admin,instruktur,peserta',
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
+            'nik' => 'nullable|string|max:30',
+            'phone' => 'nullable|string|max:20',
+            'gender' => 'nullable|in:L,P',
+            'birth_place' => 'nullable|string|max:100',
+            'birth_date' => 'nullable|date',
+            'address' => 'nullable|string',
+            'bio' => 'nullable|string',
+            'approval_status' => 'nullable|in:pending,approved,rejected',
+            'is_active' => 'nullable|boolean',
+            'photo' => UploadRules::profilePhoto(2048),
+        ]);
 
-    $validated = $request->validate([
-        'role' => 'required|in:admin,instruktur,peserta',
-        'name' => 'required|max:255',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|min:6',
+        $photo = null;
 
-        'nik' => 'nullable|string|max:30',
-        'phone' => 'nullable|string|max:20',
-        'gender' => 'nullable|in:L,P',
-        'birth_place' => 'nullable|string|max:100',
-        'birth_date' => 'nullable|date',
-        'address' => 'nullable|string',
-        'bio' => 'nullable|string',
+        if ($request->hasFile('photo')) {
+            $photo = SecureStorage::storeUploadedFile($request->file('photo'), 'users');
+        }
 
-        'approval_status' => 'nullable|in:pending,approved,rejected',
-        'is_active' => 'nullable|boolean',
+        $user = new User([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'nik' => $request->nik,
+            'phone' => $request->phone,
+            'gender' => $request->gender,
+            'birth_place' => $request->birth_place,
+            'birth_date' => $request->birth_date,
+            'address' => $request->address,
+            'bio' => $request->bio,
+            'photo' => $photo,
+            'approval_status' => $request->approval_status ?? 'approved',
+            'is_active' => $request->boolean('is_active', true),
+        ]);
+        $user->role = $request->role;
+        $user->save();
 
-        'photo' => 'nullable|image|max:2048',
-    ]);
-
-    $photo = null;
-
-    if ($request->hasFile('photo')) {
-
-        $photo = $request
-            ->file('photo')
-            ->store('users', 'public');
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', __('lms.flash.user_created'));
     }
 
-     User::create([
-        'role' => $request->role,
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-
-        'nik' => $request->nik,
-        'phone' => $request->phone,
-        'gender' => $request->gender,
-        'birth_place' => $request->birth_place,
-        'birth_date' => $request->birth_date,
-        'address' => $request->address,
-        'bio' => $request->bio,
-
-        'photo' => $photo,
-
-        'approval_status' => $request->approval_status,
-        'is_active' => $request->boolean('is_active'),
-    ]);
-
-    return redirect()
-        ->route('admin.users.index')
-        ->with('success', __('lms.flash.user_created'));
-}
-    /**
-     * Show Detail
-     */
     public function show(User $user): View
     {
         return view(
@@ -122,9 +107,6 @@ class UserController extends Controller
         );
     }
 
-    /**
-     * Edit Form
-     */
     public function edit(User $user): View
     {
         return view(
@@ -133,100 +115,78 @@ class UserController extends Controller
         );
     }
 
-    /**
-     * Update User
-     */
-    public function update(
-    Request $request,
-    User $user
-): RedirectResponse {
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        $request->validate([
+            'role' => 'required|in:admin,instruktur,peserta',
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'nik' => 'nullable|max:50',
+            'phone' => 'nullable|max:30',
+            'gender' => 'nullable|in:L,P',
+            'birth_place' => 'nullable|max:100',
+            'birth_date' => 'nullable|date',
+            'address' => 'nullable',
+            'bio' => 'nullable',
+            'photo' => UploadRules::profilePhoto(2048),
+            'approval_status' => 'required|in:pending,approved,rejected',
+            'is_active' => 'nullable|boolean',
+            'password' => 'nullable|min:8',
+        ]);
 
-    $validated = $request->validate([
-        'role' => 'required|in:admin,instruktur,peserta',
-        'name' => 'required|max:255',
-        'email' => 'required|email|unique:users,email,' . $user->id,
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'nik' => $request->nik,
+            'phone' => $request->phone,
+            'gender' => $request->gender,
+            'birth_place' => $request->birth_place,
+            'birth_date' => $request->birth_date,
+            'address' => $request->address,
+            'bio' => $request->bio,
+            'approval_status' => $request->approval_status,
+            'is_active' => $request->boolean('is_active'),
+        ];
 
-        'nik' => 'nullable|max:50',
-        'phone' => 'nullable|max:30',
-        'gender' => 'nullable|in:L,P',
-        'birth_place' => 'nullable|max:100',
-        'birth_date' => 'nullable|date',
-        'address' => 'nullable',
-        'bio' => 'nullable',
+        if ($request->hasFile('photo')) {
+            SecureStorage::delete($user->photo);
+            $data['photo'] = SecureStorage::storeUploadedFile($request->file('photo'), 'users');
+        }
 
-        'photo' => 'nullable|image|max:2048',
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
 
-        'approval_status' => 'required|in:pending,approved,rejected',
-        'is_active' => 'nullable|boolean',
+        $user->fill($data);
+        $user->role = $request->role;
+        $user->save();
 
-        'password' => 'nullable|min:6',
-    ]);
-
-    $data = [
-        'role' => $request->role,
-        'name' => $request->name,
-        'email' => $request->email,
-
-        'nik' => $request->nik,
-        'phone' => $request->phone,
-        'gender' => $request->gender,
-        'birth_place' => $request->birth_place,
-        'birth_date' => $request->birth_date,
-        'address' => $request->address,
-        'bio' => $request->bio,
-
-        'approval_status' => $request->approval_status,
-        'is_active' => $request->boolean('is_active'),
-    ];
-
-    if ($request->hasFile('photo')) {
-
-        $data['photo'] = $request
-            ->file('photo')
-            ->store('users', 'public');
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', __('lms.flash.user_updated'));
     }
 
-    if ($request->filled('password')) {
+    public function destroy(User $user): RedirectResponse
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', __('lms.flash.user_cannot_delete_self'));
+        }
 
-        $data['password'] = Hash::make(
-            $request->password
-        );
-    }
+        if ($user->role === 'admin' && User::where('role', 'admin')->count() <= 1) {
+            return back()->with('error', __('lms.flash.user_cannot_delete_last_admin'));
+        }
 
-    $user->update($data);
-
-    return redirect()
-        ->route('admin.users.index')
-        ->with(
-            'success',
-            'User updated successfully.'
-        );
-}
-    /**
-     * Delete User
-     */
-    public function destroy(
-        User $user
-    ): RedirectResponse {
+        SecureStorage::delete($user->photo);
 
         $user->delete();
 
         return redirect()
             ->route('admin.users.index')
-            ->with(
-                'success',
-                'User deleted successfully.'
-            );
+            ->with('success', __('lms.flash.user_deleted'));
     }
 
-    /**
-     * Approval Status
-     */
-    public function updateStatus(
-        Request $request,
-        User $user
-    ): RedirectResponse {
-
+    public function updateStatus(Request $request, User $user): RedirectResponse
+    {
         $request->validate([
             'approval_status' => [
                 'required',
@@ -243,9 +203,6 @@ class UserController extends Controller
 
         return redirect()
             ->route('admin.users.index')
-            ->with(
-                'success',
-                'User status updated successfully.'
-            );
+            ->with('success', __('lms.flash.user_status_updated'));
     }
 }

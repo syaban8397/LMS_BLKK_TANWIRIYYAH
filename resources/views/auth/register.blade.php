@@ -8,9 +8,6 @@
         @endif
 
         <div class="lms-auth-card lms-auth-card--register p-6 md:p-8 relative">
-            <div class="absolute top-4 right-4 z-10">
-                <x-locale-switcher />
-            </div>
             <div class="text-center mb-5">
                 <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-16 w-auto mx-auto drop-shadow-md mb-2">
                 <h2 class="text-2xl font-bold text-slate-800">{{ __('lms.auth.create_account') }}</h2>
@@ -88,6 +85,21 @@
                             <button type="button" onclick="togglePassword('password_confirmation')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">👁️</button>
                         </div>
                     </div>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="flex items-start gap-2 cursor-pointer">
+                        <input type="checkbox" name="terms_accepted" value="1" required
+                               class="mt-1 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                               {{ old('terms_accepted') ? 'checked' : '' }}>
+                        <span class="text-sm text-slate-600">
+                            {!! __('lms.auth.terms_accept', [
+                                'terms' => '<a href="' . route('legal.terms') . '" target="_blank" class="lms-auth-link font-semibold">' . __('lms.welcome.terms') . '</a>',
+                                'privacy' => '<a href="' . route('legal.privacy') . '" target="_blank" class="lms-auth-link font-semibold">' . __('lms.welcome.privacy') . '</a>',
+                            ]) !!}
+                        </span>
+                    </label>
+                    @error('terms_accepted') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <button type="submit" class="btn-auth-primary mt-6">

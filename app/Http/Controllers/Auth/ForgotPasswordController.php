@@ -4,193 +4,112 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\PasswordResetToken;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class ForgotPasswordController extends Controller
 {
-    /**
-     * Form Verifikasi
-     */
-    public function create()
+    public function create(): View
     {
         return view('auth.forgot-password');
     }
 
-    /**
-     * Verifikasi Email + NIK
-     */
-    public function verify(Request $request)
+    public function verify(Request $request): RedirectResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'nik' => 'required'
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'nik' => ['required', 'string'],
         ]);
 
-        $emailExists = User::where(
-            'email',
-            $request->email
-        )->exists();
+        $user = User::where('email', $validated['email'])
+            ->where('nik', $validated['nik'])
+            ->first();
 
-        $nikExists = User::where(
-            'nik',
-            $request->nik
-        )->exists();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Email & NIK tidak ditemukan
-        |--------------------------------------------------------------------------
-        */
-
-        if (!$emailExists && !$nikExists) {
-
-            return back()->with(
-                'popup_error',
-                'Email dan NIK tidak ditemukan.'
-            );
+        if (! $user || ! $user->is_active || $user->approval_status !== 'approved') {
+            return back()
+                ->withInput($request->only('email', 'nik'))
+                ->with('popup_error', __('lms.auth_popup.verify_failed_generic'));
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Email tidak ditemukan
-        |--------------------------------------------------------------------------
-        */
-
-        if (!$emailExists) {
-
-            return back()->with(
-                'popup_error',
-                'Email tidak ditemukan.'
-            );
+        $previousToken = session('reset_token');
+        if (is_string($previousToken) && $previousToken !== '') {
+            PasswordResetToken::invalidate($previousToken);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | NIK tidak ditemukan
-        |--------------------------------------------------------------------------
-        */
+        $token = PasswordResetToken::create($user->id);
+        session(['reset_token' => $token]);
 
-        if (!$nikExists) {
-
-            return back()->with(
-                'popup_error',
-                'NIK tidak ditemukan.'
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Email & NIK harus milik user yang sama
-        |--------------------------------------------------------------------------
-        */
-
-        $user = User::where(
-            'email',
-            $request->email
-        )
-        ->where(
-            'nik',
-            $request->nik
-        )
-        ->first();
-
-        if (!$user) {
-
-            return back()->with(
-                'popup_error',
-                'Email dan NIK tidak sesuai.'
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Akun tidak aktif
-        |--------------------------------------------------------------------------
-        */
-
-        if (!$user->is_active) {
-
-            return back()->with(
-                'popup_error',
-                'Akun tidak aktif. Hubungi administrator.'
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Simpan Session Reset
-        |--------------------------------------------------------------------------
-        */
-
-        session([
-            'reset_user_id' => $user->id
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Popup Success
-        |--------------------------------------------------------------------------
-        */
-
-        return back()->with(
-            'popup_success',
-            'Email dan NIK berhasil diverifikasi.'
-        );
+        return back()
+            ->withInput($request->only('email', 'nik'))
+            ->with('popup_success', __('lms.auth_popup.verify_success'));
     }
 
-    /**
-     * Form Reset Password
-     */
-    public function showResetForm()
+    public function showResetForm(): View|RedirectResponse
     {
-        if (!session()->has('reset_user_id')) {
+        $token = session('reset_token');
 
-            return redirect()->route(
-                'password.request.custom'
-            );
+        if (! is_string($token) || $token === '' || PasswordResetToken::userIdFor($token) === null) {
+            if (is_string($token) && $token !== '') {
+                session()->forget('reset_token');
+            }
+
+            return redirect()
+                ->route('password.request')
+                ->with('error', __('lms.auth_popup.reset_expired'));
         }
 
-        return view(
-            'auth.reset-password'
-        );
+        return view('auth.reset-password-custom', [
+            'resetToken' => $token,
+        ]);
     }
 
-    /**
-     * Simpan Password Baru
-     */
-    public function resetPassword(Request $request)
+    public function resetPassword(Request $request): RedirectResponse
     {
         $request->validate([
-            'password' => 'required|min:8|confirmed'
+            'reset_token' => ['required', 'string'],
+            'password' => ['required', 'confirmed', 'min:8'],
         ]);
 
-        $user = User::find(
-            session('reset_user_id')
-        );
+        $sessionToken = session('reset_token');
+        $requestToken = $request->input('reset_token');
 
-        if (!$user) {
+        if (! is_string($sessionToken) || $sessionToken === '' || ! hash_equals($sessionToken, $requestToken)) {
+            session()->forget('reset_token');
 
-            return redirect()->route(
-                'password.request.custom'
-            );
+            return redirect()
+                ->route('password.request')
+                ->with('error', __('lms.auth_popup.reset_expired'));
+        }
+
+        $userId = PasswordResetToken::consume($requestToken);
+
+        if ($userId === null) {
+            session()->forget('reset_token');
+
+            return redirect()
+                ->route('password.request')
+                ->with('error', __('lms.auth_popup.reset_expired'));
+        }
+
+        $user = User::find($userId);
+
+        if (! $user) {
+            session()->forget('reset_token');
+
+            return redirect()->route('password.request');
         }
 
         $user->update([
-            'password' => Hash::make(
-                $request->password
-            )
+            'password' => Hash::make($request->password),
         ]);
 
-        session()->forget(
-            'reset_user_id'
-        );
+        session()->forget('reset_token');
 
         return redirect()
             ->route('login')
-            ->with(
-                'success',
-                'Password berhasil diubah.'
-            );
+            ->with('success', __('lms.auth_popup.password_changed'));
     }
 }

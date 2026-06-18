@@ -16,12 +16,12 @@
             <div class="lms-dialog-body">
                 <div class="lms-dialog-icon lms-dialog-icon--info">ℹ️</div>
                 <div class="lms-dialog-content">
-                    <h3 class="lms-dialog-title">Informasi</h3>
+                    <h3 class="lms-dialog-title">{{ __('lms.common.dialog_info') }}</h3>
                     <p class="lms-dialog-message" x-text="message"></p>
                 </div>
             </div>
             <div class="lms-dialog-footer">
-                <button type="button" @click="closeAlert()" class="lms-btn-primary">OK</button>
+                <button type="button" @click="closeAlert()" class="lms-btn-primary">{{ __('lms.common.dialog_ok') }}</button>
             </div>
         </div>
     </div>
@@ -41,13 +41,13 @@
             <div class="lms-dialog-body">
                 <div class="lms-dialog-icon lms-dialog-icon--warning">⚠️</div>
                 <div class="lms-dialog-content">
-                    <h3 class="lms-dialog-title">Konfirmasi</h3>
+                    <h3 class="lms-dialog-title">{{ __('lms.common.dialog_confirm') }}</h3>
                     <p class="lms-dialog-message" x-text="message"></p>
                 </div>
             </div>
             <div class="lms-dialog-footer lms-dialog-footer--split">
-                <button type="button" @click="confirmNo()" class="lms-btn-secondary">Batal</button>
-                <button type="button" @click="confirmYes()" class="lms-btn-primary">Ya, Lanjutkan</button>
+                <button type="button" @click="confirmNo()" class="lms-btn-secondary">{{ __('lms.common.dialog_cancel') }}</button>
+                <button type="button" @click="confirmYes()" class="lms-btn-primary">{{ __('lms.common.dialog_yes') }}</button>
             </div>
         </div>
     </div>

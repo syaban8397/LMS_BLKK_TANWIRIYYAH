@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <div class="lms-page-shell space-y-5">
+    <div class="lms-page-shell lms-module-shell lms-report-shell space-y-5">
 
         <x-lms-page-header
 
@@ -12,19 +12,27 @@
 
             :back-label="__('lms.report.back')"
 
+            :breadcrumbs="[
+                ['label' => __('lms.report.index_title'), 'url' => route('admin.reports.index')],
+                ['label' => __('lms.report.attendance'), 'url' => route('admin.reports.attendance')],
+                ['label' => $class->title],
+            ]"
+
         >
 
             <x-slot:actions>
-
-                <a href="{{ route('admin.reports.attendance.export', $class) }}" class="lms-btn-success btn-3d">{{ __('lms.export_excel') }}</a>
-
+                @include('admin.reports._export-actions', [
+                    'excelRoute' => 'admin.reports.attendance.export',
+                    'pdfRoute' => 'admin.reports.attendance.export-pdf',
+                    'routeParams' => [$class],
+                ])
             </x-slot:actions>
 
         </x-lms-page-header>
 
+        <x-lms-session-flash />
 
-
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+        <div class="lms-report-table-wrap bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
 
             <table class="w-full text-sm min-w-[900px]">
 
@@ -103,4 +111,3 @@
     </div>
 
 </x-app-layout>
-

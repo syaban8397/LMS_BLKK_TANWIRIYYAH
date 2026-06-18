@@ -27,4 +27,9 @@ class Material extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function progressRecords()
+    {
+        return $this->hasMany(MaterialProgress::class);
+    }
 }

@@ -1,4 +1,8 @@
-@props(['title', 'subtitle' => null, 'backUrl' => null, 'backLabel' => null])
+@props(['title', 'subtitle' => null, 'backUrl' => null, 'backLabel' => null, 'breadcrumbs' => []])
+
+@if(!empty($breadcrumbs))
+    <x-lms-breadcrumb :items="$breadcrumbs" class="mb-3" />
+@endif
 
 <div {{ $attributes->merge(['class' => 'page-header flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4']) }}>
     <div class="min-w-0">

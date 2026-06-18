@@ -6,8 +6,9 @@ use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\Material;
+use App\Support\SecureStorage;
+use App\Support\UploadRules;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class MaterialController extends Controller
 {
@@ -47,26 +48,23 @@ class MaterialController extends Controller
             'material_code' => 'nullable|max:50',
             'description' => 'nullable|string',
             'meeting_number' => 'required|integer|min:1',
-            'file' => 'nullable|file|max:102400', // 100MB max
+            'file' => UploadRules::documentAttachment(),
             'youtube_url' => 'nullable|url|max:255',
         ]);
 
-        // Check that at least one content is provided
         if (!$request->hasFile('file') && empty($validated['youtube_url'])) {
             return redirect()
                 ->back()
                 ->withInput()
-                ->withErrors(['content' => 'Please upload a file or provide a YouTube URL']);
+                ->withErrors(['content' => __('lms.flash.material_need_content')]);
         }
 
         $filePath = null;
         $fileType = null;
 
-        // Handle file upload
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('materials', $fileName, 'public');
+            $filePath = SecureStorage::storeUploadedFile($file, 'materials');
             $fileType = $file->getClientOriginalExtension();
         }
 
@@ -130,23 +128,18 @@ class MaterialController extends Controller
             'material_code' => 'nullable|max:50',
             'description' => 'nullable|string',
             'meeting_number' => 'required|integer|min:1',
-            'file' => 'nullable|file|max:102400',
+            'file' => UploadRules::documentAttachment(),
             'youtube_url' => 'nullable|url|max:255',
         ]);
 
         $filePath = $material->file_path;
         $fileType = $material->file_type;
 
-        // Handle file upload if provided
         if ($request->hasFile('file')) {
-            // Delete old file if exists
-            if ($material->file_path) {
-                Storage::disk('public')->delete($material->file_path);
-            }
+            SecureStorage::delete($material->file_path);
 
             $file = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('materials', $fileName, 'public');
+            $filePath = SecureStorage::storeUploadedFile($file, 'materials');
             $fileType = $file->getClientOriginalExtension();
         }
 
@@ -173,11 +166,7 @@ class MaterialController extends Controller
             abort(404);
         }
 
-        // Delete file if exists
-        if ($material->file_path) {
-            Storage::disk('public')->delete($material->file_path);
-        }
-
+        SecureStorage::delete($material->file_path);
         $material->delete();
 
         return redirect()

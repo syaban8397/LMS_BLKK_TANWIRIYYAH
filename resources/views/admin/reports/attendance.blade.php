@@ -1,18 +1,19 @@
-<x-app-layout>
+﻿<x-app-layout>
 
-    <div class="lms-page-shell space-y-5">
+    <div class="lms-page-shell lms-module-shell lms-report-shell space-y-5">
 
         @include('admin.reports._header', [
-
             'title' => __('lms.report.attendance'),
-
             'description' => __('lms.report.attendance_desc'),
-
+            'breadcrumbs' => [
+                ['label' => __('lms.report.index_title'), 'url' => route('admin.reports.index')],
+                ['label' => __('lms.report.attendance')],
+            ],
         ])
 
+        <x-lms-session-flash />
 
-
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+        <div class="lms-report-table-wrap bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
 
             <table class="w-full text-sm">
 
@@ -54,7 +55,7 @@
 
                                 <a href="{{ route('admin.reports.attendance.show', $class) }}"
 
-                                   class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium">{{ __('lms.report.view_summary') }}</a>
+                                   class="lms-action-btn lms-action-btn--view">{{ __('lms.report.view_summary') }}</a>
 
                             </td>
 
@@ -81,4 +82,3 @@
     </div>
 
 </x-app-layout>
-

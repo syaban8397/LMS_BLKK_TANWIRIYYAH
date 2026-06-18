@@ -1,22 +1,21 @@
-<x-app-layout>
-<div class="peserta-show-wrapper lms-page-shell space-y-6">
+﻿<x-app-layout>
+<div class="peserta-show-wrapper lms-module-shell space-y-6">
         <x-lms-page-header
             :title="$class->title"
             :subtitle="__('lms.common.subtitle_code_instructor_dot', ['code' => $class->code, 'instructor' => $class->instructor->name])"
             :back-url="route('peserta.classes.index')"
             :back-label="__('lms.back')"
+            :breadcrumbs="[
+                ['label' => __('lms.nav.my_classes'), 'url' => route('peserta.classes.index')],
+                ['label' => $class->title],
+            ]"
         >
             <x-slot:actions>
-                <a href="{{ route('peserta.classes.stream', $class) }}" class="lms-btn-primary btn-3d">📢 {{ __('lms.common.class_stream') }}</a>
+                <a href="{{ route('peserta.classes.stream', $class) }}" class="lms-btn-primary">📢 {{ __('lms.common.class_stream') }}</a>
             </x-slot:actions>
         </x-lms-page-header>
 
-        @if(session('success'))
-            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
-        @endif
-        @if(session('error'))
-            <x-lms-flash type="error">{{ session('error') }}</x-lms-flash>
-        @endif
+        <x-lms-session-flash />
 
         <div class="info-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">

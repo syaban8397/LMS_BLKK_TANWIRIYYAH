@@ -8,7 +8,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@if(!empty($title)){{ $title }} — @endif{{ __('lms.app_name') }}</title>
+    <meta name="description" content="{{ __('lms.welcome.meta_desc') }}">
+    <meta name="theme-color" content="#004071">
+    <title>@if(!empty($title)){{ $title }} — @endif{{ $lmsAppDisplayName ?? __('lms.app_name') }}</title>
 
     <script>
         (function () {
@@ -26,7 +28,7 @@
                 var uid = @json(auth()->id() ?? '');
                 var base = 'lms-theme-' + role;
                 var key = uid ? base + '-' + uid : base;
-                var theme = localStorage.getItem(key) || localStorage.getItem(base) || 'light';
+                var theme = localStorage.getItem(key) || localStorage.getItem(base) || @json($lmsDefaultTheme ?? 'light');
                 if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
                 }
@@ -52,7 +54,7 @@
             <div class="flex items-center gap-4">
                 <button id="toggleSidebarBtn"
                         class="theme-toggle-btn w-9 h-9 text-lg text-slate-600"
-                        aria-label="Toggle sidebar">
+                        aria-label="{{ __('lms.layout.toggle_sidebar') }}">
                     ☰
                 </button>
                 <img src="{{ asset('storage/images/Logo.png') }}"
@@ -77,8 +79,8 @@
                     <button id="profileButton"
                             class="flex items-center gap-3 glass-panel rounded-lg px-3 py-2 transition-all duration-200">
                         @php $user = Auth::user(); @endphp
-                        @if($user->photo)
-                            <img src="{{ Storage::url($user->photo) }}" class="w-9 h-9 rounded-lg object-cover ring-1 ring-slate-200 dark:ring-slate-600 shadow-3d-sm" alt="">
+                        @if($user->hasProfilePhoto())
+                            <img src="{{ $user->profilePhotoUrl() }}" class="w-9 h-9 rounded-lg object-cover ring-1 ring-slate-200 dark:ring-slate-600 shadow-3d-sm" alt="">
                         @else
                             <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-600 to-indigo-700 flex items-center justify-center text-white font-semibold text-sm shadow-3d-sm">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
@@ -114,6 +116,17 @@
             @endisset
             {{ $slot }}
         </main>
+
+        <footer class="border-t border-slate-200/80 dark:border-slate-700/60 py-4 px-6 text-center text-xs text-slate-500 dark:text-slate-400">
+            <p class="mb-2">© {{ date('Y') }} {{ $lmsAppDisplayName ?? __('lms.app_name') }} · {{ __('lms.welcome.powered_by') }}</p>
+            <p>
+                <a href="{{ route('legal.help') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">{{ __('lms.welcome.help') }}</a>
+                <span class="mx-2">·</span>
+                <a href="{{ route('legal.privacy') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">{{ __('lms.welcome.privacy') }}</a>
+                <span class="mx-2">·</span>
+                <a href="{{ route('legal.terms') }}" class="hover:text-brand-600 dark:hover:text-brand-400 transition">{{ __('lms.welcome.terms') }}</a>
+            </p>
+        </footer>
     </div>
 </div>
 

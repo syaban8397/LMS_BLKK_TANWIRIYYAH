@@ -2,345 +2,328 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('lms.app_name') }}</title>
-    <meta name="description" content="YMT Creator Base – Ekosistem pembelajaran modern untuk mencetak talenta kreatif siap masa depan. #SkillUpFutureReady">
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    <meta name="description" content="{{ __('lms.welcome.meta_desc') }}">
+    @vite(['resources/css/app.css', 'resources/css/landing.css', 'resources/js/app.js', 'resources/js/landing.js'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { overflow-x: hidden; background: #ffffff; }
-
-        /* Animasi 3D utama */
-        @keyframes fadeInUp3D {
-            0% { opacity: 0; transform: translateY(40px) rotateX(10deg); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0); }
-        }
-        @keyframes cardPop3D {
-            0% { opacity: 0; transform: scale(0.95) translateY(20px) rotateX(5deg); }
-            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
-        }
-        @keyframes fadeSlideUp {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes float3D {
-            0% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
-            50% { transform: translateY(-10px) rotateX(2deg) rotateY(2deg); }
-            100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
-        }
-
-        /* Wrapper utama */
-        .landing-wrapper {
-            animation: fadeInUp3D 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-
-        /* Kartu biru (statistik, program, dll) */
-        .blue-card {
-            background: rgba(255,255,255,0.95);
-            border-radius: 2rem;
-            border: 1px solid rgba(59,130,246,0.3);
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
-            transition: all 0.4s cubic-bezier(0.2,0.9,0.4,1.2);
-            transform-style: preserve-3d;
-            perspective: 1200px;
-            animation: cardPop3D 0.6s ease forwards;
-            opacity: 0;
-        }
-        .blue-card:hover {
-            transform: translateY(-10px) rotateX(3deg) rotateY(2deg) scale(1.02);
-            box-shadow: 0 30px 45px -15px rgba(0,0,0,0.25);
-            border-color: rgba(37,99,235,0.6);
-        }
-
-        /* Glass hero kanan */
-        .glass-blue {
-            background: rgba(255,255,255,0.3);
-            backdrop-filter: blur(12px);
-            border-radius: 2rem;
-            border: 1px solid rgba(59,130,246,0.4);
-            transition: all 0.4s ease;
-            animation: cardPop3D 0.6s ease forwards;
-            opacity: 0;
-        }
-        .glass-blue:hover {
-            transform: translateY(-8px) rotateX(2deg) rotateY(2deg);
-            background: rgba(255,255,255,0.45);
-            box-shadow: 0 25px 35px -12px rgba(0,0,0,0.2);
-        }
-
-        /* Tombol */
-        .btn-primary {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
-            color: white;
-            transition: all 0.3s cubic-bezier(0.2,0.9,0.4,1.2);
-            transform: translateY(0);
-            box-shadow: 0 12px 20px -10px rgba(0,0,0,0.2);
-        }
-        .btn-primary:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 20px 30px -12px rgba(37,99,235,0.4);
-            background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
-        }
-        .btn-outline {
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(4px);
-            border: 1px solid #93c5fd;
-            color: #1e3a8a;
-            transition: all 0.3s;
-        }
-        .btn-outline:hover {
-            background: white;
-            transform: translateY(-4px) scale(1.02);
-            border-color: #2563eb;
-            box-shadow: 0 15px 25px -12px rgba(0,0,0,0.15);
-        }
-
-        /* Navbar */
-        .navbar {
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.03);
-        }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #dbeafe; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
-
-        .gradient-blue {
-            background: linear-gradient(120deg, #1e40af, #3b82f6, #60a5fa);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: shimmer 5s linear infinite;
-        }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-
-        /* Stagger delay untuk kartu hero (4 buah) */
-        .glass-blue:nth-child(1) { animation-delay: 0.1s; }
-        .glass-blue:nth-child(2) { animation-delay: 0.2s; }
-        .glass-blue:nth-child(3) { animation-delay: 0.3s; }
-        .glass-blue:nth-child(4) { animation-delay: 0.4s; }
-
-        /* Stagger untuk statistik */
-        .stat-card { animation: cardPop3D 0.5s ease forwards; opacity: 0; }
-        .stat-card:nth-child(1) { animation-delay: 0.05s; }
-        .stat-card:nth-child(2) { animation-delay: 0.1s; }
-        .stat-card:nth-child(3) { animation-delay: 0.15s; }
-        .stat-card:nth-child(4) { animation-delay: 0.2s; }
-
-        /* Stagger untuk program cards */
-        .program-card { animation: cardPop3D 0.5s ease forwards; opacity: 0; }
-        .program-card:nth-child(1) { animation-delay: 0.25s; }
-        .program-card:nth-child(2) { animation-delay: 0.3s; }
-        .program-card:nth-child(3) { animation-delay: 0.35s; }
-        .program-card:nth-child(4) { animation-delay: 0.4s; }
-        .program-card:nth-child(5) { animation-delay: 0.45s; }
-        .program-card:nth-child(6) { animation-delay: 0.5s; }
-
-        /* Stagger fasilitas */
-        .facility-card { animation: cardPop3D 0.5s ease forwards; opacity: 0; }
-        .facility-card:nth-child(1) { animation-delay: 0.4s; }
-        .facility-card:nth-child(2) { animation-delay: 0.45s; }
-        .facility-card:nth-child(3) { animation-delay: 0.5s; }
-        .facility-card:nth-child(4) { animation-delay: 0.55s; }
-    </style>
 </head>
-<body>
+<body class="landing-page antialiased" x-data="{ navScrolled: false, mobileOpen: false }" @scroll.window="navScrolled = window.scrollY > 16">
 
-    <!-- Navbar dengan Logo Besar -->
-    <nav class="navbar fixed top-0 left-0 right-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 lg:px-10">
-            <div class="h-20 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-14 w-auto drop-shadow-lg">
+<div class="landing-mesh" aria-hidden="true">
+    <div class="landing-mesh__orb landing-mesh__orb--1"></div>
+    <div class="landing-mesh__orb landing-mesh__orb--2"></div>
+    <div class="landing-mesh__orb landing-mesh__orb--3"></div>
+</div>
+
+{{-- Navigation --}}
+<header class="landing-nav" :class="{ 'landing-nav--scrolled': navScrolled }">
+    <div class="landing-nav__shell">
+        <div class="landing-nav__inner">
+            <a href="{{ url('/') }}" class="landing-nav__brand">
+                <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-10 w-auto">
+                <span class="hidden sm:block">{{ __('lms.app_name') }}</span>
+            </a>
+
+            <nav class="landing-nav__links" aria-label="Primary">
+                <a href="#fitur" class="landing-nav__link">{{ __('lms.welcome.nav_features') }}</a>
+                <a href="#program" class="landing-nav__link">{{ __('lms.welcome.programs') }}</a>
+                <a href="#manfaat" class="landing-nav__link">{{ __('lms.welcome.nav_benefits') }}</a>
+                <a href="#faq" class="landing-nav__link">{{ __('lms.welcome.nav_faq') }}</a>
+                <a href="#kontak" class="landing-nav__link">{{ __('lms.welcome.contact') }}</a>
+            </nav>
+
+            <div class="landing-nav__actions">
+                <x-locale-switcher class="hidden sm:inline-flex" />
+                <a href="{{ route('login') }}" class="hidden sm:inline-flex ds-btn ds-btn--secondary text-sm py-2 px-4">{{ __('lms.welcome.login') }}</a>
+                <a href="{{ route('register') }}" class="hidden sm:inline-flex ds-btn ds-btn--primary text-sm py-2 px-4">{{ __('lms.welcome.register') }}</a>
+                <button type="button" class="landing-nav__menu-btn" @click="mobileOpen = !mobileOpen" :aria-expanded="mobileOpen" aria-label="Menu">
+                    <svg x-show="!mobileOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <svg x-show="mobileOpen" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div x-show="mobileOpen" x-cloak x-transition class="landing-mobile-menu md:hidden">
+            <a href="#fitur" @click="mobileOpen = false">{{ __('lms.welcome.nav_features') }}</a>
+            <a href="#program" @click="mobileOpen = false">{{ __('lms.welcome.programs') }}</a>
+            <a href="#manfaat" @click="mobileOpen = false">{{ __('lms.welcome.nav_benefits') }}</a>
+            <a href="#faq" @click="mobileOpen = false">{{ __('lms.welcome.nav_faq') }}</a>
+            <a href="#kontak" @click="mobileOpen = false">{{ __('lms.welcome.contact') }}</a>
+            <div class="flex items-center gap-2 pt-4">
+                <x-locale-switcher />
+                <a href="{{ route('login') }}" class="ds-btn ds-btn--secondary text-sm py-2 px-4 flex-1 justify-center">{{ __('lms.welcome.login') }}</a>
+                <a href="{{ route('register') }}" class="ds-btn ds-btn--primary text-sm py-2 px-4 flex-1 justify-center">{{ __('lms.welcome.register') }}</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+    {{-- Hero --}}
+    <section class="landing-hero">
+        <div class="landing-wrap">
+            <div class="landing-hero__grid">
+                <div class="landing-reveal">
+                    <p class="landing-eyebrow">{{ __('lms.welcome.powered_by') }}</p>
+                    <h1 class="landing-hero__title">
+                        {{ __('lms.welcome.hero_title') }}
+                        <span>{{ __('lms.welcome.hero_tagline') }}</span>
+                    </h1>
+                    <p class="landing-lead">{{ __('lms.welcome.hero_desc') }}</p>
+                    <div class="landing-hero__actions">
+                        <a href="{{ route('register') }}" class="ds-btn ds-btn--primary px-6 py-3">{{ __('lms.welcome.register_now') }}</a>
+                        <a href="{{ route('login') }}" class="ds-btn ds-btn--outline px-6 py-3">{{ __('lms.welcome.login_lms') }}</a>
+                    </div>
+                    <div class="landing-hero__trust">
+                        <span class="landing-hero__trust-badge">
+                            <span class="landing-hero__trust-dot"></span>
+                            {{ __('lms.welcome.powered_by') }}
+                        </span>
+                        <span class="text-sm text-slate-500">{{ __('lms.welcome.hero_subtitle') }}</span>
+                    </div>
                 </div>
-                <div class="hidden lg:flex items-center gap-8">
-                    <a href="#tentang" class="text-slate-700 hover:text-blue-700 font-medium transition">{{ __('lms.welcome.about') }}</a>
-                    <a href="#program" class="text-slate-700 hover:text-blue-700 font-medium transition">{{ __('lms.welcome.programs') }}</a>
-                    <a href="#fasilitas" class="text-slate-700 hover:text-blue-700 font-medium transition">{{ __('lms.welcome.facilities') }}</a>
-                    <a href="#kontak" class="text-slate-700 hover:text-blue-700 font-medium transition">{{ __('lms.welcome.contact') }}</a>
-                </div>
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('login') }}" class="px-5 py-2.5 rounded-xl text-blue-700 font-semibold hover:bg-blue-50 transition btn-outline">{{ __('lms.welcome.login') }}</a>
-                    <a href="{{ route('register') }}" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition btn-primary btn-3d">{{ __('lms.welcome.register') }}</a>
-                    <x-locale-switcher />
+
+                <div class="landing-bento landing-reveal landing-reveal--delay-1">
+                    <div class="landing-bento__cell landing-bento__cell--7">
+                        <div class="landing-card landing-card--dark landing-card--tall">
+                            <div class="landing-card__icon">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="1.75" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                            </div>
+                            <h3 class="landing-card__title">{{ __('lms.welcome.hero_card_skill_up') }}</h3>
+                            <p class="landing-card__desc">{{ __('lms.welcome.hero_card_skill_up_desc') }}</p>
+                        </div>
+                    </div>
+                    <div class="landing-bento__cell landing-bento__cell--5">
+                        <div class="landing-card landing-card--accent">
+                            <div class="landing-card__icon">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="1.75" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342"/></svg>
+                            </div>
+                            <h3 class="landing-card__title">{{ __('lms.welcome.hero_card_certification') }}</h3>
+                            <p class="landing-card__desc">{{ __('lms.welcome.hero_card_certification_desc') }}</p>
+                        </div>
+                    </div>
+                    <div class="landing-bento__cell landing-bento__cell--6">
+                        <div class="landing-card">
+                            <div class="landing-card__icon">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="1.75" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+                            </div>
+                            <h3 class="landing-card__title">{{ __('lms.welcome.hero_card_future_ready') }}</h3>
+                            <p class="landing-card__desc">{{ __('lms.welcome.hero_card_future_ready_desc') }}</p>
+                        </div>
+                    </div>
+                    <div class="landing-bento__cell landing-bento__cell--6">
+                        <div class="landing-card">
+                            <div class="landing-card__icon">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="1.75" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"/></svg>
+                            </div>
+                            <h3 class="landing-card__title">{{ __('lms.welcome.hero_card_institutional') }}</h3>
+                            <p class="landing-card__desc">{{ __('lms.welcome.hero_card_institutional_desc') }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </nav>
+    </section>
 
-    <div class="landing-wrapper">
-        <!-- Hero Section -->
-        <section class="relative pt-36 pb-24 overflow-hidden">
-            <div class="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
-                <div class="grid lg:grid-cols-2 gap-12 items-center">
-                    <!-- Kiri -->
-                    <div style="animation: fadeSlideUp 0.6s ease forwards 0.05s; opacity: 0;">
-                        <span class="inline-flex px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold">
-                            <i class="fas fa-certificate mr-2 text-blue-600"></i> Powered by BLKK | Kemnaker RI
-                        </span>
-                        <h1 class="text-5xl lg:text-6xl font-extrabold mt-8 leading-tight">
-                            <span class="gradient-blue">YMT Creator Base</span><br>
-                            <span class="text-slate-800">#SkillUpFutureReady</span>
-                        </h1>
-                        <p class="mt-6 text-lg text-slate-600 leading-relaxed max-w-xl">
-                            Pusat pengembangan kreativitas dan keterampilan masa depan. Bangun kompetensi, ciptakan karya, raih kesiapan menghadapi dunia industri.
-                        </p>
-                        <div class="flex flex-wrap gap-5 mt-10">
-                            <a href="{{ route('register') }}" class="px-8 py-4 rounded-lg bg-gradient-to-r from-blue-700 to-blue-800 text-white font-bold shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 btn-primary">
-                                {{ __('lms.welcome.register_now') }} <i class="fas fa-arrow-right ml-2"></i>
-                            </a>
-                            <a href="{{ route('login') }}" class="px-8 py-4 rounded-lg border border-blue-300 bg-white/60 backdrop-blur-sm text-blue-700 font-semibold hover:bg-white transition transform hover:-translate-y-1 btn-outline">
-                                {{ __('lms.welcome.login_lms') }}
-                            </a>
+    {{-- Feature --}}
+    <section id="fitur" class="landing-section landing-section--muted">
+        <div class="landing-wrap">
+            <div class="landing-section-head landing-reveal">
+                <p class="landing-eyebrow">{{ __('lms.welcome.features_eyebrow') }}</p>
+                <h2 class="landing-heading">{{ __('lms.welcome.features_title') }}</h2>
+                <p class="landing-lead">{{ __('lms.welcome.features_desc') }}</p>
+            </div>
+
+            <div class="landing-bento">
+                @foreach([
+                    ['feature_materials', 'feature_materials_desc', 'M4.745 3A23.933 23.933 0 003 12c0 3.026.737 5.874 2.036 8.378M4.745 3A23.933 23.933 0 0121 12c0 3.026-.737 5.874-2.036 8.378M4.745 3L21 21', '8', 'accent'],
+                    ['feature_assignments', 'feature_assignments_desc', 'M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z', '4', ''],
+                    ['feature_attendance', 'feature_attendance_desc', 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5', '4', ''],
+                    ['feature_certificates', 'feature_certificates_desc', 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z', '4', ''],
+                    ['feature_stream', 'feature_stream_desc', 'M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z', '4', ''],
+                ] as $i => [$titleKey, $descKey, $iconPath, $span, $variant])
+                    <div class="landing-bento__cell landing-bento__cell--{{ $span }} landing-reveal landing-reveal--delay-{{ min($i + 1, 4) }}">
+                        <div class="landing-card {{ $variant === 'accent' ? 'landing-card--accent landing-card--tall' : '' }}">
+                            <div class="landing-card__icon">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="1.75" d="{{ $iconPath }}"/></svg>
+                            </div>
+                            <h3 class="landing-card__title">{{ __('lms.welcome.'.$titleKey) }}</h3>
+                            <p class="landing-card__desc">{{ __('lms.welcome.'.$descKey) }}</p>
                         </div>
                     </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
-                    <!-- Kanan: Kartu 2x2 -->
-                    <div class="relative">
-                        <div class="grid grid-cols-2 gap-6">
-                            <div class="glass-blue p-6 text-center"><div class="text-5xl mb-3">🎨</div><h3 class="font-bold text-xl text-blue-800">Kreativitas</h3><p class="text-blue-700 text-sm mt-1">Eksplorasi ide tanpa batas</p></div>
-                            <div class="glass-blue p-6 text-center"><div class="text-5xl mb-3">🚀</div><h3 class="font-bold text-xl text-blue-800">Skill Up</h3><p class="text-blue-700 text-sm mt-1">Tingkatkan kompetensi</p></div>
-                            <div class="glass-blue p-6 text-center"><div class="text-5xl mb-3">💼</div><h3 class="font-bold text-xl text-blue-800">Future Ready</h3><p class="text-blue-700 text-sm mt-1">Siap hadapi masa depan</p></div>
-                            <div class="glass-blue p-6 text-center"><div class="text-5xl mb-3">🎓</div><h3 class="font-bold text-xl text-blue-800">Sertifikasi</h3><p class="text-blue-700 text-sm mt-1">Diakui industri</p></div>
+    {{-- Program --}}
+    <section id="program" class="landing-section">
+        <div class="landing-wrap">
+            <div class="landing-section-head landing-section-head--center landing-reveal">
+                <p class="landing-eyebrow">{{ __('lms.welcome.featured_programs') }}</p>
+                <h2 class="landing-heading">{{ __('lms.welcome.competency') }}</h2>
+            </div>
+
+            <div class="landing-bento">
+                @foreach([
+                    ['program_digital_marketing', 'program_digital_marketing_desc', '0'],
+                    ['program_content_creator', 'program_content_creator_desc', '1'],
+                    ['program_desain_grafis', 'program_desain_grafis_desc', '2'],
+                    ['program_web_dev', 'program_web_dev_desc', '3'],
+                    ['program_fotografi', 'program_fotografi_desc', '4'],
+                    ['program_public_speaking', 'program_public_speaking_desc', '5'],
+                ] as $i => [$titleKey, $descKey, $tagNum])
+                    <div @class([
+                        'landing-bento__cell landing-reveal',
+                        'landing-bento__cell--8' => $i === 0,
+                        'landing-bento__cell--4' => $i !== 0,
+                        'landing-reveal--delay-'.min($i + 1, 4) => true,
+                    ])>
+                        <div @class(['landing-card landing-program', 'landing-card--accent' => $i === 0])>
+                            <span class="landing-program__tag">{{ str_pad((int) $tagNum + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                            <h3 class="landing-program__title">{{ __('lms.welcome.'.$titleKey) }}</h3>
+                            <p class="landing-program__desc">{{ __('lms.welcome.'.$descKey) }}</p>
                         </div>
                     </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- Benefit --}}
+    <section id="manfaat" class="landing-section landing-section--muted">
+        <div class="landing-wrap">
+            <div class="grid lg:grid-cols-2 gap-10 items-start">
+                <div class="landing-reveal">
+                    <p class="landing-eyebrow">{{ __('lms.welcome.benefits_eyebrow') }}</p>
+                    <h2 class="landing-heading">{{ __('lms.welcome.benefits_title') }}</h2>
+                    <p class="landing-lead">{{ __('lms.welcome.benefits_desc') }}</p>
+                    <div class="mt-8 space-y-4 text-sm leading-relaxed text-slate-600">
+                        <p>{{ __('lms.welcome.about_p1') }}</p>
+                        <p>{{ __('lms.welcome.about_p2') }}</p>
+                    </div>
+                    <div class="landing-card landing-card--accent mt-8">
+                        <h3 class="landing-card__title text-brand-900">{{ __('lms.welcome.vision') }}</h3>
+                        <p class="landing-card__desc mt-2">{{ __('lms.welcome.vision_text') }}</p>
+                    </div>
+                </div>
+
+                <div class="landing-benefit-list">
+                    @foreach([
+                        ['benefit_competency', 'benefit_competency_desc'],
+                        ['benefit_practice', 'benefit_practice_desc'],
+                        ['benefit_mentor', 'benefit_mentor_desc'],
+                        ['benefit_career', 'benefit_career_desc'],
+                    ] as $i => [$titleKey, $descKey])
+                        <div class="landing-benefit-item landing-reveal landing-reveal--delay-{{ min($i + 1, 4) }}">
+                            <span class="landing-benefit-item__num">{{ $i + 1 }}</span>
+                            <div>
+                                <h3 class="font-semibold text-slate-900">{{ __('lms.welcome.'.$titleKey) }}</h3>
+                                <p class="mt-1 text-sm text-slate-600 leading-relaxed">{{ __('lms.welcome.'.$descKey) }}</p>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Tentang -->
-        <section id="tentang" class="py-24 bg-white/50">
-            <div class="max-w-7xl mx-auto px-6 lg:px-10">
-                <div class="grid lg:grid-cols-2 gap-16 items-center">
-                    <div style="animation: fadeSlideUp 0.6s ease forwards 0.1s; opacity:0;">
-                        <span class="text-blue-700 font-bold uppercase tracking-wider">Tentang Kami</span>
-                        <h2 class="text-4xl lg:text-5xl font-extrabold mt-4 text-slate-800">YMT Creator Base <span class="gradient-blue">#SkillUpFutureReady</span></h2>
-                        <p class="mt-6 text-lg text-slate-600">YMT Creator Base merupakan identitas baru dari BLKK Tanwiriyyah, pusat pengembangan keterampilan dan talenta kreatif yang didukung oleh program Balai Latihan Kerja Komunitas (BLKK) Kementerian Ketenagakerjaan RI.</p>
-                        <p class="mt-6 text-lg text-slate-600">Kami hadir sebagai ruang belajar, berkarya, dan bertumbuh bagi generasi muda. Dengan pendekatan modern, kolaboratif, dan berbasis praktik nyata.</p>
+    {{-- Statistics --}}
+    <section id="statistik" class="landing-section">
+        <div class="landing-wrap">
+            <div class="landing-section-head landing-section-head--center landing-reveal">
+                <p class="landing-eyebrow">{{ __('lms.welcome.stats_eyebrow') }}</p>
+                <h2 class="landing-heading">{{ __('lms.welcome.stats_title') }}</h2>
+                <p class="landing-lead">{{ __('lms.welcome.stats_desc') }}</p>
+            </div>
+
+            <div class="landing-stats-grid">
+                @foreach([
+                    [$participantCount, 'stat_participants'],
+                    [$programCount, 'stat_programs'],
+                    [$classCount, 'stat_classes'],
+                    [$certificateCount, 'stat_certificates'],
+                ] as $i => [$value, $labelKey])
+                    <div class="landing-stat landing-reveal landing-reveal--delay-{{ min($i + 1, 4) }}">
+                        <p class="landing-stat__value" data-count="{{ $value }}">0</p>
+                        <p class="landing-stat__label">{{ __('lms.welcome.'.$labelKey) }}</p>
                     </div>
-                    <div class="blue-card p-10" style="animation-delay: 0.15s;">
-                        <div class="bg-gradient-to-br from-blue-800 to-blue-900 rounded-3xl p-10 text-white shadow-2xl">
-                            <h3 class="text-3xl font-bold">Visi</h3>
-                            <p class="mt-5 text-blue-100">Menjadi pusat pengembangan talenta kreatif terdepan yang mencetak individu adaptif, produktif, dan siap menghadapi dinamika industri kreatif.</p>
-                            <hr class="my-8 border-white/20">
-                            <h3 class="text-3xl font-bold">Misi</h3>
-                            <ul class="mt-5 space-y-3 text-blue-100">
-                                <li><i class="fas fa-check-circle mr-2 text-blue-300"></i> Pelatihan berbasis kompetensi kreatif.</li>
-                                <li><i class="fas fa-check-circle mr-2 text-blue-300"></i> Ekosistem teori & praktik seimbang.</li>
-                                <li><i class="fas fa-check-circle mr-2 text-blue-300"></i> Kemandirian melalui proyek nyata dan praktik langsung.</li>
-                                <li><i class="fas fa-check-circle mr-2 text-blue-300"></i> Talenta siap kerja dan wirausaha digital.</li>
-                            </ul>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- FAQ --}}
+    <section id="faq" class="landing-section landing-section--muted" x-data="{ open: null }">
+        <div class="landing-wrap">
+            <div class="landing-section-head landing-section-head--center landing-reveal">
+                <p class="landing-eyebrow">{{ __('lms.welcome.faq_eyebrow') }}</p>
+                <h2 class="landing-heading">{{ __('lms.welcome.faq_title') }}</h2>
+                <p class="landing-lead">{{ __('lms.welcome.faq_desc') }}</p>
+            </div>
+
+            <div class="landing-faq">
+                @foreach(range(1, 5) as $n)
+                    <div class="landing-faq__item landing-reveal landing-reveal--delay-{{ min($n, 4) }}" :class="{ 'is-open': open === {{ $n }} }">
+                        <button type="button" class="landing-faq__trigger" @click="open = open === {{ $n }} ? null : {{ $n }}" :aria-expanded="open === {{ $n }}">
+                            <span>{{ __('lms.welcome.faq_q'.$n) }}</span>
+                            <svg class="landing-faq__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div class="landing-faq__panel" x-ref="panel{{ $n }}" :style="open === {{ $n }} ? 'max-height:' + $refs.panel{{ $n }}.scrollHeight + 'px' : ''">
+                            <div class="landing-faq__answer">{{ __('lms.welcome.faq_a'.$n) }}</div>
                         </div>
                     </div>
-                </div>
+                @endforeach
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Statistik -->
-        <section class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-6 lg:px-10">
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">👨‍🎨</div><h3 class="text-4xl font-extrabold text-blue-700">{{ $participantCount }}</h3><p class="mt-3 text-slate-500">{{ __('lms.welcome.stat_participants') }}</p></div>
-                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">📚</div><h3 class="text-4xl font-extrabold text-blue-700">{{ $programCount }}</h3><p class="mt-3 text-slate-500">{{ __('lms.welcome.stat_programs') }}</p></div>
-                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">🏫</div><h3 class="text-4xl font-extrabold text-blue-700">{{ $classCount }}</h3><p class="mt-3 text-slate-500">{{ __('lms.welcome.stat_classes') }}</p></div>
-                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">🏆</div><h3 class="text-4xl font-extrabold text-blue-700">{{ $certificateCount }}</h3><p class="mt-3 text-slate-500">{{ __('lms.welcome.stat_certificates') }}</p></div>
+    {{-- CTA --}}
+    <section class="landing-cta">
+        <div class="landing-wrap">
+            <div class="landing-cta__panel landing-reveal">
+                <div class="landing-cta__content">
+                    <h2 class="landing-cta__title">{{ __('lms.welcome.cta_title') }}</h2>
+                    <p class="landing-cta__desc">{{ __('lms.welcome.cta_desc') }}</p>
+                    <div class="landing-cta__actions">
+                        <a href="{{ route('register') }}" class="landing-cta__btn-primary">{{ __('lms.welcome.register_now') }}</a>
+                        <a href="{{ route('login') }}" class="landing-cta__btn-ghost">{{ __('lms.welcome.login_lms') }}</a>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
+</main>
 
-        <!-- Program Unggulan -->
-        <section id="program" class="py-24 bg-blue-50">
-            <div class="max-w-7xl mx-auto px-6 lg:px-10 text-center">
-                <span class="text-blue-700 font-bold uppercase">Program Unggulan</span>
-                <h2 class="text-5xl font-extrabold mt-4 text-slate-800">Bidang Kompetensi Kreatif</h2>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
-                    <div class="program-card blue-card p-8">
-                        <div class="text-5xl">📈</div>
-                        <h3 class="text-2xl font-bold mt-6">Digital Marketing</h3>
-                        <p class="mt-4 text-slate-600">Strategi pemasaran digital, media sosial, dan evaluasi skema kompetensi.</p>
-                    </div>
-                    <div class="program-card blue-card p-8">
-                        <div class="text-5xl">🎬</div>
-                        <h3 class="text-2xl font-bold mt-6">Content Creator</h3>
-                        <p class="mt-4 text-slate-600">Produksi konten kreatif, personal branding, dan strategi media sosial.</p>
-                    </div>
-                    <div class="program-card blue-card p-8">
-                        <div class="text-5xl">🎨</div>
-                        <h3 class="text-2xl font-bold mt-6">Desain Grafis</h3>
-                        <p class="mt-4 text-slate-600">Desain visual, tipografi, layout, dan aplikasi tools desain profesional.</p>
-                    </div>
-                    <div class="program-card blue-card p-8">
-                        <div class="text-5xl">💻</div>
-                        <h3 class="text-2xl font-bold mt-6">Web Developer</h3>
-                        <p class="mt-4 text-slate-600">Pengembangan website, frontend, dan dasar-dasar pemrograman web.</p>
-                    </div>
-                    <div class="program-card blue-card p-8">
-                        <div class="text-5xl">📷</div>
-                        <h3 class="text-2xl font-bold mt-6">Fotografi</h3>
-                        <p class="mt-4 text-slate-600">Teknik fotografi, komposisi, editing, dan visual storytelling.</p>
-                    </div>
-                    <div class="program-card blue-card p-8">
-                        <div class="text-5xl">🎤</div>
-                        <h3 class="text-2xl font-bold mt-6">Public Speaking</h3>
-                        <p class="mt-4 text-slate-600">Komunikasi efektif, presentasi, dan kepercayaan diri di depan publik.</p>
-                    </div>
+{{-- Footer --}}
+<footer id="kontak" class="landing-footer">
+    <div class="landing-wrap">
+        <div class="landing-footer__grid">
+            <div class="landing-footer__brand">
+                <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-10 w-auto brightness-0 invert opacity-90">
+                <p>{{ __('lms.welcome.footer_tagline') }}</p>
+            </div>
+            <div>
+                <h3 class="landing-footer__heading">{{ __('lms.welcome.links') }}</h3>
+                <div class="landing-footer__links">
+                    <a href="{{ route('legal.privacy') }}">{{ __('lms.welcome.privacy') }}</a>
+                    <a href="{{ route('legal.terms') }}">{{ __('lms.welcome.terms') }}</a>
+                    <a href="{{ route('legal.help') }}">{{ __('lms.welcome.help') }}</a>
                 </div>
             </div>
-        </section>
-
-        <!-- Fasilitas -->
-        <section id="fasilitas" class="py-24 bg-white">
-            <div class="max-w-7xl mx-auto px-6 lg:px-10 text-center">
-                <span class="text-blue-700 font-bold uppercase">Fasilitas</span>
-                <h2 class="text-5xl font-extrabold mt-4 text-slate-800">Sarana Pendukung</h2>
-                <p class="mt-6 text-lg text-slate-600 max-w-3xl mx-auto">Lingkungan belajar modern dengan fasilitas lengkap untuk mendukung kreativitas.</p>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
-                    <div class="facility-card blue-card p-8 text-center"><div class="text-5xl">💻</div><h3 class="font-bold text-xl mt-5">Lab. Creative</h3><p class="mt-3 text-slate-600">Perangkat iMac & PC spesialisasi kreatif.</p></div>
-                    <div class="facility-card blue-card p-8 text-center"><div class="text-5xl">🎥</div><h3 class="font-bold text-xl mt-5">Studio Multimedia</h3><p class="mt-3 text-slate-600">Green screen, lighting, audio profesional.</p></div>
-                    <div class="facility-card blue-card p-8 text-center"><div class="text-5xl">📶</div><h3 class="font-bold text-xl mt-5">Internet Gigabit</h3><p class="mt-3 text-slate-600">Akses cepat stabil.</p></div>
-                    <div class="facility-card blue-card p-8 text-center"><div class="text-5xl">👨‍🏫</div><h3 class="font-bold text-xl mt-5">Mentor Ahli</h3><p class="mt-3 text-slate-600">Instruktur praktisi industri.</p></div>
-                </div>
+            <div>
+                <h3 class="landing-footer__heading">{{ __('lms.welcome.contact_title') }}</h3>
+                <p class="text-sm leading-relaxed">{{ __('lms.welcome.contact_address_full') }}</p>
+                <p class="text-sm mt-3">{{ __('lms.welcome.contact_email') }}</p>
+                <p class="text-sm mt-1">{{ __('lms.welcome.contact_phone') }}</p>
             </div>
-        </section>
-
-        <!-- CTA -->
-        <section class="py-24 bg-gradient-to-r from-blue-800 to-blue-900 text-white">
-            <div class="max-w-5xl mx-auto text-center px-6">
-                <h2 class="text-5xl font-extrabold">#SkillUpFutureReady</h2>
-                <p class="mt-8 text-xl text-blue-100">Tingkatkan keterampilan, kerjakan proyek nyata, dan raih peluang karir di industri kreatif.</p>
-                <div class="flex flex-wrap justify-center gap-5 mt-12">
-                    <a href="{{ route('register') }}" class="px-8 py-4 rounded-lg bg-white text-blue-800 font-bold shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 btn-primary">Daftar Sekarang <i class="fas fa-user-plus ml-2"></i></a>
-                    <a href="{{ route('login') }}" class="px-8 py-4 rounded-lg border border-white/30 bg-white/10 backdrop-blur-md font-semibold hover:bg-white/20 transition transform hover:-translate-y-1 btn-outline">Masuk LMS <i class="fas fa-sign-in-alt ml-2"></i></a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer id="kontak" class="bg-slate-900 text-slate-300">
-            <div class="max-w-7xl mx-auto px-6 lg:px-10 py-16">
-                <div class="grid lg:grid-cols-3 gap-12">
-                    <div><img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-14 w-auto mb-4"><p>{{ __('lms.app_name') }} — Pusat pelatihan vokasi dan keterampilan.</p></div>
-                    <div><h3 class="text-xl font-bold text-white">Tautan</h3><ul class="space-y-3 mt-5"><li><a href="#tentang" class="hover:text-blue-400 transition">{{ __('lms.welcome.about') }}</a></li><li><a href="#program" class="hover:text-blue-400 transition">{{ __('lms.welcome.programs') }}</a></li><li><a href="{{ route('legal.privacy') }}" class="hover:text-blue-400 transition">{{ __('lms.welcome.privacy') }}</a></li><li><a href="{{ route('legal.terms') }}" class="hover:text-blue-400 transition">{{ __('lms.welcome.terms') }}</a></li></ul></div>
-                    <div><h3 class="text-xl font-bold text-white">Kontak</h3><p>Jl. Ariawiratanudatar KM.05, Sindanglaka, Karangtengah, Cianjur 43281</p><p class="mt-2"><i class="fas fa-envelope mr-2"></i> info@ymtcreatorbase.id</p><p class="mt-2"><i class="fas fa-phone-alt mr-2"></i> +62 857 9570 0651</p></div>
-                </div>
-                <div class="border-t border-slate-800 mt-12 pt-8 text-center">© {{ date('Y') }} {{ __('lms.app_name') }}</div>
-            </div>
-        </footer>
+        </div>
+        <div class="landing-footer__bottom">
+            © {{ date('Y') }} {{ __('lms.app_name') }} · {{ __('lms.welcome.powered_by') }}
+        </div>
     </div>
+</footer>
 
-    <script>
-        // Optional: tambahan efek scroll atau interaksi jika diperlukan
-        document.addEventListener('DOMContentLoaded', function() {});
-    </script>
 </body>
 </html>

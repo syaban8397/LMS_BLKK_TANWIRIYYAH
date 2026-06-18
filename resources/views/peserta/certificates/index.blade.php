@@ -1,51 +1,43 @@
 <x-app-layout>
-    <div class="lms-page-shell space-y-5">
+    <div class="lms-module-shell space-y-5">
         <x-lms-page-header
-            title="Sertifikat Saya"
-            subtitle="Daftar sertifikat yang telah diterbitkan untuk Anda."
+            :title="__('lms.certificate_page.my_cert')"
+            :subtitle="__('lms.certificate_page.my_list_desc')"
             :back-url="route('peserta.dashboard')"
+            :breadcrumbs="[
+                ['label' => __('lms.certificate_page.my_cert')],
+            ]"
         />
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <table class="w-full text-sm">
-                <thead class="bg-slate-50 text-slate-500 text-xs font-semibold">
-                    <tr>
-                        <th class="px-4 py-3 text-left">Kelas / Program</th>
-                        <th class="px-4 py-3 text-left">Nomor Sertifikat</th>
-                        <th class="px-4 py-3 text-center">Tanggal Terbit</th>
-                        <th class="px-4 py-3 text-center">Kehadiran</th>
-                        <th class="px-4 py-3 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @forelse($certificates as $certificate)
-                        <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3">
-                                <div class="font-medium text-slate-800">{{ $certificate->class->title }}</div>
-                                <div class="text-xs text-slate-500">{{ $certificate->class->program->name }}</div>
-                            </td>
-                            <td class="px-4 py-3 text-xs font-mono text-slate-600">{{ $certificate->certificate_number }}</td>
-                            <td class="px-4 py-3 text-center text-slate-600">{{ $certificate->issued_at?->format('d M Y') }}</td>
-                            <td class="px-4 py-3 text-center text-blue-700 font-medium">{{ $certificate->attendance_percentage }}%</td>
-                            <td class="px-4 py-3 text-center">
-                                <a href="{{ route('peserta.certificates.download', $certificate) }}"
-                                   class="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-medium">
-                                    📜 Cetak / Unduh
-                                </a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="py-12 text-center text-slate-400">
-                                Belum ada sertifikat. Sertifikat akan tersedia setelah Anda ditandai lulus oleh admin atau instruktur.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            @if($certificates->hasPages())
-                <div class="px-4 py-3 border-t">{{ $certificates->links() }}</div>
-            @endif
-        </div>
+        <x-lms-data-table :paginator="$certificates" :skeleton-cols="5">
+            <x-slot:head>
+                <tr>
+                    <th class="lms-data-table__th lms-data-table__th--left">{{ __('lms.certificate_page.class_program') }}</th>
+                    <th class="lms-data-table__th lms-data-table__th--left">{{ __('lms.certificate_page.cert_number') }}</th>
+                    <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.certificate_page.issued_at') }}</th>
+                    <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.certificate_page.attendance_pct') }}</th>
+                    <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.common.actions') }}</th>
+                </tr>
+            </x-slot:head>
+
+            @forelse($certificates as $certificate)
+                <tr class="transition">
+                    <td class="px-4 py-3">
+                        <div class="font-medium text-slate-800 dark:text-slate-100">{{ $certificate->class->title }}</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">{{ $certificate->class->program->name }}</div>
+                    </td>
+                    <td class="px-4 py-3 text-xs font-mono text-slate-600 dark:text-slate-300">{{ $certificate->certificate_number }}</td>
+                    <td class="px-4 py-3 text-center text-slate-600 dark:text-slate-300">{{ $certificate->issued_at?->format('d M Y') }}</td>
+                    <td class="px-4 py-3 text-center text-blue-700 dark:text-blue-400 font-medium">{{ $certificate->attendance_percentage }}%</td>
+                    <td class="px-4 py-3 text-center">
+                        <x-lms-row-actions>
+                            <x-lms-action-btn variant="view" :href="route('peserta.certificates.download', $certificate)">{{ __('lms.certificate_page.print_download_btn') }}</x-lms-action-btn>
+                        </x-lms-row-actions>
+                    </td>
+                </tr>
+            @empty
+                <x-lms-table-empty :colspan="5" :message="__('lms.certificate_page.no_certs_hint')" />
+            @endforelse
+        </x-lms-data-table>
     </div>
 </x-app-layout>

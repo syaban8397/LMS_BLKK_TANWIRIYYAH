@@ -1,17 +1,28 @@
 <x-app-layout>
-    <div class="lms-page-shell space-y-5">
+    <div class="lms-page-shell lms-module-shell lms-report-shell space-y-5">
         <x-lms-page-header
             :title="__('lms.report.classes') . ' — ' . $class->title"
             :subtitle="$class->program->name . ' · ' . __('lms.report.instructor') . ': ' . $class->instructor->name . ' · ' . $class->code"
             :back-url="route('admin.reports.classes')"
             :back-label="__('lms.report.back')"
+            :breadcrumbs="[
+                ['label' => __('lms.report.index_title'), 'url' => route('admin.reports.index')],
+                ['label' => __('lms.report.classes'), 'url' => route('admin.reports.classes')],
+                ['label' => $class->title],
+            ]"
         >
             <x-slot:actions>
-                <a href="{{ route('admin.reports.classes.export-class', $class) }}" class="lms-btn-success btn-3d">{{ __('lms.export_excel') }}</a>
+                @include('admin.reports._export-actions', [
+                    'excelRoute' => 'admin.reports.classes.export-class',
+                    'pdfRoute' => 'admin.reports.classes.export-class-pdf',
+                    'routeParams' => [$class],
+                ])
             </x-slot:actions>
         </x-lms-page-header>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+        <x-lms-session-flash />
+
+        <div class="lms-report-table-wrap bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
             <table class="w-full text-sm min-w-[1600px]">
                 <thead class="bg-slate-50 text-slate-500 text-xs font-semibold">
                     <tr>

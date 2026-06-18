@@ -12,11 +12,15 @@ use App\Exports\Reports\ParticipantsReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Services\ReportService;
+use App\Services\ReportPdfService;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
-    public function __construct(protected ReportService $reportService) {}
+    public function __construct(
+        protected ReportService $reportService,
+        protected ReportPdfService $reportPdfService
+    ) {}
 
     public function index()
     {
@@ -40,6 +44,11 @@ class ReportController extends Controller
         );
     }
 
+    public function exportParticipantsPdf()
+    {
+        return $this->reportPdfService->downloadParticipants();
+    }
+
     public function instructors()
     {
         $instructors = $this->reportService->instructorsReport();
@@ -55,6 +64,11 @@ class ReportController extends Controller
             new InstructorsReportExport($instructors),
             'laporan-instruktur-' . now()->format('Ymd') . '.xlsx'
         );
+    }
+
+    public function exportInstructorsPdf()
+    {
+        return $this->reportPdfService->downloadInstructors();
     }
 
     public function classes()
@@ -82,6 +96,11 @@ class ReportController extends Controller
         );
     }
 
+    public function exportClassesPdf()
+    {
+        return $this->reportPdfService->downloadClasses();
+    }
+
     public function exportClass(ClassModel $class)
     {
         $class->load(['program', 'instructor']);
@@ -91,6 +110,11 @@ class ReportController extends Controller
             new ClassParticipantsReportExport($class, $students),
             'laporan-kelas-' . $class->code . '-' . now()->format('Ymd') . '.xlsx'
         );
+    }
+
+    public function exportClassPdf(ClassModel $class)
+    {
+        return $this->reportPdfService->downloadClass($class);
     }
 
     public function attendance()
@@ -119,6 +143,11 @@ class ReportController extends Controller
         );
     }
 
+    public function exportAttendancePdf(ClassModel $class)
+    {
+        return $this->reportPdfService->downloadAttendance($class);
+    }
+
     public function grades()
     {
         $grades = $this->reportService->gradesReport();
@@ -136,6 +165,11 @@ class ReportController extends Controller
         );
     }
 
+    public function exportGradesPdf()
+    {
+        return $this->reportPdfService->downloadGrades();
+    }
+
     public function certificates()
     {
         $certificates = $this->reportService->certificatesReport();
@@ -151,5 +185,10 @@ class ReportController extends Controller
             new CertificatesReportExport($certificates),
             'laporan-sertifikat-' . now()->format('Ymd') . '.xlsx'
         );
+    }
+
+    public function exportCertificatesPdf()
+    {
+        return $this->reportPdfService->downloadCertificates();
     }
 }

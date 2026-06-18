@@ -80,6 +80,46 @@ body {
     z-index: 1;
 }
 
+.p1-sidebar-text {
+    left: 0;
+    top: 0;
+    width: 52mm;
+    height: 210mm;
+    z-index: 2;
+}
+
+.sidebar-table {
+    width: 52mm;
+    height: 210mm;
+    border-collapse: collapse;
+}
+
+.sidebar-table td {
+    vertical-align: middle;
+    padding: 0;
+}
+
+.sidebar-main-cell {
+    width: 28mm;
+    padding-left: 6mm;
+    color: #ffffff;
+    font-size: 21pt;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-align: center;
+    line-height: 0.92;
+}
+
+.sidebar-sub-cell {
+    width: 18mm;
+    color: #d1d5db;
+    font-size: 6.2pt;
+    font-weight: normal;
+    text-align: center;
+    line-height: 1.15;
+    letter-spacing: 0.4px;
+}
+
 /* PAGE 1 — LOGO BAR */
 .p1-logo {
     top: 4mm;
@@ -353,6 +393,19 @@ body {
 
     <div class="abs p1-sidebar" @if(!empty($logos['sidebar_bg'])) style="background-image: url('data:image/png;base64,{{ $logos['sidebar_bg'] }}');" @endif></div>
 
+    <div class="abs p1-sidebar-text">
+        <table class="sidebar-table" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="sidebar-main-cell">
+                    S<br>E<br>R<br>T<br>I<br>F<br>I<br>K<br>A<br>T
+                </td>
+                <td class="sidebar-sub-cell">
+                    C<br>E<br>R<br>T<br>I<br>F<br>I<br>C<br>A<br>T<br>E<br><br>O<br>F<br><br>T<br>R<br>A<br>I<br>N<br>I<br>N<br>G
+                </td>
+            </tr>
+        </table>
+    </div>
+
     <div class="abs p1-logo p1-logo-1">
         @if(!empty($logos['kemnaker']))
             <img src="data:image/png;base64,{{ $logos['kemnaker'] }}" style="height:13mm;width:auto;" alt="">
@@ -369,7 +422,11 @@ body {
         @endif
     </div>
     <div class="abs p1-logo p1-logo-4">
-        <div class="logo-indonesia-text">Indonesia<br>Skills</div>
+        @if(!empty($logos['indonesia_skills']))
+            <img src="data:image/png;base64,{{ $logos['indonesia_skills'] }}" style="height:10mm;max-width:36mm;width:auto;" alt="">
+        @else
+            <div class="logo-indonesia-text">Indonesia<br>Skills</div>
+        @endif
     </div>
     <div class="abs p1-logo p1-logo-5">
         @if(!empty($logos['skills_swoosh']))

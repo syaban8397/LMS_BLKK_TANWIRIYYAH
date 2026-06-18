@@ -10,7 +10,10 @@ use App\Models\ClassParticipant;
 use App\Models\FinalGrade;
 use App\Models\Material;
 use App\Models\Submission;
+use App\Models\User;
+use App\Support\SecureStorage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -137,6 +140,7 @@ class CertificateService
                 ->firstOrFail();
 
             $this->updateStatus($class, (int) $participantId, $status);
+
             $updated++;
         }
 
@@ -162,40 +166,49 @@ class CertificateService
 
     public function issue(ClassModel $class, int $participantId): Certificate
     {
-        $class->load('program');
+        return DB::transaction(function () use ($class, $participantId) {
+            $class->load('program');
 
-        $finalGrade = FinalGrade::where('class_id', $class->id)
-            ->where('participant_id', $participantId)
-            ->first();
+            $finalGrade = FinalGrade::where('class_id', $class->id)
+                ->where('participant_id', $participantId)
+                ->first();
 
-        if (!$finalGrade || $finalGrade->status !== 'pass') {
-            throw new \RuntimeException('Peserta belum ditandai lulus.');
-        }
+            if (!$finalGrade || $finalGrade->status !== 'pass') {
+                throw new \RuntimeException(__('lms.flash.participant_not_passed'));
+            }
 
-        $stats = collect($this->getClassStats($class))
-            ->first(fn ($row) => $row['participant']->id === $participantId);
+            $stats = collect($this->getClassStats($class))
+                ->first(fn ($row) => $row['participant']->id === $participantId);
 
-        $certificate = Certificate::firstOrNew([
-            'class_id' => $class->id,
-            'participant_id' => $participantId,
-        ]);
+            $certificate = Certificate::where('class_id', $class->id)
+                ->where('participant_id', $participantId)
+                ->lockForUpdate()
+                ->first();
 
-        if (!$certificate->certificate_number) {
-            $certificate->certificate_number = $this->generateNumber($class, $participantId);
-        }
+            if (!$certificate) {
+                $certificate = new Certificate([
+                    'class_id' => $class->id,
+                    'participant_id' => $participantId,
+                ]);
+            }
 
-        $certificate->final_score = $finalGrade->final_score ?? 0;
-        $certificate->attendance_percentage = $stats['attendance_percentage'] ?? 0;
-        $certificate->issued_at = now();
+            if (!$certificate->certificate_number) {
+                $certificate->certificate_number = $this->generateNumber($class, $participantId);
+            }
 
-        $verifyUrl = route('certificates.verify', $certificate->certificate_number);
-        $certificate->qr_code = $this->storeQrCode($certificate->certificate_number, $verifyUrl);
+            $certificate->final_score = $finalGrade->final_score ?? 0;
+            $certificate->attendance_percentage = $stats['attendance_percentage'] ?? 0;
+            $certificate->issued_at = now();
 
-        $pdfPath = $this->generatePdf($class, $certificate);
-        $certificate->pdf_file = $pdfPath;
-        $certificate->save();
+            $verifyUrl = route('certificates.verify', $certificate->certificate_number);
+            $certificate->qr_code = $this->storeQrCode($certificate->certificate_number, $verifyUrl);
 
-        return $certificate;
+            $pdfPath = $this->generatePdf($class, $certificate);
+            $certificate->pdf_file = $pdfPath;
+            $certificate->save();
+
+            return $certificate;
+        });
     }
 
     protected function generateNumber(ClassModel $class, int $participantId): string
@@ -221,14 +234,14 @@ class CertificateService
             ->color(0, 64, 113)
             ->backgroundColor(255, 255, 255)
             ->generate($url);
-        Storage::disk('public')->put($path, $svg);
+        SecureStorage::put($path, $svg);
 
         return $path;
     }
 
     protected function qrDataUri(string $path): string
     {
-        $content = Storage::disk('public')->get($path);
+        $content = SecureStorage::get($path);
         $mime = str_ends_with(strtolower($path), '.svg') ? 'image/svg+xml' : 'image/png';
 
         return 'data:' . $mime . ';base64,' . base64_encode($content);
@@ -275,9 +288,12 @@ class CertificateService
             'logo' => $logo,
             'ymt' => $logo ?: $this->imageBase64('logo-ymt-creatorbase.png'),
             'vokasi' => $this->imageBase64('logo-pelatihan-vokasi.png'),
+            'indonesia_skills' => $this->imageBase64('logo-indonesia-skills.png'),
             'skills_swoosh' => $this->imageBase64('logo-skills-swoosh.png'),
+            'blkk_mark' => $this->imageBase64('logo-blkk.png'),
             'siapkerja' => $this->imageBase64('logo-siapkerja.png'),
             'page2_watermark' => $this->imageBase64('page2-watermark.png'),
+            'materials_watermark' => $this->imageBase64('modules-watermark.png'),
         ];
     }
 
@@ -320,17 +336,17 @@ class CertificateService
             ->setOption('isHtml5ParserEnabled', true);
 
         $path = 'certificates/pdf/' . $certificate->certificate_number . '.pdf';
-        Storage::disk('public')->put($path, $pdf->output());
+        SecureStorage::put($path, $pdf->output());
 
         return $path;
     }
 
     public function downloadPath(Certificate $certificate): ?string
     {
-        if (!$certificate->pdf_file || !Storage::disk('public')->exists($certificate->pdf_file)) {
+        if (!$certificate->pdf_file || !SecureStorage::exists($certificate->pdf_file)) {
             return null;
         }
 
-        return Storage::disk('public')->path($certificate->pdf_file);
+        return SecureStorage::path($certificate->pdf_file);
     }
 }

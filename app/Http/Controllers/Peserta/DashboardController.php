@@ -9,6 +9,7 @@ use App\Models\Attendance;
 use App\Models\Certificate;
 use App\Models\ClassParticipant;
 use App\Models\Material;
+use App\Models\MaterialProgress;
 use App\Models\Submission;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,42 +18,46 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
-        // Kelas yang diikuti peserta
+
         $participations = ClassParticipant::where('participant_id', $user->id)
             ->with('class')
             ->get();
-        
+
+        $primaryClass = ClassParticipant::where('participant_id', $user->id)
+            ->where('status', 'active')
+            ->with('class')
+            ->latest()
+            ->first()?->class;
+
         $classes = $participations->count();
-        
-        // Total materi dari semua kelas yang diikuti
         $classIds = $participations->pluck('class_id');
+
         $materials = Material::whereIn('class_id', $classIds)->count();
-        
-        // Total tugas dari semua kelas yang diikuti
         $assignments = Assignment::whereIn('class_id', $classIds)->count();
-        
-        // Sertifikat (sesuaikan dengan model Anda, jika ada)
         $certificates = Certificate::where('participant_id', $user->id)->count();
-        
-        // Kelas selesai (status completed)
         $completedClasses = $participations->where('status', 'completed')->count();
-        
-        // Tugas belum dikumpulkan / pending
+
         $submittedAssignmentIds = Submission::where('participant_id', $user->id)
             ->pluck('assignment_id')
             ->toArray();
         $pendingAssignments = Assignment::whereIn('class_id', $classIds)
             ->whereNotIn('id', $submittedAssignmentIds)
             ->count();
-        
-        // Persentase kehadiran (contoh sederhana, hitung dari semua pertemuan)
+
         $totalAttendances = Attendance::where('participant_id', $user->id)->count();
         $presentAttendances = Attendance::where('participant_id', $user->id)
             ->whereIn('status', ['present', 'permission', 'sick'])
             ->count();
         $attendancePercentage = $totalAttendances > 0
             ? round(($presentAttendances / $totalAttendances) * 100)
+            : 0;
+
+        $completedMaterials = MaterialProgress::where('participant_id', $user->id)
+            ->where('status', 'completed')
+            ->whereHas('material', fn ($q) => $q->whereIn('class_id', $classIds))
+            ->count();
+        $materialProgressPercentage = $materials > 0
+            ? round(($completedMaterials / $materials) * 100)
             : 0;
 
         $announcements = Announcement::whereIn('class_id', $classIds)
@@ -71,8 +76,11 @@ class DashboardController extends Controller
             'completedClasses',
             'pendingAssignments',
             'attendancePercentage',
+            'materialProgressPercentage',
+            'completedMaterials',
             'announcements',
-            'announcementCount'
+            'announcementCount',
+            'primaryClass'
         ));
     }
 }

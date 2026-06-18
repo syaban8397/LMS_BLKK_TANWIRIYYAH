@@ -66,7 +66,7 @@ class CertificateController extends Controller
         $path = $this->certificateService->downloadPath($certificate);
 
         if (!$path) {
-            abort(404, 'File sertifikat tidak ditemukan.');
+            abort(404, __('lms.flash.certificate_file_not_found'));
         }
 
         return response()->download($path, $certificate->certificate_number . '.pdf');

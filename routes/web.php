@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ClassController;
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\CertificateController as AdminCertificateController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Instruktur\ClassController as InstruktorClassController;
 use App\Http\Controllers\Instruktur\ClassStreamController as InstruktorClassStreamController;
 use App\Http\Controllers\Instruktur\MaterialController as InstruktorMaterialController;
@@ -27,7 +28,6 @@ use App\Http\Controllers\Peserta\AttendanceController as PesertaAttendanceContro
 use App\Http\Controllers\Peserta\SubmissionController as PesertaSubmissionController;
 use App\Http\Controllers\Peserta\CertificateController as PesertaCertificateController;
 use App\Http\Controllers\CertificateVerifyController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Models\Certificate;
 use App\Models\ClassModel;
 use App\Models\Program;
@@ -46,8 +46,18 @@ Route::get('/locale/{locale}', [\App\Http\Controllers\LocaleController::class, '
 
 Route::get('/kebijakan-privasi', fn () => view('legal.privacy'))->name('legal.privacy');
 Route::get('/syarat-layanan', fn () => view('legal.terms'))->name('legal.terms');
+Route::get('/bantuan', fn () => view('legal.help'))->name('legal.help');
 
-Route::get('/verify/certificate/{number}', [CertificateVerifyController::class, 'show'])->name('certificates.verify');
+Route::get('/verify/certificate/{number}', [CertificateVerifyController::class, 'show'])
+    ->middleware('throttle:30,1')
+    ->name('certificates.verify');
+
+Route::middleware(['auth', 'user.active'])->prefix('secure')->name('secure.')->group(function () {
+    Route::get('/photos/{user}', [\App\Http\Controllers\SecureFileController::class, 'userPhoto'])->name('photos.show');
+    Route::get('/classes/{class}/assignments/{assignment}/attachment', [\App\Http\Controllers\SecureFileController::class, 'assignmentAttachment'])->name('assignments.attachment');
+    Route::get('/classes/{class}/materials/{material}/file', [\App\Http\Controllers\SecureFileController::class, 'materialFile'])->name('materials.file');
+    Route::get('/classes/{class}/assignments/{assignment}/submissions/{submission}/file', [\App\Http\Controllers\SecureFileController::class, 'submissionFile'])->name('submissions.file');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -55,7 +65,7 @@ Route::get('/verify/certificate/{number}', [CertificateVerifyController::class, 
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->get('/dashboard', function () {
+Route::middleware(['auth', 'user.active'])->get('/dashboard', function () {
 
     $user = auth()->user();
 
@@ -74,7 +84,7 @@ Route::middleware('auth')->get('/dashboard', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role.check:admin'])
+Route::middleware(['auth', 'role.check:admin', 'user.active'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -104,19 +114,29 @@ Route::middleware(['auth', 'role.check:admin'])
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/participants', [ReportController::class, 'participants'])->name('reports.participants');
         Route::get('/reports/participants/export', [ReportController::class, 'exportParticipants'])->name('reports.participants.export');
+        Route::get('/reports/participants/export-pdf', [ReportController::class, 'exportParticipantsPdf'])->name('reports.participants.export-pdf');
         Route::get('/reports/instructors', [ReportController::class, 'instructors'])->name('reports.instructors');
         Route::get('/reports/instructors/export', [ReportController::class, 'exportInstructors'])->name('reports.instructors.export');
+        Route::get('/reports/instructors/export-pdf', [ReportController::class, 'exportInstructorsPdf'])->name('reports.instructors.export-pdf');
         Route::get('/reports/classes', [ReportController::class, 'classes'])->name('reports.classes');
         Route::get('/reports/classes/export/all', [ReportController::class, 'exportClasses'])->name('reports.classes.export');
+        Route::get('/reports/classes/export/all-pdf', [ReportController::class, 'exportClassesPdf'])->name('reports.classes.export-pdf');
         Route::get('/reports/classes/{class}', [ReportController::class, 'showClass'])->name('reports.classes.show');
         Route::get('/reports/classes/{class}/export', [ReportController::class, 'exportClass'])->name('reports.classes.export-class');
+        Route::get('/reports/classes/{class}/export-pdf', [ReportController::class, 'exportClassPdf'])->name('reports.classes.export-class-pdf');
         Route::get('/reports/attendance', [ReportController::class, 'attendance'])->name('reports.attendance');
         Route::get('/reports/attendance/{class}', [ReportController::class, 'showAttendance'])->name('reports.attendance.show');
         Route::get('/reports/attendance/{class}/export', [ReportController::class, 'exportAttendance'])->name('reports.attendance.export');
+        Route::get('/reports/attendance/{class}/export-pdf', [ReportController::class, 'exportAttendancePdf'])->name('reports.attendance.export-pdf');
         Route::get('/reports/grades', [ReportController::class, 'grades'])->name('reports.grades');
         Route::get('/reports/grades/export', [ReportController::class, 'exportGrades'])->name('reports.grades.export');
+        Route::get('/reports/grades/export-pdf', [ReportController::class, 'exportGradesPdf'])->name('reports.grades.export-pdf');
         Route::get('/reports/certificates', [ReportController::class, 'certificates'])->name('reports.certificates');
         Route::get('/reports/certificates/export', [ReportController::class, 'exportCertificates'])->name('reports.certificates.export');
+        Route::get('/reports/certificates/export-pdf', [ReportController::class, 'exportCertificatesPdf'])->name('reports.certificates.export-pdf');
+
+        Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
+        Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
     });
 
 /*
@@ -125,7 +145,7 @@ Route::middleware(['auth', 'role.check:admin'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role.check:instruktur'])
+Route::middleware(['auth', 'role.check:instruktur', 'user.active'])
     ->prefix('instruktur')
     ->name('instruktur.')
     ->group(function () {
@@ -192,7 +212,7 @@ Route::middleware(['auth', 'role.check:instruktur'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role.check:peserta'])
+Route::middleware(['auth', 'role.check:peserta', 'user.active'])
     ->prefix('peserta')
     ->name('peserta.')
     ->group(function () {
@@ -208,6 +228,7 @@ Route::middleware(['auth', 'role.check:peserta'])
         // Materials
         Route::get('/classes/{class}/materials', [PesertaMaterialController::class, 'index'])->name('materials.index');
         Route::get('/classes/{class}/materials/{material}', [PesertaMaterialController::class, 'show'])->name('materials.show');
+        Route::post('/classes/{class}/materials/{material}/complete', [PesertaMaterialController::class, 'complete'])->name('materials.complete');
 
         // Assignments (daftar assignment dan detail)
         Route::get('/classes/{class}/assignments', [PesertaAssignmentController::class, 'index'])->name('assignments.index');
@@ -231,28 +252,13 @@ Route::middleware(['auth', 'role.check:peserta'])
 
 /*
 |--------------------------------------------------------------------------
-| Forgot Password (Email + NIK)
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware('guest')->group(function () {
-
-    Route::get('/forgot-password-custom', [ForgotPasswordController::class, 'create'])->name('password.request.custom');
-    Route::post('/forgot-password-custom', [ForgotPasswordController::class, 'verify'])->name('password.verify.custom');
-    Route::get('/reset-password-custom', [ForgotPasswordController::class, 'showResetForm'])->name('password.form');
-    Route::post('/reset-password-custom', [ForgotPasswordController::class, 'resetPassword'])->name('password.reset.custom');
-});
-
-/*
-|--------------------------------------------------------------------------
 | Profile Routes
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'user.active'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

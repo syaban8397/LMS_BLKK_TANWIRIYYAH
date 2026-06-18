@@ -12,34 +12,54 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'nik' => fake()->unique()->numerify('32##############'),
+            'phone' => fake()->numerify('08##########'),
+            'gender' => fake()->randomElement(['L', 'P']),
+            'birth_place' => fake()->city(),
+            'birth_date' => fake()->date(),
+            'address' => fake()->address(),
+            'is_active' => true,
+            'approval_status' => 'approved',
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
+    public function configure(): static
+    {
+        return $this->afterMaking(function (User $user) {
+            if (blank($user->role)) {
+                $user->role = 'peserta';
+            }
+        });
+    }
+
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    public function admin(): static
+    {
+        return $this->afterMaking(function (User $user) {
+            $user->role = 'admin';
+        });
+    }
+
+    public function instruktur(): static
+    {
+        return $this->afterMaking(function (User $user) {
+            $user->role = 'instruktur';
+        });
     }
 }

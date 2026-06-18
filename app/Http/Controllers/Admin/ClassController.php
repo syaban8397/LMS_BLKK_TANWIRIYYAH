@@ -7,6 +7,7 @@ use App\Models\ClassModel;
 use App\Models\Program;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ClassController extends Controller
 {
@@ -133,7 +134,14 @@ class ClassController extends Controller
     {
         return $request->validate([
             'program_id' => 'required|exists:programs,id',
-            'instructor_id' => 'required|exists:users,id',
+            'instructor_id' => [
+                'required',
+                Rule::exists('users', 'id')->where(function ($query) {
+                    $query->where('role', 'instruktur')
+                        ->where('is_active', true)
+                        ->where('approval_status', 'approved');
+                }),
+            ],
             'title' => 'required|max:255',
             'description' => 'required',
             'start_date' => 'required|date',

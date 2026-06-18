@@ -1,3 +1,7 @@
+@import './design-system.css';
+@import './classroom.css';
+@import './ui-consistency.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -122,7 +126,7 @@
     }
 
     html[data-authenticated-app="1"] .page-content-3d {
-        animation: pageEnter 0.35s ease forwards;
+        animation: pageEnter 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
     html[data-authenticated-app="1"] .premium-sidebar,
@@ -312,8 +316,6 @@
     .blue-card,
     .card-3d {
         transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
-        animation: cardPop 0.4s ease forwards;
-        opacity: 0;
     }
 
     html[data-authenticated-app="1"] .dashboard-card:hover,
@@ -326,21 +328,6 @@
     html[data-authenticated-app="1"] .user-table:hover {
         border-color: var(--color-border);
     }
-
-    .dashboard-card:nth-child(1), .stat-card:nth-child(1), .card-3d:nth-child(1) { animation-delay: 0.05s; }
-    .dashboard-card:nth-child(2), .stat-card:nth-child(2) { animation-delay: 0.1s; }
-    .dashboard-card:nth-child(3), .stat-card:nth-child(3) { animation-delay: 0.15s; }
-    .dashboard-card:nth-child(4), .stat-card:nth-child(4) { animation-delay: 0.2s; }
-
-    .filter-card { animation-delay: 0.25s; }
-    .user-table { animation-delay: 0.3s; }
-    .progress-card:nth-child(1) { animation-delay: 0.25s; }
-    .progress-card:nth-child(2) { animation-delay: 0.3s; }
-    .progress-card:nth-child(3) { animation-delay: 0.35s; }
-    .quick-card { animation-delay: 0.4s; }
-    .analytics-card { animation-delay: 0.45s; }
-    .analytics-card:nth-child(2) { animation-delay: 0.5s; }
-    .program-stats-card { animation-delay: 0.55s; }
 
     .user-table tbody tr {
         animation: none;
@@ -607,9 +594,13 @@
 
     /* Primary CTA in page headers */
     .lms-btn-primary {
-        @apply inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white px-3.5 py-2 rounded-lg text-sm font-medium;
-        box-shadow: var(--shadow-btn);
-        transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+        @apply inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold;
+        min-height: 2.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: var(--ds-radius);
+        box-shadow: var(--ds-shadow-soft);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     }
     .lms-btn-primary:hover {
         transform: translateY(-1px);
@@ -621,12 +612,16 @@
     }
 
     .lms-btn-secondary {
-        @apply inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium;
+        @apply inline-flex items-center gap-1.5 font-semibold;
+        min-height: 2.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: var(--ds-radius);
         background: var(--color-surface-elevated);
         border: 1px solid var(--color-border);
         color: var(--color-text);
-        box-shadow: var(--shadow-btn);
-        transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+        box-shadow: var(--ds-shadow-soft);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     }
     .lms-btn-secondary:hover {
         @apply bg-slate-50 dark:bg-slate-800/60;
@@ -1392,6 +1387,221 @@
         color: #1e3a8a;
         text-decoration: underline;
     }
+
+    .lms-auth-card--forgot,
+    .lms-auth-card--reset { max-width: 28rem; }
+
+    .auth-input-wrap { position: relative; }
+
+    .auth-input-icon {
+        position: absolute;
+        left: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.125rem;
+        height: 1.125rem;
+        color: #94a3b8;
+        pointer-events: none;
+    }
+
+    .input-luxury--icon { padding-left: 2.75rem; }
+
+    .input-luxury.is-invalid {
+        border-color: #ef4444;
+        background: #fef2f2;
+    }
+
+    .input-luxury.is-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+
+    .input-luxury.is-valid {
+        border-color: #22c55e;
+    }
+
+    .auth-field-hint {
+        font-size: 0.75rem;
+        margin-top: 0.375rem;
+        line-height: 1.25;
+    }
+
+    .auth-field-hint--error { color: #dc2626; }
+    .auth-field-hint--success { color: #16a34a; }
+    .auth-field-hint--warning { color: #d97706; }
+
+    .auth-alert {
+        border-radius: 0.75rem;
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+        border: 1px solid transparent;
+    }
+
+    .auth-alert--success {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+        color: #166534;
+    }
+
+    .auth-alert--error {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #991b1b;
+    }
+
+    .password-strength {
+        margin-top: 0.5rem;
+    }
+
+    .password-strength__bar {
+        display: flex;
+        gap: 0.25rem;
+        height: 0.25rem;
+    }
+
+    .password-strength__segment {
+        flex: 1;
+        border-radius: 9999px;
+        background: #e2e8f0;
+        transition: background-color 0.2s ease;
+    }
+
+    .password-strength__segment.is-active-1 { background: #ef4444; }
+    .password-strength__segment.is-active-2 { background: #f97316; }
+    .password-strength__segment.is-active-3 { background: #eab308; }
+    .password-strength__segment.is-active-4 { background: #22c55e; }
+
+    .password-strength__label {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.375rem;
+    }
+
+    .btn-auth-primary:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-auth-primary.is-loading {
+        position: relative;
+        color: transparent;
+    }
+
+    .btn-auth-primary.is-loading::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 1.25rem;
+        height: 1.25rem;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: authSpin 0.7s linear infinite;
+    }
+
+    @keyframes authSpin {
+        to { transform: rotate(360deg); }
+    }
+
+    .auth-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
+    }
+
+    .auth-modal {
+        width: 100%;
+        max-width: 24rem;
+        border-radius: 1.25rem;
+        overflow: hidden;
+        background: #ffffff;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+        border: 1px solid #e2e8f0;
+    }
+
+    .auth-modal__header {
+        padding: 1.5rem;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .auth-modal__header--success {
+        background: linear-gradient(135deg, #16a34a, #059669);
+    }
+
+    .auth-modal__header--error {
+        background: linear-gradient(135deg, #dc2626, #be123c);
+    }
+
+    .auth-modal__body {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .btn-auth-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        text-decoration: none;
+    }
+
+    .btn-auth-secondary--ghost {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .btn-auth-secondary--ghost:hover { background: #e2e8f0; }
+
+    .btn-auth-secondary--success {
+        background: #16a34a;
+        color: #ffffff;
+    }
+
+    .btn-auth-secondary--success:hover { background: #15803d; }
+
+    .dark .lms-guest-page {
+        background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .dark .lms-auth-card {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    .dark .lms-auth-card label { color: #e2e8f0; }
+
+    .dark .input-luxury {
+        background: #0f172a;
+        border-color: #334155;
+        color: #f8fafc;
+    }
+
+    .dark .input-luxury:focus {
+        background: #0f172a;
+        border-color: #3b82f6;
+    }
+
+    .dark .auth-modal {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    .dark .auth-modal__body { color: #cbd5e1; }
 }
 
 @layer utilities {
@@ -1638,22 +1848,33 @@
     }
 
     .lms-btn-primary {
-        @apply h-9 px-3.5 text-sm font-medium rounded-md;
+        min-height: 2.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border-radius: var(--ds-radius);
     }
 
     .lms-btn-secondary {
-        @apply h-9 px-3.5 text-sm font-medium rounded-md;
+        min-height: 2.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border-radius: var(--ds-radius);
     }
 
     .input-3d,
     .premium-input {
-        @apply h-9 text-sm rounded-md;
+        min-height: 2.5rem;
+        font-size: 0.875rem;
+        border-radius: var(--ds-radius);
     }
 
     html[data-authenticated-app="1"] main select,
     html[data-authenticated-app="1"] main input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
     html[data-authenticated-app="1"] main textarea {
-        @apply rounded-md text-sm;
+        font-size: 0.875rem;
+        border-radius: var(--ds-radius);
     }
 
     html[data-authenticated-app="1"] main textarea {
@@ -1694,8 +1915,8 @@
     html[data-authenticated-app="1"] main .detail-card.bg-white,
     html[data-authenticated-app="1"] main .info-card.bg-white,
     html[data-authenticated-app="1"] main .grade-card.bg-white {
-        border-radius: 0.5rem;
-        box-shadow: var(--shadow-card);
+        border-radius: var(--ds-radius);
+        box-shadow: var(--ds-shadow-soft);
         border-color: var(--color-border);
     }
 
@@ -1712,7 +1933,7 @@
 }
 
 @keyframes pageEnter {
-    0% { opacity: 0; transform: translateY(18px) scale(0.992); }
+    0% { opacity: 0; transform: translateY(10px) scale(0.985); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
@@ -1753,4 +1974,73 @@
 @keyframes loaderPulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
+}
+
+/* Institutional quick links — flat, readable, non-gradient */
+.lms-quick-link {
+    @apply flex flex-col items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-700 transition hover:border-brand-600 hover:bg-brand-50/40 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-brand-500;
+}
+
+.lms-quick-link--muted {
+    @apply opacity-70;
+}
+
+.lms-quick-link__icon {
+    @apply text-xl leading-none;
+}
+
+.lms-auth-modal {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4;
+}
+
+.lms-auth-modal__panel {
+    @apply w-full max-w-md overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl dark:border-slate-600 dark:bg-slate-800;
+}
+
+.lms-auth-modal__header {
+    @apply px-6 py-4 text-center text-white;
+}
+
+.lms-auth-modal__header--error {
+    @apply bg-red-600;
+}
+
+.lms-auth-modal__header--success {
+    @apply bg-emerald-600;
+}
+
+.lms-auth-modal__header h3 {
+    @apply text-lg font-semibold;
+}
+
+.lms-auth-modal__body {
+    @apply px-6 py-6 text-center text-slate-600 dark:text-slate-300;
+}
+
+.lms-landing-nav {
+    @apply fixed inset-x-0 top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm;
+}
+
+.lms-landing-hero {
+    @apply bg-gradient-to-b from-slate-50 to-white pt-28 pb-16;
+}
+
+.lms-landing-section {
+    @apply py-16;
+}
+
+.lms-landing-card {
+    @apply rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-brand-600/40 hover:shadow-md;
+}
+
+.lms-landing-stat {
+    @apply rounded-lg border border-slate-200 bg-white p-6 text-center;
+}
+
+.lms-landing-cta {
+    @apply bg-brand-800 text-white py-16;
+}
+
+.lms-landing-footer {
+    @apply bg-slate-900 text-slate-300 py-12;
 }
