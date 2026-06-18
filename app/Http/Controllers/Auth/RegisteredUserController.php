@@ -80,7 +80,7 @@ class RegisteredUserController extends Controller
             ->route('login')
             ->with(
                 'success',
-                'Registration successful. Please wait for admin approval.'
+                __('lms.auth.registration_success')
             );
     }
 }

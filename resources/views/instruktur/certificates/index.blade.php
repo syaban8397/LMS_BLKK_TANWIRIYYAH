@@ -1,12 +1,13 @@
 <x-app-layout>
-    <div class="space-y-5">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">Sertifikat Kelas Saya</h1>
-            <p class="text-sm text-slate-500 mt-0.5">Kelola kelulusan dan cetak sertifikat peserta.</p>
-        </div>
+    <div class="lms-page-shell space-y-5">
+        <x-lms-page-header
+            title="Sertifikat Kelas Saya"
+            subtitle="Kelola kelulusan dan cetak sertifikat peserta."
+            :back-url="route('instruktur.dashboard')"
+        />
 
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">{{ session('success') }}</div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">

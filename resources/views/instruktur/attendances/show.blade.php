@@ -1,22 +1,16 @@
 <x-app-layout>
-<div class="show-attendance-wrapper space-y-6">
-        {{-- Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Meeting {{ $meetingNumber }} - Attendance</h1>
-                <p class="text-sm text-slate-500 mt-0.5">{{ $class->title }} • {{ \Carbon\Carbon::parse($meetingDate)->format('d F Y H:i') }}</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('instruktur.attendances.edit', [$class, $meetingNumber]) }}" class="btn-3d px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition shadow-sm">
-                    ✏️ Edit
-                </a>
-                <a href="{{ route('instruktur.attendances.index', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                    ← Back to Sessions
-                </a>
-            </div>
-        </div>
+<div class="show-attendance-wrapper lms-page-shell space-y-6">
+        <x-lms-page-header
+            :title="'Pertemuan ' . $meetingNumber . ' — Kehadiran'"
+            :subtitle="$class->title . ' • ' . \Carbon\Carbon::parse($meetingDate)->format('d F Y H:i')"
+            :back-url="route('instruktur.attendances.index', $class)"
+            back-label="← Kembali ke Sesi"
+        >
+            <x-slot:actions>
+                <a href="{{ route('instruktur.attendances.edit', [$class, $meetingNumber]) }}" class="lms-btn-warning btn-3d">✏️ Edit</a>
+            </x-slot:actions>
+        </x-lms-page-header>
 
-        {{-- Flash Messages --}}
         @if(session('success'))
             <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif

@@ -84,7 +84,7 @@ class MaterialController extends Controller
 
         return redirect()
             ->route('instruktur.materials.index', $class)
-            ->with('success', 'Materi berhasil ditambahkan.');
+            ->with('success', __('lms.flash.material_created'));
     }
 
     public function show(ClassModel $class, Material $material)
@@ -162,7 +162,7 @@ class MaterialController extends Controller
 
         return redirect()
             ->route('instruktur.materials.show', [$class, $material])
-            ->with('success', 'Materi berhasil diperbarui.');
+            ->with('success', __('lms.flash.material_updated'));
     }
 
     public function destroy(ClassModel $class, Material $material)
@@ -182,6 +182,6 @@ class MaterialController extends Controller
 
         return redirect()
             ->route('instruktur.materials.index', $class)
-            ->with('success', 'Materi berhasil dihapus.');
+            ->with('success', __('lms.flash.material_deleted'));
     }
 }

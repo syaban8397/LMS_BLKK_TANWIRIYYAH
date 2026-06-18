@@ -1,38 +1,27 @@
 <x-app-layout>
-    <div class="space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Pengumuman — {{ $class->title }}</h1>
-                <p class="text-sm text-slate-500 mt-0.5">
-                    {{ $class->code }} · Instruktur: {{ $class->instructor->name }}
-                </p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('admin.announcements.index') }}"
-                   class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition">
-                    ← Kembali
-                </a>
-                <a href="{{ route('admin.classes.show', $class) }}"
-                   class="px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg text-sm font-medium transition">
-                    Detail Kelas
-                </a>
-            </div>
-        </div>
+    <div class="lms-page-shell space-y-5">
+        <x-lms-page-header
+            :title="'Pengumuman — ' . $class->title"
+            :subtitle="$class->code . ' · Instruktur: ' . $class->instructor->name"
+            :back-url="route('admin.announcements.index')"
+        >
+            <x-slot:actions>
+                <a href="{{ route('admin.classes.show', $class) }}" class="lms-btn-secondary btn-3d">Detail Kelas</a>
+            </x-slot:actions>
+        </x-lms-page-header>
 
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">
-                {{ session('success') }}
-            </div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
 
         @if ($errors->any())
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm">
+            <x-lms-flash type="error">
                 <ul class="list-disc list-inside space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-            </div>
+            </x-lms-flash>
         @endif
 
         {{-- Form tambah pengumuman --}}

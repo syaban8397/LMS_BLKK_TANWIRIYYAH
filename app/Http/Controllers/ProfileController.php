@@ -49,7 +49,7 @@ class ProfileController extends Controller
         $user->save();
 
         return Redirect::route('profile.edit')
-            ->with('success', 'Profile updated successfully.');
+            ->with('success', __('lms.flash.profile_updated'));
     }
 
     /**
@@ -66,7 +66,7 @@ class ProfileController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        return back()->with('success', 'Password updated successfully.');
+        return back()->with('success', __('lms.flash.password_updated'));
     }
 
     /**

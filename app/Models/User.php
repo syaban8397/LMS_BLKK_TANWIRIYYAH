@@ -77,11 +77,6 @@ class User extends Authenticatable
         return $this->hasMany(FinalGrade::class, 'participant_id');
     }
 
-    public function portfolios()
-    {
-        return $this->hasMany(Portfolio::class, 'participant_id');
-    }
-
     public function certificates()
     {
         return $this->hasMany(Certificate::class, 'participant_id');

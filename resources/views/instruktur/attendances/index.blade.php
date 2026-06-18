@@ -4,7 +4,7 @@
             title="Attendance Sessions"
             :subtitle="$class->title . ' • Manage attendance per meeting'"
             :back-url="route('instruktur.classes.stream', $class)"
-            back-label="← Back to Class"
+            back-label="← Kembali ke Kelas"
         >
             <x-slot:actions>
                 <a href="{{ route('instruktur.attendances.create', $class) }}" class="lms-btn-primary btn-3d">+ New Session</a>

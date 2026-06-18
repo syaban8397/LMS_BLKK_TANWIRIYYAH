@@ -50,7 +50,7 @@ class CertificateController extends Controller
 
         return redirect()
             ->route('instruktur.certificates.show', $class)
-            ->with('success', "Status {$count} peserta berhasil disimpan.");
+            ->with('success', __('lms.flash.certificate_status_saved', ['count' => $count]));
     }
 
     public function bulkIssue(Request $request, ClassModel $class)

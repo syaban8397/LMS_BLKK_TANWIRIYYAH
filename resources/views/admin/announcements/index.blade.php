@@ -1,19 +1,12 @@
 <x-app-layout>
-    <div class="space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Pengumuman Kelas</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Kelola pengumuman untuk kelas tertentu.</p>
-            </div>
-        </div>
+    <div class="lms-page-shell space-y-5">
+        <x-lms-page-header title="Pengumuman Kelas" subtitle="Kelola pengumuman untuk kelas tertentu." />
 
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm">
-                {{ session('success') }}
-            </div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="table-card overflow-hidden p-0">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50 text-slate-500 text-xs font-semibold">

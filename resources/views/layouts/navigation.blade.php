@@ -1,87 +1,96 @@
 @php
-$activeClass = 'bg-white/95 dark:bg-white/10 text-brand-900 dark:text-white shadow-3d-md font-semibold ring-1 ring-white/25 translate-x-0.5';
-$normalClass = 'text-white/85 hover:bg-white/10 hover:shadow-3d-sm hover:translate-x-0.5';
-$loaderLogo = asset('images/certificates/logo-blkk.png');
+    $role = auth()->user()->role;
 @endphp
 
 <nav class="relative z-10 h-screen flex flex-col">
     <div class="px-3 py-5 border-b border-white/10">
-        <div class="flex items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-white/95 p-1.5 flex items-center justify-center shadow-3d-sm ring-1 ring-white/25 overflow-hidden">
-                <img src="{{ $loaderLogo }}" alt="BLKK" class="w-full h-full object-contain">
-            </div>
-            <div class="logo-text ml-3">
-                <h1 class="text-white text-lg font-bold tracking-tight">LMS BLKK</h1>
-                <p class="text-blue-200/80 text-[10px] uppercase tracking-widest">Tanwiriyyah</p>
+        <div class="flex items-center justify-center px-1">
+            <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="logo-text h-9 w-auto max-w-[11rem] object-contain">
+            <div class="sidebar-logo-mark hidden w-10 h-10 rounded-lg bg-white p-1 items-center justify-center shadow-sm ring-1 ring-white/20 overflow-hidden">
+                <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-full w-auto max-w-none object-contain object-left origin-left scale-[2.2]">
             </div>
         </div>
     </div>
 
     <div class="flex-1 px-3 py-4 overflow-y-auto">
         <div class="space-y-1.5">
-            <a href="{{ route(auth()->user()->role.'.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs(auth()->user()->role.'.dashboard') ? $activeClass : $normalClass }}">
-                <span class="text-lg w-6 text-center">📊</span>
-                <span class="menu-text text-sm">Dashboard</span>
+            <a href="{{ route($role.'.dashboard') }}"
+               class="sidebar-nav-link {{ request()->routeIs($role.'.dashboard') ? 'sidebar-nav-link--active' : '' }}">
+                <span class="sidebar-nav-icon">📊</span>
+                <span class="menu-text">{{ __('lms.dashboard.menu') }}</span>
             </a>
 
-            @if(auth()->user()->role == 'admin')
-                <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('admin.users.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">👥</span>
-                    <span class="menu-text text-sm">User Management</span>
+            @if($role == 'admin')
+                <a href="{{ route('admin.users.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.users.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">👥</span>
+                    <span class="menu-text">{{ __('lms.nav.user_management') }}</span>
                 </a>
-                <a href="{{ route('admin.programs.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('admin.programs.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">📚</span>
-                    <span class="menu-text text-sm">Training Programs</span>
+                <a href="{{ route('admin.programs.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.programs.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">📚</span>
+                    <span class="menu-text">{{ __('lms.nav.training_programs') }}</span>
                 </a>
-                <a href="{{ route('admin.classes.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('admin.classes.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">🏫</span>
-                    <span class="menu-text text-sm">Classes</span>
+                <a href="{{ route('admin.classes.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.classes.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">🏫</span>
+                    <span class="menu-text">{{ __('lms.nav.classes') }}</span>
                 </a>
-                <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('admin.announcements.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">📢</span>
-                    <span class="menu-text text-sm">Announcements</span>
+                <a href="{{ route('admin.announcements.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.announcements.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">📢</span>
+                    <span class="menu-text">{{ __('lms.nav.announcements') }}</span>
                 </a>
-                <a href="{{ route('admin.certificates.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('admin.certificates.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">📜</span>
-                    <span class="menu-text text-sm">Certificates</span>
+                <a href="{{ route('admin.certificates.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.certificates.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">📜</span>
+                    <span class="menu-text">{{ __('lms.nav.certificates') }}</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ $normalClass }}">
-                    <span class="text-lg w-6 text-center">📖</span>
-                    <span class="menu-text text-sm">Learning Materials</span>
+                <a href="{{ route('admin.reports.classes') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.reports.classes*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">📖</span>
+                    <span class="menu-text">{{ __('lms.nav.report_classes') }}</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ $normalClass }}">
-                    <span class="text-lg w-6 text-center">📝</span>
-                    <span class="menu-text text-sm">Assignments</span>
+                <a href="{{ route('admin.reports.grades') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.reports.grades*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">📝</span>
+                    <span class="menu-text">{{ __('lms.nav.report_grades') }}</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ $normalClass }}">
-                    <span class="text-lg w-6 text-center">📅</span>
-                    <span class="menu-text text-sm">Attendance</span>
+                <a href="{{ route('admin.reports.attendance') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.reports.attendance*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">📅</span>
+                    <span class="menu-text">{{ __('lms.nav.report_attendance') }}</span>
                 </a>
-                <a href="{{ route('admin.reports.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('admin.reports.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">📈</span>
-                    <span class="menu-text text-sm">Reports</span>
-                </a>
-            @endif
-
-            @if(auth()->user()->role == 'instruktur')
-                <a href="{{ route('instruktur.classes.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('instruktur.classes.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">🏫</span>
-                    <span class="menu-text text-sm">My Classes</span>
-                </a>
-                <a href="{{ route('instruktur.certificates.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('instruktur.certificates.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">📜</span>
-                    <span class="menu-text text-sm">Certificates</span>
+                <a href="{{ route('admin.reports.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('admin.reports.index') || request()->routeIs('admin.reports.participants*') || request()->routeIs('admin.reports.instructors*') || request()->routeIs('admin.reports.certificates*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">📈</span>
+                    <span class="menu-text">{{ __('lms.nav.reports') }}</span>
                 </a>
             @endif
 
-            @if(auth()->user()->role == 'peserta')
-                <a href="{{ route('peserta.classes.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('peserta.classes.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">🏫</span>
-                    <span class="menu-text text-sm">My Classes</span>
+            @if($role == 'instruktur')
+                <a href="{{ route('instruktur.classes.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('instruktur.classes.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">🏫</span>
+                    <span class="menu-text">{{ __('lms.nav.my_classes') }}</span>
                 </a>
-                <a href="{{ route('peserta.certificates.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 {{ request()->routeIs('peserta.certificates.*') ? $activeClass : $normalClass }}">
-                    <span class="text-lg w-6 text-center">📜</span>
-                    <span class="menu-text text-sm">Certificates</span>
+                <a href="{{ route('instruktur.certificates.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('instruktur.certificates.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">📜</span>
+                    <span class="menu-text">{{ __('lms.nav.certificates') }}</span>
+                </a>
+            @endif
+
+            @if($role == 'peserta')
+                <a href="{{ route('peserta.classes.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('peserta.classes.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">🏫</span>
+                    <span class="menu-text">{{ __('lms.nav.my_classes') }}</span>
+                </a>
+                <a href="{{ route('peserta.certificates.index') }}"
+                   class="sidebar-nav-link {{ request()->routeIs('peserta.certificates.*') ? 'sidebar-nav-link--active' : '' }}">
+                    <span class="sidebar-nav-icon">📜</span>
+                    <span class="menu-text">{{ __('lms.nav.certificates') }}</span>
                 </a>
             @endif
         </div>
@@ -89,8 +98,8 @@ $loaderLogo = asset('images/certificates/logo-blkk.png');
 
     <div class="border-t border-white/10 p-4">
         <div class="logo-text text-center">
-            <p class="text-[10px] text-blue-200/70 uppercase tracking-wider">LMS BLKK Tanwiriyyah</p>
-            <p class="text-[10px] text-blue-300/50 mt-0.5">Version 1.0</p>
+            <p class="text-[10px] text-blue-200/70 uppercase tracking-wider">{{ __('lms.app_name') }}</p>
+            <p class="text-[10px] text-blue-300/50 mt-0.5">{{ __('lms.version') }} 1.0</p>
         </div>
     </div>
 </nav>

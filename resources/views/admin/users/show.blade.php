@@ -1,22 +1,14 @@
 <x-app-layout>
-<div class="show-user-wrapper space-y-6">
-        {{-- Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">{{ $user->name }}</h1>
-                <p class="text-sm text-slate-500 mt-0.5">User Profile & Account Information</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('admin.users.edit', $user) }}" 
-                   class="btn-3d px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm font-medium shadow-md transition">
-                    ✏️ Edit User
-                </a>
-                <a href="{{ route('admin.users.index') }}" 
-                   class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium shadow-sm transition">
-                    ← Back
-                </a>
-            </div>
-        </div>
+<div class="show-user-wrapper lms-page-shell space-y-6">
+        <x-lms-page-header
+            :title="$user->name"
+            subtitle="User Profile & Account Information"
+            :back-url="route('admin.users.index')"
+        >
+            <x-slot:actions>
+                <a href="{{ route('admin.users.edit', $user) }}" class="lms-btn-warning btn-3d">✏️ Edit User</a>
+            </x-slot:actions>
+        </x-lms-page-header>
 
         {{-- Main Grid --}}
         <div class="grid lg:grid-cols-3 gap-6">

@@ -10,7 +10,11 @@ class CertificateVerifyController extends Controller
     {
         $certificate = Certificate::where('certificate_number', $number)
             ->with(['participant', 'class.program'])
-            ->firstOrFail();
+            ->first();
+
+        if (! $certificate) {
+            return view('certificates.verify-invalid', compact('number'));
+        }
 
         return view('certificates.verify', compact('certificate'));
     }

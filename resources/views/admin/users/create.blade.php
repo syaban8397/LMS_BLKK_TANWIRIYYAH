@@ -1,24 +1,23 @@
 <x-app-layout>
-<div class="create-user-wrapper">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
-            <div>
-                <h2 class="text-xl font-bold text-slate-800">Create User</h2>
-                <p class="text-xs text-slate-500">Create administrator, instructor, or participant account</p>
-            </div>
-            <div class="hidden md:flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs shadow-md">
-                👤 User Management
-            </div>
-        </div>
+<div class="create-user-wrapper lms-page-shell space-y-5">
+        <x-lms-page-header
+            :title="__('lms.common.create_user')"
+            :subtitle="__('lms.common.create_user_subtitle')"
+            :back-url="route('admin.users.index')"
+        >
+            <x-slot:actions>
+                <span class="lms-badge lms-badge--info">{{ __('lms.nav.user_management') }}</span>
+            </x-slot:actions>
+        </x-lms-page-header>
 
         @if ($errors->any())
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-2 text-xs mb-4 animate-pulse">
-                <ul class="list-disc list-inside">
+            <x-lms-flash type="error">
+                <ul class="list-disc list-inside space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-            </div>
+            </x-lms-flash>
         @endif
 
         <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
@@ -125,7 +124,7 @@
 
                         <!-- Buttons -->
                         <div class="flex justify-end gap-3 mt-4 pt-2 border-t border-slate-100">
-                            <a href="{{ route('admin.users.index') }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition shadow-sm">Cancel</a>
+                            <a href="{{ route('admin.users.index') }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition shadow-sm">Batal</a>
                             <button type="submit" class="btn-3d px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition shadow-sm hover:shadow-md">Create User</button>
                         </div>
                     </div>

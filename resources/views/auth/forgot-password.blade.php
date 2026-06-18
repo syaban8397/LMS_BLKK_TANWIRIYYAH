@@ -19,14 +19,11 @@
             <div class="mb-10">
 
                 <h1 class="text-5xl font-extrabold leading-tight">
-                    Password
-                    <br>
-                    Recovery
+                    {{ __('lms.auth.forgot_page_title') }}
                 </h1>
 
                 <p class="mt-6 text-lg text-blue-100 leading-relaxed">
-                    Verify your identity using your registered Email
-                    and NIK before creating a new password.
+                    {{ __('lms.auth.forgot_page_desc') }}
                 </p>
 
             </div>
@@ -34,61 +31,61 @@
             <div class="grid grid-cols-2 gap-6">
 
                 <div
-                    class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
+                    class="bg-white/10 backdrop-blur-md rounded-lg p-5 border border-white/20">
 
                     <div class="text-3xl mb-3">🔐</div>
 
                     <h3 class="font-semibold text-lg">
-                        Secure Verification
+                        {{ __('lms.auth.forgot_secure_title') }}
                     </h3>
 
                     <p class="text-sm text-blue-100 mt-2">
-                        Email and NIK validation for account protection.
+                        {{ __('lms.auth.forgot_secure_desc') }}
                     </p>
 
                 </div>
 
                 <div
-                    class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
+                    class="bg-white/10 backdrop-blur-md rounded-lg p-5 border border-white/20">
 
                     <div class="text-3xl mb-3">🛡️</div>
 
                     <h3 class="font-semibold text-lg">
-                        Account Security
+                        {{ __('lms.auth.forgot_security_title') }}
                     </h3>
 
                     <p class="text-sm text-blue-100 mt-2">
-                        Only active accounts can reset passwords.
+                        {{ __('lms.auth.forgot_security_desc') }}
                     </p>
 
                 </div>
 
                 <div
-                    class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
+                    class="bg-white/10 backdrop-blur-md rounded-lg p-5 border border-white/20">
 
                     <div class="text-3xl mb-3">⚡</div>
 
                     <h3 class="font-semibold text-lg">
-                        Fast Recovery
+                        {{ __('lms.auth.forgot_fast_title') }}
                     </h3>
 
                     <p class="text-sm text-blue-100 mt-2">
-                        Recover your account within minutes.
+                        {{ __('lms.auth.forgot_fast_desc') }}
                     </p>
 
                 </div>
 
                 <div
-                    class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
+                    class="bg-white/10 backdrop-blur-md rounded-lg p-5 border border-white/20">
 
                     <div class="text-3xl mb-3">🎓</div>
 
                     <h3 class="font-semibold text-lg">
-                        LMS Access
+                        {{ __('lms.auth.forgot_lms_title') }}
                     </h3>
 
                     <p class="text-sm text-blue-100 mt-2">
-                        Continue your learning journey securely.
+                        {{ __('lms.auth.forgot_lms_desc') }}
                     </p>
 
                 </div>
@@ -104,28 +101,32 @@
         class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
 
         <div
-            class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-10">
+            class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 relative">
+
+            <div class="absolute top-5 right-5 z-10">
+                <x-locale-switcher />
+            </div>
 
             <div class="text-center mb-8">
 
                 <div
-                    class="w-20 h-20 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 mx-auto flex items-center justify-center text-white text-3xl shadow-lg">
+                    class="w-20 h-20 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-700 mx-auto flex items-center justify-center text-white text-3xl shadow-lg overflow-hidden">
 
-                    🔑
+                    <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-14 w-auto">
 
                 </div>
 
                 <h2
                     class="mt-5 text-3xl font-bold text-slate-800">
 
-                    Forgot Password
+                    {{ __('lms.auth.forgot_title') }}
 
                 </h2>
 
                 <p
                     class="text-slate-500 mt-2">
 
-                    Verify your account before resetting password
+                    {{ __('lms.auth.forgot_subtitle') }}
 
                 </p>
 
@@ -143,7 +144,7 @@
                     <label
                         class="block text-sm font-semibold text-gray-700 mb-2">
 
-                        Email Address
+                        {{ __('lms.auth.email') }}
 
                     </label>
 
@@ -162,7 +163,7 @@
                     <label
                         class="block text-sm font-semibold text-gray-700 mb-2">
 
-                        NIK
+                        {{ __('lms.auth.nik') }}
 
                     </label>
 
@@ -180,7 +181,7 @@
                     type="submit"
                     class="w-full mt-8 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-3 rounded-xl font-semibold shadow-lg transition">
 
-                    Verify Account
+                    {{ __('lms.auth.verify_account') }}
 
                 </button>
 
@@ -191,7 +192,7 @@
                         href="{{ route('login') }}"
                         class="text-sm text-gray-600 hover:text-blue-600">
 
-                        ← Back to Login
+                        {{ __('lms.auth.back_to_login') }}
 
                     </a>
 
@@ -227,7 +228,7 @@
             </div>
 
             <h2 class="text-2xl font-bold">
-                Verification Failed
+                Verifikasi Gagal
             </h2>
 
         </div>
@@ -276,7 +277,7 @@
             </div>
 
             <h2 class="text-2xl font-bold">
-                Verification Success
+                Verifikasi Berhasil
             </h2>
 
         </div>
@@ -293,7 +294,7 @@
                     href="{{ route('password.form') }}"
                     class="block w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition">
 
-                    Continue Reset Password
+                    Lanjut Atur Ulang Kata Sandi
 
                 </a>
 
@@ -301,7 +302,7 @@
                     onclick="closePopup()"
                     class="w-full py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-semibold transition">
 
-                    Close
+                    Tutup
 
                 </button>
 

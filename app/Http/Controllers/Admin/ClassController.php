@@ -58,7 +58,7 @@ class ClassController extends Controller
 
         return redirect()
             ->route('admin.classes.index')
-            ->with('success', 'Kelas berhasil ditambahkan.');
+            ->with('success', __('lms.flash.class_created'));
     }
 
     public function show(ClassModel $class)
@@ -102,7 +102,7 @@ class ClassController extends Controller
 
         return redirect()
             ->route('admin.classes.show', $class)
-            ->with('success', 'Kelas berhasil diperbarui.');
+            ->with('success', __('lms.flash.class_updated'));
     }
 
     public function destroy(ClassModel $class)
@@ -111,7 +111,7 @@ class ClassController extends Controller
 
         return redirect()
             ->route('admin.classes.index')
-            ->with('success', 'Kelas berhasil dihapus.');
+            ->with('success', __('lms.flash.class_deleted'));
     }
 
     public function previewCode(Request $request)

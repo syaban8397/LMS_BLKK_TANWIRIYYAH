@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Peserta;
 
 use App\Http\Controllers\Controller;
-use App\Models\ClassParticipant;
-use App\Models\Attendance;
+use App\Models\Announcement;
 use App\Models\Assignment;
+use App\Models\Attendance;
+use App\Models\Certificate;
+use App\Models\ClassParticipant;
 use App\Models\Material;
 use App\Models\Submission;
-use App\Models\Certificate;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -51,10 +51,18 @@ class DashboardController extends Controller
         $presentAttendances = Attendance::where('participant_id', $user->id)
             ->whereIn('status', ['present', 'permission', 'sick'])
             ->count();
-        $attendancePercentage = $totalAttendances > 0 
-            ? round(($presentAttendances / $totalAttendances) * 100) 
+        $attendancePercentage = $totalAttendances > 0
+            ? round(($presentAttendances / $totalAttendances) * 100)
             : 0;
-        
+
+        $announcements = Announcement::whereIn('class_id', $classIds)
+            ->with(['creator', 'class'])
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        $announcementCount = Announcement::whereIn('class_id', $classIds)->count();
+
         return view('dashboard.peserta', compact(
             'classes',
             'materials',
@@ -62,7 +70,9 @@ class DashboardController extends Controller
             'certificates',
             'completedClasses',
             'pendingAssignments',
-            'attendancePercentage'
+            'attendancePercentage',
+            'announcements',
+            'announcementCount'
         ));
     }
 }

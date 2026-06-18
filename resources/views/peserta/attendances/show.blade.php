@@ -1,21 +1,15 @@
 {{-- resources/views/peserta/attendances/show.blade.php --}}
 <x-app-layout>
-<div class="peserta-attendance-show-wrapper space-y-6">
-        {{-- Header Sederhana dengan Tombol Back --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Meeting {{ $meetingNumber }} - Submit Attendance</h1>
-                <p class="text-sm text-slate-500 mt-0.5">{{ $class->title }} • {{ \Carbon\Carbon::parse($attendance->attendance_date)->format('d F Y H:i') }}</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('peserta.attendances.index', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                    ← Back to Attendance
-                </a>
-            </div>
-        </div>
+<div class="peserta-attendance-show-wrapper lms-page-shell space-y-6">
+        <x-lms-page-header
+            :title="'Pertemuan ' . $meetingNumber . ' — Absensi'"
+            :subtitle="$class->title . ' • ' . \Carbon\Carbon::parse($attendance->attendance_date)->format('d F Y H:i')"
+            :back-url="route('peserta.attendances.index', $class)"
+            back-label="← Kembali ke Absensi"
+        />
 
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('error') }}</div>
+            <x-lms-flash type="error">{{ session('error') }}</x-lms-flash>
         @endif
 
         @php
@@ -137,7 +131,7 @@
 
                         {{-- Action Buttons --}}
                         <div class="border-t border-slate-200 pt-6 flex justify-end gap-3">
-                            <a href="{{ route('peserta.attendances.index', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">Cancel</a>
+                            <a href="{{ route('peserta.attendances.index', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">Batal</a>
                             <button type="submit" class="btn-3d px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
                                 {{ $attendance->status != 'absent' && $attendance->check_in_time ? 'Update Attendance' : 'Submit Attendance' }}
                             </button>

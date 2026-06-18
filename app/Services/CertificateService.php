@@ -236,22 +236,44 @@ class CertificateService
 
     protected function imageBase64(string $filename): ?string
     {
-        $path = public_path('images/certificates/' . $filename);
-
-        if (!file_exists($path)) {
-            return null;
+        foreach ($this->certificateImagePaths($filename) as $path) {
+            if (file_exists($path)) {
+                return base64_encode(file_get_contents($path));
+            }
         }
 
-        return base64_encode(file_get_contents($path));
+        return null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function certificateImagePaths(string $filename): array
+    {
+        $paths = [];
+
+        if (in_array(strtolower($filename), ['logo.png', 'logo'], true)) {
+            foreach (['logo.png', 'Logo.png'] as $logoFile) {
+                $paths[] = public_path('storage/images/' . $logoFile);
+                $paths[] = Storage::disk('public')->path('images/' . $logoFile);
+            }
+        }
+
+        $paths[] = public_path('images/certificates/' . $filename);
+
+        return $paths;
     }
 
     protected function certificateLogos(): array
     {
+        $logo = $this->imageBase64('logo.png');
+
         return [
             'sidebar_bg' => $this->imageBase64('sidebar-bg.png'),
             'kemnaker' => $this->imageBase64('logo-kemnaker.png'),
             'kemnaker_mark' => $this->imageBase64('logo-kemnaker-mark.png'),
-            'ymt' => $this->imageBase64('logo-ymt-creatorbase.png'),
+            'logo' => $logo,
+            'ymt' => $logo ?: $this->imageBase64('logo-ymt-creatorbase.png'),
             'vokasi' => $this->imageBase64('logo-pelatihan-vokasi.png'),
             'skills_swoosh' => $this->imageBase64('logo-skills-swoosh.png'),
             'siapkerja' => $this->imageBase64('logo-siapkerja.png'),

@@ -11,7 +11,7 @@
 
 <x-lms-page-loader />
 
-    <div class="max-w-lg w-full p-8 bg-white rounded-2xl border border-slate-200 shadow-3d-lg">
+    <div class="max-w-lg w-full p-8 bg-white rounded-lg border border-slate-200 shadow-3d-lg">
         <div class="text-center mb-6">
             <div class="text-4xl mb-2">✅</div>
             <h1 class="text-xl font-bold text-slate-800">Sertifikat Valid</h1>

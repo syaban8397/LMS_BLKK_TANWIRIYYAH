@@ -1,17 +1,10 @@
 <x-app-layout>
-<div class="stream-wrapper space-y-6">
-        {{-- Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">{{ $class->title }}</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Class Code: <span class="font-mono bg-slate-100 px-2 py-0.5 rounded-md">{{ $class->code }}</span> • Instructor: {{ $class->instructor->name }}</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('instruktur.classes.index') }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                    ← Back to Classes
-                </a>
-            </div>
-        </div>
+<div class="stream-wrapper lms-page-shell space-y-6">
+        <x-lms-page-header
+            :title="$class->title"
+            :subtitle="'Kode: ' . $class->code . ' · Instruktur: ' . $class->instructor->name"
+            :back-url="route('instruktur.classes.index')"
+        />
 
         @if(session('success'))
             <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
@@ -121,7 +114,7 @@
                                 @csrf @method('PUT')
                                 <input type="text" name="title" value="{{ $announcement->title }}" class="input-3d w-full rounded-lg border-slate-200 text-sm px-3 py-1.5">
                                 <textarea name="description" rows="2" class="input-3d w-full rounded-lg border-slate-200 text-sm px-3 py-1.5">{{ $announcement->description }}</textarea>
-                                <div class="flex gap-2"><button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded-md text-xs transition">Save</button><button type="button" onclick="cancelEdit({{ $announcement->id }})" class="px-3 py-1 bg-slate-200 rounded-md text-xs transition">Cancel</button></div>
+                                <div class="flex gap-2"><button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded-md text-xs transition">Simpan</button><button type="button" onclick="cancelEdit({{ $announcement->id }})" class="px-3 py-1 bg-slate-200 rounded-md text-xs transition">Batal</button></div>
                             </form>
                         </div>
                     </div>
@@ -150,7 +143,7 @@
                         </div>
                         <h4 class="font-bold text-slate-800 mt-3">{{ $assignment->title }}</h4>
                         <p class="text-slate-600 text-sm mt-1">{{ $assignment->description }}</p>
-                        @if($assignment->attachment)<a href="{{ Storage::url($assignment->attachment) }}" class="text-xs text-blue-600 mt-2 inline-block hover:underline">📎 Download</a>@endif
+                        @if($assignment->attachment)<a href="{{ Storage::url($assignment->attachment) }}" class="text-xs text-blue-600 mt-2 inline-block hover:underline">📎 Unduh</a>@endif
                         @if($submittedCount > 0)
                         <div class="mt-3 pt-2 border-t"><div class="flex justify-between text-xs"><span>Grading Progress</span><span>{{ $gradedCount }}/{{ $submittedCount }}</span></div><div class="w-full bg-slate-200 rounded-full h-1.5 mt-1"><div class="bg-purple-600 h-1.5 rounded-full" style="width: {{ $progress }}%"></div></div></div>
                         @endif

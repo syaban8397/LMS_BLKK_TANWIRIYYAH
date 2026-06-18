@@ -1,19 +1,12 @@
 <x-app-layout>
-<div class="submissions-wrapper space-y-6">
-        {{-- Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">{{ $assignment->title }} - Submissions</h1>
-                <p class="text-sm text-slate-500 mt-0.5">{{ $class->title }}</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                    ← Back to Class
-                </a>
-            </div>
-        </div>
+<div class="submissions-wrapper lms-page-shell space-y-6">
+        <x-lms-page-header
+            :title="$assignment->title . ' — Pengumpulan'"
+            :subtitle="$class->title"
+            :back-url="route('instruktur.classes.stream', $class)"
+            back-label="← Kembali ke Kelas"
+        />
 
-        {{-- Flash Messages --}}
         @if(session('success'))
             <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif

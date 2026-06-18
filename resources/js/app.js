@@ -21,7 +21,7 @@ window.LmsLoader = {
     _hideTimer: null,
     _safetyTimer: null,
     _shownAt: 0,
-    _minShow: 200,
+    _minShow: 60,
     _initialized: false,
     _finishing: false,
 
@@ -37,7 +37,7 @@ window.LmsLoader = {
             return;
         }
 
-        this._minShow = parseInt(this._el.dataset.minShow || '200', 10);
+        this._minShow = parseInt(this._el.dataset.minShow || '60', 10);
 
         const pending = sessionStorage.getItem(NAV_KEY) === '1';
         if (pending) {
@@ -50,7 +50,7 @@ window.LmsLoader = {
         this.bindForms();
         this.bindPageReady();
 
-        this._safetyTimer = window.setTimeout(() => this.forceHide(), 8000);
+        this._safetyTimer = window.setTimeout(() => this.forceHide(), 5000);
     },
 
     _clearNavState() {
@@ -169,6 +169,10 @@ window.LmsLoader = {
 
         const path = url.pathname;
 
+        if (/\/locale\//i.test(path)) {
+            return false;
+        }
+
         if (/\/(download|export)(\/?|$)/i.test(path)) {
             return false;
         }
@@ -191,6 +195,9 @@ window.LmsLoader = {
             return false;
         }
         if (link.closest('#lms-page-loader, [x-data*="lmsDialog"]')) {
+            return false;
+        }
+        if (link.closest('[data-lms-no-loader], .lms-locale-switcher')) {
             return false;
         }
 
@@ -433,6 +440,39 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 
+window.LmsLocale = {
+    init() {
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-lms-locale]');
+            if (!btn) {
+                return;
+            }
+
+            const locale = btn.getAttribute('data-lms-locale');
+            const htmlLang = (document.documentElement.lang || 'id').toLowerCase().slice(0, 2);
+            if (locale === htmlLang) {
+                e.preventDefault();
+                return;
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const href = btn.getAttribute('href');
+            if (!href) {
+                return;
+            }
+
+            try {
+                sessionStorage.removeItem(NAV_KEY);
+                sessionStorage.removeItem(NAV_STARTED_KEY);
+            } catch (err) {}
+
+            window.location.replace(href);
+        }, true);
+    },
+};
+
 let lmsAppBooted = false;
 
 function bootLmsApp() {
@@ -442,6 +482,7 @@ function bootLmsApp() {
     lmsAppBooted = true;
 
     window.LmsTheme.init();
+    window.LmsLocale.init();
 
     if (isAuthenticatedApp()) {
         window.LmsLoader.init();

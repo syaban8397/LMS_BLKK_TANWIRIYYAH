@@ -18,7 +18,6 @@ class ReportService
     {
         return User::query()
             ->where('role', 'peserta')
-            ->withCount(['classParticipants', 'certificates', 'submissions', 'attendances'])
             ->orderBy('name')
             ->get();
     }
@@ -27,18 +26,36 @@ class ReportService
     {
         return User::query()
             ->where('role', 'instruktur')
-            ->withCount('classes')
             ->orderBy('name')
             ->get();
     }
 
     public function classesReport(): Collection
     {
-        return ClassModel::query()
+        $classes = ClassModel::query()
             ->with(['program', 'instructor'])
             ->withCount(['participants', 'materials', 'assignments', 'certificates'])
             ->latest()
             ->get();
+
+        if ($classes->isEmpty()) {
+            return $classes;
+        }
+
+        $meetingsByClass = Attendance::query()
+            ->whereIn('class_id', $classes->pluck('id'))
+            ->select('class_id', 'meeting_number', 'attendance_date')
+            ->orderBy('meeting_number')
+            ->get()
+            ->groupBy('class_id')
+            ->map(fn ($rows) => $rows->unique('meeting_number')->values());
+
+        return $classes->each(function ($class) use ($meetingsByClass) {
+            $class->setAttribute(
+                'meeting_sessions',
+                $meetingsByClass->get($class->id, collect())
+            );
+        });
     }
 
     public function classParticipantStats(ClassModel $class): array
@@ -62,9 +79,11 @@ class ReportService
         $attendanceMatrix = [];
 
         foreach ($students as $student) {
+            $participant = $student->participant;
             $attendanceMatrix[$student->participant_id] = [
-                'name' => $student->participant->name,
-                'email' => $student->participant->email,
+                'participant' => $participant,
+                'name' => $participant->name,
+                'email' => $participant->email,
                 'attendances' => [],
                 'present_count' => 0,
                 'permission_count' => 0,

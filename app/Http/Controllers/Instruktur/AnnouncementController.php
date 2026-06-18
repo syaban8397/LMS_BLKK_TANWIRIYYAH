@@ -29,7 +29,7 @@ class AnnouncementController extends Controller
 
         return redirect()
             ->route('instruktur.classes.stream', $class)
-            ->with('success', 'Pengumuman berhasil ditambahkan.');
+            ->with('success', __('lms.flash.announcement_created'));
     }
 
     public function edit(ClassModel $class, Announcement $announcement)
@@ -61,7 +61,7 @@ class AnnouncementController extends Controller
 
         return redirect()
             ->route('instruktur.classes.stream', $class)
-            ->with('success', 'Pengumuman berhasil diperbarui.');
+            ->with('success', __('lms.flash.announcement_updated'));
     }
 
     public function destroy(ClassModel $class, Announcement $announcement)
@@ -76,6 +76,6 @@ class AnnouncementController extends Controller
 
         return redirect()
             ->route('instruktur.classes.stream', $class)
-            ->with('success', 'Pengumuman berhasil dihapus.');
+            ->with('success', __('lms.flash.announcement_deleted'));
     }
 }

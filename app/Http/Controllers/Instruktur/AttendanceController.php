@@ -63,7 +63,7 @@ class AttendanceController extends Controller
             ->exists();
         
         if ($exists) {
-            return redirect()->back()->with('error', 'Meeting ' . $validated['meeting_number'] . ' already exists.');
+            return redirect()->back()->with('error', __('lms.flash.meeting_exists', ['number' => $validated['meeting_number']]));
         }
         
         $students = ClassParticipant::where('class_id', $class->id)
@@ -71,7 +71,7 @@ class AttendanceController extends Controller
             ->get();
         
         if ($students->isEmpty()) {
-            return redirect()->back()->with('error', 'No active students in this class.');
+            return redirect()->back()->with('error', __('lms.flash.no_active_students'));
         }
         
         $attendanceDate = \Carbon\Carbon::parse($validated['attendance_date']);
@@ -95,11 +95,14 @@ class AttendanceController extends Controller
             
             DB::commit();
             return redirect()->route('instruktur.attendances.show', [$class, $validated['meeting_number']])
-                ->with('success', 'Attendance session for Meeting ' . $validated['meeting_number'] . ' created successfully. Deadline: ' . $deadline);
+                ->with('success', __('lms.flash.attendance_session_created', [
+                    'number' => $validated['meeting_number'],
+                    'deadline' => $deadline->format('d/m/Y H:i'),
+                ]));
                 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to create attendance session.');
+            return redirect()->back()->with('error', __('lms.flash.attendance_session_create_failed'));
         }
     }
     
@@ -115,7 +118,7 @@ class AttendanceController extends Controller
         
         if ($attendances->isEmpty()) {
             return redirect()->route('instruktur.attendances.index', $class)
-                ->with('error', 'Attendance session not found.');
+                ->with('error', __('lms.flash.attendance_session_not_found'));
         }
         
         $summary = [
@@ -145,7 +148,7 @@ class AttendanceController extends Controller
         
         if ($attendances->isEmpty()) {
             return redirect()->route('instruktur.attendances.index', $class)
-                ->with('error', 'Attendance session not found.');
+                ->with('error', __('lms.flash.attendance_session_not_found'));
         }
         
         $students = ClassParticipant::where('class_id', $class->id)
@@ -194,7 +197,7 @@ class AttendanceController extends Controller
         if ($newStart->gt($newDeadline)) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Jam mulai tidak boleh setelah batas waktu absensi. Perpanjang deadline terlebih dahulu.');
+                ->with('error', __('lms.flash.attendance_start_after_deadline'));
         }
         
         DB::beginTransaction();
@@ -218,16 +221,19 @@ class AttendanceController extends Controller
             }
             
             DB::commit();
-            $message = 'Attendance updated successfully.';
+            $message = __('lms.flash.attendance_updated');
             if ($extendMinutes > 0) {
-                $message .= ' Deadline diperpanjang ' . $extendMinutes . ' menit (baru: ' . $newDeadline->format('d/m/Y H:i') . ').';
+                $message .= __('lms.flash.attendance_deadline_extended', [
+                    'minutes' => $extendMinutes,
+                    'deadline' => $newDeadline->format('d/m/Y H:i'),
+                ]);
             }
             return redirect()->route('instruktur.attendances.show', [$class, $meetingNumber])
                 ->with('success', $message);
                 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to update attendance.');
+            return redirect()->back()->with('error', __('lms.flash.attendance_update_failed'));
         }
     }
     
@@ -241,7 +247,7 @@ class AttendanceController extends Controller
             ->delete();
         
         return redirect()->route('instruktur.attendances.index', $class)
-            ->with('success', 'Attendance session deleted successfully.');
+            ->with('success', __('lms.flash.attendance_session_deleted'));
     }
     
     // Laporan rekap absensi

@@ -1,30 +1,16 @@
 <x-app-layout>
-    <div class="space-y-5">
-        {{-- Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">{{ $class->title }}</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Class code: <span class="font-semibold">{{ $class->code }}</span></p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('admin.certificates.show', $class) }}"
-                   class="btn-action px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition shadow-sm">
-                    📜 Sertifikat
-                </a>
-                <a href="{{ route('admin.announcements.show', $class) }}"
-                   class="btn-action px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
-                    📢 Pengumuman
-                </a>
-                <a href="{{ route('admin.classes.edit', $class) }}" 
-                   class="btn-action px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition shadow-sm">
-                    ✏️ Edit
-                </a>
-                <a href="{{ route('admin.classes.index') }}" 
-                   class="btn-action px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition">
-                    ← Back
-                </a>
-            </div>
-        </div>
+    <div class="lms-page-shell space-y-5">
+        <x-lms-page-header
+            :title="$class->title"
+            :subtitle="'Kode: ' . $class->code"
+            :back-url="route('admin.classes.index')"
+        >
+            <x-slot:actions>
+                <a href="{{ route('admin.certificates.show', $class) }}" class="lms-btn-warning btn-3d">📜 Sertifikat</a>
+                <a href="{{ route('admin.announcements.show', $class) }}" class="lms-btn-primary btn-3d">📢 Pengumuman</a>
+                <a href="{{ route('admin.classes.edit', $class) }}" class="lms-btn-secondary btn-3d">✏️ Edit</a>
+            </x-slot:actions>
+        </x-lms-page-header>
 
         {{-- Class Information Card --}}
         <div class="dashboard-card bg-white rounded-xl border border-slate-200 shadow-sm p-5">
@@ -70,7 +56,7 @@
                                 <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Completed</span>
                                 @break
                             @case('cancelled')
-                                <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-medium">Cancelled</span>
+                                <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-medium">Dibatalkan</span>
                                 @break
                         @endswitch
                     </div>
@@ -78,7 +64,7 @@
             </div>
             <div class="mt-5 pt-4 border-t border-slate-100">
                 <span class="text-slate-400 text-xs">Description</span>
-                <p class="text-sm text-slate-600 mt-1">{{ $class->description ?: 'No description available.' }}</p>
+                <p class="text-sm text-slate-600 mt-1">{{ $class->description ?: 'Tidak ada deskripsi.' }}</p>
             </div>
         </div>
 

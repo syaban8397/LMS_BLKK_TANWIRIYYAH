@@ -4,7 +4,7 @@
             :title="$class->title . ' - Materials'"
             subtitle="Learning materials for this class."
             :back-url="route('peserta.classes.stream', $class)"
-            back-label="← Back to Class"
+            back-label="← Kembali ke Kelas"
         />
 
         @if(session('success'))

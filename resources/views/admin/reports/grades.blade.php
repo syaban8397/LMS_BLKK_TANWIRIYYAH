@@ -1,51 +1,114 @@
 <x-app-layout>
-    <div class="space-y-5">
+
+    <div class="lms-page-shell space-y-5">
+
         @include('admin.reports._header', [
-            'title' => 'Laporan Nilai',
-            'description' => 'Rekap nilai akhir peserta per kelas.',
+
+            'title' => __('lms.report.grades'),
+
+            'description' => __('lms.report.grades_desc'),
+
         ])
 
+
+
         <div class="flex justify-end">
-            <a href="{{ route('admin.reports.grades.export') }}"
-               class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium">
-                Export Excel
+
+            <a href="{{ route('admin.reports.grades.export') }}" class="lms-btn-success btn-3d">
+
+                {{ __('lms.export_excel') }}
+
             </a>
+
         </div>
 
+
+
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
-            <table class="w-full text-sm">
+
+            <table class="w-full text-sm min-w-[1200px]">
+
                 <thead class="bg-slate-50 text-slate-500 text-xs font-semibold">
+
                     <tr>
-                        <th class="px-4 py-3 text-left">Peserta</th>
-                        <th class="px-4 py-3 text-left">Kelas</th>
-                        <th class="px-4 py-3 text-center">Nilai Tugas</th>
-                        <th class="px-4 py-3 text-center">Nilai Absensi</th>
-                        <th class="px-4 py-3 text-center">Nilai Akhir</th>
-                        <th class="px-4 py-3 text-center">Status</th>
+
+                        <th class="px-3 py-3 text-left">{{ __('lms.report.no') }}</th>
+
+                        @include('admin.reports._participant-minimal-head')
+
+                        <th class="px-3 py-3 text-left">{{ __('lms.common.code') }}</th>
+
+                        <th class="px-3 py-3 text-left">{{ __('lms.report.class_name') }}</th>
+
+                        <th class="px-3 py-3 text-left">{{ __('lms.report.program') }}</th>
+
+                        <th class="px-3 py-3 text-left">{{ __('lms.report.instructor') }}</th>
+
+                        <th class="px-3 py-3 text-center">{{ __('lms.report.assignment_score') }}</th>
+
+                        <th class="px-3 py-3 text-center">{{ __('lms.report.attendance_score') }}</th>
+
+                        <th class="px-3 py-3 text-center">{{ __('lms.report.final_score') }}</th>
+
+                        <th class="px-3 py-3 text-center">{{ __('lms.report.graduation_status') }}</th>
+
+                        <th class="px-3 py-3 text-left">{{ __('lms.report.feedback') }}</th>
+
                     </tr>
+
                 </thead>
+
                 <tbody class="divide-y divide-slate-100">
-                    @forelse($grades as $grade)
+
+                    @forelse($grades as $index => $grade)
+
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3">
-                                <div class="font-medium text-slate-800">{{ $grade->participant->name ?? '-' }}</div>
-                                <div class="text-xs text-slate-500">{{ $grade->participant->email ?? '-' }}</div>
-                            </td>
-                            <td class="px-4 py-3 text-slate-600">{{ $grade->class->title ?? '-' }}</td>
-                            <td class="px-4 py-3 text-center">{{ $grade->assignment_score }}</td>
-                            <td class="px-4 py-3 text-center">{{ $grade->attendance_score }}</td>
-                            <td class="px-4 py-3 text-center font-semibold">{{ $grade->final_score }}</td>
-                            <td class="px-4 py-3 text-center text-xs">
-                                @if($grade->status === 'pass') Lulus
-                                @elseif($grade->status === 'fail') Tidak Lulus
-                                @else - @endif
-                            </td>
+
+                            <td class="px-3 py-3 text-slate-500">{{ $index + 1 }}</td>
+
+                            @if($grade->participant)
+
+                                @include('admin.reports._participant-minimal-row', ['user' => $grade->participant])
+
+                            @else
+
+                                @for($i = 0; $i < 3; $i++)<td class="px-3 py-3">-</td>@endfor
+
+                            @endif
+
+                            <td class="px-3 py-3 text-slate-600 font-mono text-xs">{{ $grade->class->code ?? '-' }}</td>
+
+                            <td class="px-3 py-3 text-slate-600">{{ $grade->class->title ?? '-' }}</td>
+
+                            <td class="px-3 py-3 text-slate-600">{{ $grade->class->program->name ?? '-' }}</td>
+
+                            <td class="px-3 py-3 text-slate-600">{{ $grade->class->instructor->name ?? '-' }}</td>
+
+                            <td class="px-3 py-3 text-center">{{ $grade->assignment_score ?? '-' }}</td>
+
+                            <td class="px-3 py-3 text-center">{{ $grade->attendance_score ?? '-' }}</td>
+
+                            <td class="px-3 py-3 text-center font-semibold">{{ $grade->final_score ?? '-' }}</td>
+
+                            <td class="px-3 py-3 text-center text-xs">{{ $grade->status ?? '-' }}</td>
+
+                            <td class="px-3 py-3 text-slate-600">{{ $grade->feedback ?? '-' }}</td>
+
                         </tr>
+
                     @empty
-                        <tr><td colspan="6" class="py-10 text-center text-slate-400">Belum ada data nilai.</td></tr>
+
+                        <tr><td colspan="13" class="py-10 text-center text-slate-400">{{ __('lms.report.no_grades') }}</td></tr>
+
                     @endforelse
+
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
+
 </x-app-layout>
+

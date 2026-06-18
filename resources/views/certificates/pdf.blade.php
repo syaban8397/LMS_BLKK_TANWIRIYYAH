@@ -11,13 +11,17 @@
     $programFull = 'Telah Berpartisipasi Pada Pelatihan ' . $program->name . ' Tahun ' . $trainingYear;
     $programLines = [$programFull];
     if (mb_strlen($programFull) > 58) {
-        $breakAt = (int) (mb_strlen($programFull) * 0.48);
-        $spacePos = mb_strrpos(mb_substr($programFull, 0, $breakAt + 14), ' ');
-        if ($spacePos !== false && $spacePos > 24) {
-            $programLines = [
-                trim(mb_substr($programFull, 0, $spacePos)),
-                trim(mb_substr($programFull, $spacePos)),
-            ];
+        if (preg_match('/^(Telah Berpartisipasi Pada Pelatihan .+?) (Skema .+ Tahun \d{4})$/u', $programFull, $matches)) {
+            $programLines = [trim($matches[1]), trim($matches[2])];
+        } else {
+            $breakAt = (int) (mb_strlen($programFull) * 0.48);
+            $spacePos = mb_strrpos(mb_substr($programFull, 0, $breakAt + 14), ' ');
+            if ($spacePos !== false && $spacePos > 24) {
+                $programLines = [
+                    trim(mb_substr($programFull, 0, $spacePos)),
+                    trim(mb_substr($programFull, $spacePos)),
+                ];
+            }
         }
     }
 
@@ -27,8 +31,6 @@
         ? e(trim($orgParts[0])) . ' -<br>' . e(trim($orgParts[1]))
         : e($organization);
 
-    $hasProgramLine2 = isset($programLines[1]);
-    $bodyShift = ($hasOrgLine2 ? 4.2 : 0) + ($hasProgramLine2 ? 6.8 : 0);
     $maxMaterialRows = 11;
     $materialCount = $materials->count();
 @endphp
@@ -104,7 +106,7 @@ body {
     color: #111827;
     line-height: 1.05;
     text-align: center;
-    padding-top: 2.5mm;
+    padding-top: 9mm;
 }
 
 .p1-divider {
@@ -129,37 +131,37 @@ body {
 }
 
 .txt-intro-id {
-    top: 32.9mm;
+    top: 30.9mm;
     font-size: 10.5pt;
     font-weight: bold;
     color: #111827;
     letter-spacing: 0.2px;
 }
 .txt-intro-en {
-    top: 39.2mm;
+    top: 37.2mm;
     font-size: 8.5pt;
     font-style: italic;
     color: #6b7280;
 }
 .txt-name {
-    top: 47.9mm;
-    font-size: 25pt;
+    top: 45.9mm;
+    font-size: 26pt;
     font-weight: bold;
     color: #111827;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
     line-height: 1.05;
 }
 .txt-org {
-    top: 61.8mm;
+    top: 59.8mm;
     font-size: 10.5pt;
     font-weight: bold;
     color: #111827;
-    line-height: 1.5;
+    line-height: 1.45;
     padding: 0 4mm;
 }
 .txt-program {
-    top: {{ number_format(79.5 + ($hasOrgLine2 ? 4.2 : 0), 1, '.', '') }}mm;
+    top: 77.5mm;
     font-size: 10.5pt;
     font-weight: bold;
     color: #111827;
@@ -167,7 +169,7 @@ body {
     padding: 0 4mm;
 }
 .txt-program-2 {
-    top: {{ number_format(86.9 + ($hasOrgLine2 ? 4.2 : 0), 1, '.', '') }}mm;
+    top: 84.9mm;
     font-size: 10.5pt;
     font-weight: bold;
     color: #111827;
@@ -180,29 +182,29 @@ body {
     color: #6b7280;
     line-height: 1.35;
 }
-.txt-en-org { top: {{ number_format(92.5 + $bodyShift, 1, '.', '') }}mm; }
+.txt-en-org { top: 93.9mm; }
 .txt-non-akademik {
-    top: {{ number_format(99.6 + $bodyShift, 1, '.', '') }}mm;
+    top: 101.0mm;
     font-size: 10.5pt;
     font-weight: bold;
     color: #111827;
 }
-.txt-en-degree { top: {{ number_format(107.3 + $bodyShift, 1, '.', '') }}mm; }
+.txt-en-degree { top: 108.7mm; }
 .txt-degree {
-    top: {{ number_format(118.8 + $bodyShift, 1, '.', '') }}mm;
+    top: 120.2mm;
     font-size: 17pt;
     font-weight: bold;
     color: #dc2626;
     letter-spacing: 0.2px;
 }
 .txt-validity {
-    top: {{ number_format(131.0 + $bodyShift, 1, '.', '') }}mm;
+    top: 132.4mm;
     font-size: 10.5pt;
     color: #111827;
     font-weight: bold;
 }
 .txt-validity-en {
-    top: {{ number_format(138.8 + $bodyShift, 1, '.', '') }}mm;
+    top: 140.2mm;
     font-size: 8.5pt;
     font-style: italic;
     color: #6b7280;
@@ -212,7 +214,7 @@ body {
 .p1-footer {
     left: 52mm;
     width: 235mm;
-    top: {{ number_format(150.5 + min($bodyShift, 8), 1, '.', '') }}mm;
+    top: 152.2mm;
     text-align: center;
     z-index: 5;
 }
@@ -222,7 +224,7 @@ body {
     font-weight: bold;
     color: #111827;
     line-height: 1.2;
-    margin-bottom: 2mm;
+    margin-bottom: 1.5mm;
 }
 
 .qr-wrap {
@@ -238,10 +240,12 @@ body {
 }
 .qr-center {
     position: absolute;
-    top: 8.5mm;
-    left: 8.5mm;
+    top: 50%;
+    left: 50%;
     width: 7mm;
     height: 7mm;
+    margin-top: -3.5mm;
+    margin-left: -3.5mm;
     background: #ffffff;
     border-radius: 50%;
     padding: 0.6mm;
@@ -253,14 +257,14 @@ body {
 }
 
 .sign-name {
-    margin-top: 3.5mm;
+    margin-top: 4.2mm;
     font-size: 12.5pt;
     font-weight: bold;
     color: #111827;
     line-height: 1.25;
 }
 .sign-title-1 {
-    margin-top: 1.2mm;
+    margin-top: 1.5mm;
     font-size: 12.5pt;
     font-weight: normal;
     color: #111827;
@@ -275,14 +279,21 @@ body {
 }
 
 .footer-meta {
-    right: 7mm;
-    top: 185.5mm;
+    right: 8mm;
+    top: 184.9mm;
     text-align: right;
-    font-size: 10.5pt;
+    font-size: 10pt;
     font-weight: bold;
     color: #1a4374;
-    line-height: 1.72;
+    line-height: 1.55;
     z-index: 5;
+}
+.footer-meta-number {
+    top: 189.7mm;
+}
+.footer-meta-issued {
+    top: 194.4mm;
+    font-weight: bold;
 }
 
 /* PAGE 2 — MATERI */
@@ -349,7 +360,7 @@ body {
     </div>
     <div class="abs p1-logo p1-logo-2">
         @if(!empty($logos['ymt']))
-            <img src="data:image/png;base64,{{ $logos['ymt'] }}" style="height:12mm;width:auto;" alt="">
+            <img src="data:image/png;base64,{{ $logos['ymt'] }}" style="height:11mm;max-width:38mm;width:auto;" alt="">
         @endif
     </div>
     <div class="abs p1-logo p1-logo-3">
@@ -421,8 +432,12 @@ body {
     </div>
 
     <div class="abs footer-meta">
-        Certified Number :<br>
-        {{ $certificate->certificate_number }}<br>
+        Certified Number :
+    </div>
+    <div class="abs footer-meta footer-meta-number">
+        {{ $certificate->certificate_number }}
+    </div>
+    <div class="abs footer-meta footer-meta-issued">
         Issued Date: {{ $certificate->issued_at->format('Y-m-d') }}
     </div>
 

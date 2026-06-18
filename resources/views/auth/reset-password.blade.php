@@ -19,14 +19,14 @@
             <div class="mb-10">
 
                 <h1 class="text-5xl font-extrabold leading-tight">
-                    Create New
+                    Buat Kata Sandi
                     <br>
-                    Password
+                    Baru
                 </h1>
 
                 <p class="mt-6 text-lg text-blue-100 leading-relaxed">
-                    Your identity has been successfully verified.
-                    Create a strong password to secure your LMS account.
+                    Identitas Anda telah berhasil diverifikasi.
+                    Buat kata sandi yang kuat untuk mengamankan akun LMS Anda.
                 </p>
 
             </div>
@@ -34,31 +34,31 @@
             <div class="grid grid-cols-2 gap-6">
 
                 <div
-                    class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
+                    class="bg-white/10 backdrop-blur-md rounded-lg p-5 border border-white/20">
 
                     <div class="text-3xl mb-3">🔐</div>
 
                     <h3 class="font-semibold text-lg">
-                        Secure Account
+                        Akun Aman
                     </h3>
 
                     <p class="text-sm text-blue-100 mt-2">
-                        Protect your learning data with a strong password.
+                        Lindungi data pembelajaran Anda dengan kata sandi yang kuat.
                     </p>
 
                 </div>
 
                 <div
-                    class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20">
+                    class="bg-white/10 backdrop-blur-md rounded-lg p-5 border border-white/20">
 
                     <div class="text-3xl mb-3">🛡️</div>
 
                     <h3 class="font-semibold text-lg">
-                        Password Security
+                        Keamanan Kata Sandi
                     </h3>
 
                     <p class="text-sm text-blue-100 mt-2">
-                        Use a unique password that only you know.
+                        Gunakan kata sandi unik yang hanya Anda ketahui.
                     </p>
 
                 </div>
@@ -79,18 +79,18 @@
             <div class="text-center mb-8">
 
                 <div
-                    class="w-20 h-20 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 mx-auto flex items-center justify-center text-white text-3xl shadow-lg">
+                    class="w-20 h-20 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-700 mx-auto flex items-center justify-center text-white shadow-lg overflow-hidden">
 
-                    🔑
+                    <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-14 w-auto">
 
                 </div>
 
                 <h2 class="mt-5 text-3xl font-bold text-slate-800">
-                    Reset Password
+                    Atur Ulang Kata Sandi
                 </h2>
 
                 <p class="text-slate-500 mt-2">
-                    Create a new password for your account
+                    Buat kata sandi baru untuk akun Anda
                 </p>
 
             </div>
@@ -107,7 +107,7 @@
                     <label
                         class="block text-sm font-semibold text-gray-700 mb-2">
 
-                        New Password
+                        Kata Sandi Baru
 
                     </label>
 
@@ -141,7 +141,7 @@
                     <label
                         class="block text-sm font-semibold text-gray-700 mb-2">
 
-                        Confirm Password
+                        Konfirmasi Kata Sandi
 
                     </label>
 
@@ -175,9 +175,9 @@
 
                     <p class="text-sm text-blue-700">
 
-                        Password should contain at least
-                        <strong>8 characters</strong>
-                        for better security.
+                        Kata sandi sebaiknya minimal
+                        <strong>8 karakter</strong>
+                        untuk keamanan yang lebih baik.
 
                     </p>
 
@@ -188,7 +188,7 @@
                     type="submit"
                     class="w-full mt-8 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-3 rounded-xl font-semibold shadow-lg transition duration-300">
 
-                    Save New Password
+                    Simpan Kata Sandi Baru
 
                 </button>
 
@@ -199,7 +199,7 @@
                         href="{{ route('login') }}"
                         class="text-sm text-gray-600 hover:text-blue-600">
 
-                        ← Back to Login
+                        ← Kembali ke Login
 
                     </a>
 

@@ -1,24 +1,17 @@
 <x-app-layout>
-<div class="peserta-material-show-wrapper space-y-6">
-        {{-- Header Sederhana dengan Tombol Back --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">{{ $material->title }}</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Meeting {{ $material->meeting_number }}</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('peserta.materials.index', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                    ← Back to Materials
-                </a>
-            </div>
-        </div>
+<div class="peserta-material-show-wrapper lms-page-shell space-y-6">
+        <x-lms-page-header
+            :title="$material->title"
+            :subtitle="'Pertemuan ' . $material->meeting_number . ' — ' . $class->title"
+            :back-url="route('peserta.materials.index', $class)"
+            back-label="← Kembali ke Materi"
+        />
 
-        {{-- Flash Messages (opsional) --}}
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('success') }}</div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('error') }}</div>
+            <x-lms-flash type="error">{{ session('error') }}</x-lms-flash>
         @endif
 
         {{-- Material Info Card --}}
@@ -91,7 +84,7 @@
                     </div>
                     <a href="{{ Storage::url($material->file_path) }}" target="_blank" class="btn-3d inline-flex items-center gap-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Download
+                        Unduh
                     </a>
                 </div>
             </div>

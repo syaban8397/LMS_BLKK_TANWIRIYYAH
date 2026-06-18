@@ -109,7 +109,7 @@ class UserController extends Controller
 
     return redirect()
         ->route('admin.users.index')
-        ->with('success', 'User created successfully.');
+        ->with('success', __('lms.flash.user_created'));
 }
     /**
      * Show Detail

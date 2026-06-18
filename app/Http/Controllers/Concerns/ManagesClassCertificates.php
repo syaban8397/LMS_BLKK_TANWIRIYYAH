@@ -45,7 +45,7 @@ trait ManagesClassCertificates
         array $result,
         string $showRoute
     ): RedirectResponse {
-        $message = count($result['issued']) . ' sertifikat berhasil diterbitkan.';
+        $message = __('lms.flash.certificates_issued', ['count' => count($result['issued'])]);
 
         if (!empty($result['errors'])) {
             return redirect()

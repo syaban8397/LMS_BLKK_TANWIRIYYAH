@@ -1,27 +1,20 @@
 <x-app-layout>
-<div class="peserta-assignment-show-wrapper space-y-6">
-        {{-- Header Sederhana dengan Tombol Back --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">{{ $assignment->title }}</h1>
-                <p class="text-sm text-slate-500 mt-0.5">{{ $class->title }}</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('peserta.assignments.index', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                    ← Back
-                </a>
-            </div>
-        </div>
+<div class="peserta-assignment-show-wrapper lms-page-shell space-y-6">
+        <x-lms-page-header
+            :title="$assignment->title"
+            :subtitle="$class->title"
+            :back-url="route('peserta.assignments.index', $class)"
+            back-label="← Kembali"
+        />
 
-        {{-- Flash Messages --}}
         @if(session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('success') }}</div>
+            <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
         @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('error') }}</div>
+            <x-lms-flash type="error">{{ session('error') }}</x-lms-flash>
         @endif
         @if(session('info'))
-            <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">{{ session('info') }}</div>
+            <x-lms-flash type="info">{{ session('info') }}</x-lms-flash>
         @endif
 
         {{-- Assignment Details Card --}}
@@ -67,7 +60,7 @@
                                 <span class="text-sm text-slate-700">{{ basename($assignment->attachment) }}</span>
                             </div>
                             <a href="{{ Storage::url($assignment->attachment) }}" target="_blank" class="btn-3d inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition shadow-sm">
-                                Download
+                                Unduh
                             </a>
                         </div>
                     </div>
@@ -176,7 +169,7 @@
                     @if($submission->file_path)
                         <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                             <span class="text-sm text-slate-700">Uploaded File:</span>
-                            <a href="{{ Storage::url($submission->file_path) }}" target="_blank" class="text-blue-600 text-sm hover:underline">Download</a>
+                            <a href="{{ Storage::url($submission->file_path) }}" target="_blank" class="text-blue-600 text-sm hover:underline">Unduh</a>
                         </div>
                     @endif
                     @if($submission->url)

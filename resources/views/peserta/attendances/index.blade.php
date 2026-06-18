@@ -5,7 +5,7 @@
             :title="$class->title . ' - Attendance'"
             subtitle="Submit your attendance for each meeting"
             :back-url="route('peserta.classes.stream', $class)"
-            back-label="← Back to Class"
+            back-label="← Kembali ke Kelas"
         />
 
         @if(session('success'))

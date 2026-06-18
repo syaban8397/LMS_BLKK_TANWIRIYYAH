@@ -28,10 +28,24 @@ use App\Http\Controllers\Peserta\SubmissionController as PesertaSubmissionContro
 use App\Http\Controllers\Peserta\CertificateController as PesertaCertificateController;
 use App\Http\Controllers\CertificateVerifyController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Models\Certificate;
+use App\Models\ClassModel;
+use App\Models\Program;
+use App\Models\User;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome', [
+        'participantCount' => User::where('role', 'peserta')->count(),
+        'programCount' => Program::count(),
+        'certificateCount' => Certificate::count(),
+        'classCount' => ClassModel::where('status', 'active')->count(),
+    ]);
 });
+
+Route::get('/locale/{locale}', [\App\Http\Controllers\LocaleController::class, 'switch'])->name('locale.switch');
+
+Route::get('/kebijakan-privasi', fn () => view('legal.privacy'))->name('legal.privacy');
+Route::get('/syarat-layanan', fn () => view('legal.terms'))->name('legal.terms');
 
 Route::get('/verify/certificate/{number}', [CertificateVerifyController::class, 'show'])->name('certificates.verify');
 

@@ -56,7 +56,7 @@ class AssignmentController extends Controller
 
     return redirect()
         ->route('instruktur.classes.stream', $class)
-        ->with('success', 'Assignment berhasil dibuat.');
+        ->with('success', __('lms.flash.assignment_created'));
 }
 
     public function edit(ClassModel $class, Assignment $assignment)
@@ -109,7 +109,7 @@ class AssignmentController extends Controller
 
     return redirect()
         ->route('instruktur.classes.stream', $class)
-        ->with('success', 'Assignment berhasil diperbarui.');
+        ->with('success', __('lms.flash.assignment_updated'));
 }
 
     public function destroy(ClassModel $class, Assignment $assignment)
@@ -128,6 +128,6 @@ class AssignmentController extends Controller
 
         return redirect()
             ->route('instruktur.classes.stream', $class)
-            ->with('success', 'Assignment berhasil dihapus.');
+            ->with('success', __('lms.flash.assignment_deleted'));
     }
 }

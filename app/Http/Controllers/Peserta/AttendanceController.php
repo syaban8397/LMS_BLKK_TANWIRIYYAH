@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    // Daftar semua sesi absensi untuk kelas tertentu (peserta)
     public function index(ClassModel $class)
     {
         $this->authorizeParticipant($class);
@@ -23,7 +22,6 @@ class AttendanceController extends Controller
         return view('peserta.attendances.index', compact('class', 'attendances'));
     }
     
-    // Form atau halaman detail untuk submit absensi
     public function show(ClassModel $class, $meetingNumber)
     {
         $this->authorizeParticipant($class);
@@ -38,7 +36,6 @@ class AttendanceController extends Controller
         return view('peserta.attendances.show', compact('class', 'attendance', 'meetingNumber', 'isExpired'));
     }
     
-    // Proses submit absensi oleh peserta
     public function submit(Request $request, ClassModel $class, $meetingNumber)
     {
         $this->authorizeParticipant($class);
@@ -49,18 +46,17 @@ class AttendanceController extends Controller
             ->firstOrFail();
         
         if ($attendance->submission_type === 'instructor') {
-            return redirect()->back()->with('error', 'Absensi ini sudah dikunci oleh instruktur.');
+            return redirect()->back()->with('error', __('lms.flash.attendance_locked'));
         }
 
-        // Validasi deadline
         if (now()->gt($attendance->attendance_deadline)) {
-            return redirect()->back()->with('error', 'Maaf, waktu absensi sudah habis. Silakan hubungi instruktur.');
+            return redirect()->back()->with('error', __('lms.flash.attendance_deadline_passed'));
         }
         if (now()->lt($attendance->attendance_date)) {
-            return redirect()->back()->with('error', 'Sesi absensi belum dimulai. Silakan cek jadwal kelas.');
+            return redirect()->back()->with('error', __('lms.flash.attendance_not_started'));
         }
         $request->validate([
-            'status' => 'required|in:present,permission,sick', // peserta tidak bisa memilih 'absent'
+            'status' => 'required|in:present,permission,sick',
             'notes'  => 'nullable|string|max:255',
         ]);
         
@@ -73,7 +69,7 @@ class AttendanceController extends Controller
         ]);
         
         return redirect()->route('peserta.attendances.index', $class)
-            ->with('success', 'Absensi berhasil disimpan.');
+            ->with('success', __('lms.flash.attendance_saved'));
     }
     
     protected function authorizeParticipant(ClassModel $class)

@@ -1,16 +1,15 @@
 <x-app-layout>
-<div class="show-wrapper max-w-5xl mx-auto">
-        {{-- Tombol aksi di kanan atas --}}
-        <div class="flex justify-end gap-3 mb-6">
-            <a href="{{ route('instruktur.materials.edit', [$class, $material]) }}" class="btn-3d inline-flex items-center gap-1 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                Edit
-            </a>
-            <a href="{{ route('instruktur.materials.index', $class) }}" class="btn-3d inline-flex items-center gap-1 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Back to Materials
-            </a>
-        </div>
+<div class="show-wrapper lms-page-shell max-w-5xl mx-auto space-y-6">
+        <x-lms-page-header
+            :title="$material->title"
+            :subtitle="'Materi · ' . $class->title"
+            :back-url="route('instruktur.materials.index', $class)"
+            back-label="← Kembali ke Materi"
+        >
+            <x-slot:actions>
+                <a href="{{ route('instruktur.materials.edit', [$class, $material]) }}" class="lms-btn-warning btn-3d">✏️ Edit</a>
+            </x-slot:actions>
+        </x-lms-page-header>
 
         @if(session('success'))
             <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
@@ -20,11 +19,11 @@
         @endif
 
         {{-- 1. Material Information Card --}}
-        <div class="detail-card bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden mb-6">
+        <div class="detail-card bg-white rounded-lg shadow-md border border-slate-200 overflow-hidden mb-6">
             <div class="bg-gradient-to-r from-blue-50 to-white px-5 py-3 border-b border-slate-200">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Material Details
+                    Detail Materi
                 </h3>
             </div>
             <div class="p-5 space-y-4">
@@ -63,7 +62,7 @@
 
         {{-- 2. File Attachment Card (jika ada) --}}
         @if($material->file_path)
-        <div class="detail-card bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden mb-6">
+        <div class="detail-card bg-white rounded-lg shadow-md border border-slate-200 overflow-hidden mb-6">
             <div class="bg-gradient-to-r from-gray-50 to-white px-5 py-3 border-b border-slate-200">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h6v6M9 21H4a1 1 0 01-1-1V4a1 1 0 011-1h10l6 6v11a1 1 0 01-1 1h-3M15 3v6h6"></path></svg>
@@ -95,7 +94,7 @@
                     </div>
                     <a href="{{ Storage::url($material->file_path) }}" target="_blank" class="btn-3d inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-medium transition shadow-sm">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Download
+                        Unduh
                     </a>
                 </div>
             </div>
@@ -104,7 +103,7 @@
 
         {{-- 3. YouTube Video Card (jika ada) --}}
         @if($material->youtube_url)
-        <div class="detail-card bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden mb-6">
+        <div class="detail-card bg-white rounded-lg shadow-md border border-slate-200 overflow-hidden mb-6">
             <div class="bg-gradient-to-r from-gray-50 to-white px-5 py-3 border-b border-slate-200">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
                     <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -135,7 +134,7 @@
 
         {{-- 4. No content warning (jika tidak ada file & youtube) --}}
         @if(!$material->file_path && !$material->youtube_url)
-        <div class="detail-card bg-white rounded-2xl shadow-md border border-slate-200 p-6 text-center">
+        <div class="detail-card bg-white rounded-lg shadow-md border border-slate-200 p-6 text-center">
             <svg class="w-12 h-12 text-amber-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
             <p class="text-amber-700 font-medium text-sm">No content attached</p>
             <p class="text-amber-600 text-xs mt-1">Edit and add a file or YouTube URL.</p>

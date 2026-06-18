@@ -1,19 +1,12 @@
 <x-app-layout>
-<div class="manage-wrapper space-y-6">
-        {{-- Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Manage Students</h1>
-                <p class="text-sm text-slate-500 mt-0.5">{{ $class->title }} • Enroll or manage participants</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                    ← Back to Class
-                </a>
-            </div>
-        </div>
+<div class="manage-wrapper lms-page-shell space-y-6">
+        <x-lms-page-header
+            title="Kelola Peserta"
+            :subtitle="$class->title . ' • Daftarkan atau kelola peserta kelas'"
+            :back-url="route('instruktur.classes.stream', $class)"
+            back-label="← Kembali ke Kelas"
+        />
 
-        {{-- Flash Messages --}}
         @if(session('success'))
             <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
@@ -25,7 +18,7 @@
         <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                    <h3 class="font-bold text-slate-800">Enrolled Students</h3>
+                    <h3 class="font-bold text-slate-800">Peserta Terdaftar</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Total: {{ $participants->total() }}</p>
                 </div>
             </div>
@@ -34,13 +27,13 @@
                 <table class="w-full">
                     <thead class="bg-slate-50 text-slate-600 text-sm">
                         <tr>
-                            <th class="px-6 py-4 text-left">Photo</th>
-                            <th class="px-6 py-4 text-left">Name</th>
+                            <th class="px-6 py-4 text-left">Foto</th>
+                            <th class="px-6 py-4 text-left">Nama</th>
                             <th class="px-6 py-4 text-left">Email</th>
-                            <th class="px-6 py-4 text-left">Phone</th>
-                            <th class="px-6 py-4 text-center">Enrolled At</th>
+                            <th class="px-6 py-4 text-left">Telepon</th>
+                            <th class="px-6 py-4 text-center">Terdaftar Pada</th>
                             <th class="px-6 py-4 text-center">Status</th>
-                            <th class="px-6 py-4 text-center">Action</th>
+                            <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,21 +58,21 @@
                                         @csrf @method('PATCH')
                                         <select name="status" onchange="this.form.submit()"
                                             class="text-xs rounded-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500 px-2 py-1 bg-white transition hover:border-blue-400">
-                                            <option value="active" {{ $participant->status == 'active' ? 'selected' : '' }}>Active</option>
-                                            <option value="completed" {{ $participant->status == 'completed' ? 'selected' : '' }}>Completed</option>
-                                            <option value="dropped" {{ $participant->status == 'dropped' ? 'selected' : '' }}>Dropped</option>
+                                            <option value="active" {{ $participant->status == 'active' ? 'selected' : '' }}>Aktif</option>
+                                            <option value="completed" {{ $participant->status == 'completed' ? 'selected' : '' }}>Selesai</option>
+                                            <option value="dropped" {{ $participant->status == 'dropped' ? 'selected' : '' }}>Keluar</option>
                                         </select>
                                     </form>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <form action="{{ route('instruktur.classes.remove-student', [$class, $participant]) }}" method="POST" data-lms-confirm="Remove this student from class?" style="display:inline;">
+                                    <form action="{{ route('instruktur.classes.remove-student', [$class, $participant]) }}" method="POST" data-lms-confirm="Hapus peserta ini dari kelas?" style="display:inline;">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn-3d px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition shadow-sm">Remove</button>
+                                        <button type="submit" class="btn-3d px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition shadow-sm">Hapus</button>
                                     </form>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="7" class="px-6 py-12 text-center text-slate-500">No students enrolled yet. Add students using the form below.</td</tr>
+                            <tr><td colspan="7" class="px-6 py-12 text-center text-slate-500">Belum ada peserta terdaftar. Tambahkan peserta menggunakan formulir di bawah.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -94,22 +87,22 @@
         {{-- Add Students Form --}}
         <div class="dashboard-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
-                <h3 class="font-bold text-slate-800">Add New Students</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Current enrollment: {{ $class->participants->count() }} / {{ $class->quota }}</p>
+                <h3 class="font-bold text-slate-800">Tambah Peserta Baru</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Pendaftaran saat ini: {{ $class->participants->count() }} / {{ $class->quota }}</p>
             </div>
 
             <div class="p-6">
                 @if($availableStudents->count() == 0)
                     <div class="text-center py-8">
                         <div class="text-4xl mb-2">👥</div>
-                        <p class="text-slate-500">No available students to add. All active students are already enrolled or there are no active students in the system.</p>
-                        <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d inline-block mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">Back to Class</a>
+                        <p class="text-slate-500">Tidak ada peserta yang tersedia. Semua peserta aktif sudah terdaftar atau tidak ada peserta aktif di sistem.</p>
+                        <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d inline-block mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">Kembali ke Kelas</a>
                     </div>
                 @else
                     <form action="{{ route('instruktur.classes.add-student', $class) }}" method="POST">
                         @csrf
                         <div class="mb-6">
-                            <label class="block text-sm font-semibold text-slate-700 mb-3">Select students to enroll</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-3">Pilih peserta untuk didaftarkan</label>
                             <div class="bg-slate-50 rounded-xl p-4 space-y-2 max-h-96 overflow-y-auto border border-slate-200">
                                 @foreach($availableStudents as $student)
                                     <label class="flex items-center gap-3 p-3 rounded-lg hover:bg-white transition cursor-pointer group">
@@ -139,8 +132,8 @@
                         </div>
 
                         <div class="border-t border-slate-200 pt-6 flex justify-end gap-3">
-                            <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">Cancel</a>
-                            <button type="submit" class="btn-3d px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">Add Selected Students</button>
+                            <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">Batal</a>
+                            <button type="submit" class="btn-3d px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">Tambah Peserta Terpilih</button>
                         </div>
                     </form>
                 @endif

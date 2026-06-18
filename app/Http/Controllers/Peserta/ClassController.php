@@ -47,9 +47,14 @@ class ClassController extends Controller
             ->where('participant_id', auth()->id())
             ->firstOrFail();
 
+        $announcements = $class->announcements()
+            ->with('creator')
+            ->latest()
+            ->get();
+
         return view(
             'peserta.classes.show',
-            compact('class', 'participation')
+            compact('class', 'participation', 'announcements')
         );
     }
 

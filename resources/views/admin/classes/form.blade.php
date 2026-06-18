@@ -2,10 +2,10 @@
     <!-- PROGRAM -->
     <div>
         <label class="block text-xs font-medium text-slate-500 mb-1">
-            Program <span class="text-red-500">*</span>
+            {{ __('lms.report.program') }} <span class="text-red-500">*</span>
         </label>
         <select name="program_id" id="program-select" class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
-            <option value="">Pilih program</option>
+            <option value="">{{ __('lms.common.select_program') }}</option>
             @foreach($programs as $program)
                 @php
                     $selectedProgramId = old('program_id', $class->program_id ?? '');
@@ -15,11 +15,11 @@
                 <option value="{{ $program->id }}"
                         {{ $isSelected ? 'selected' : '' }}
                         {{ $isFull ? 'disabled' : '' }}>
-                    {{ $program->name }} ({{ $program->classes_count }}/{{ $program->capacity }} kelas)@if($isFull) — Penuh @endif
+                    {{ $program->name }} ({{ __('lms.common.classes_slot', ['current' => $program->classes_count, 'max' => $program->capacity]) }})@if($isFull) — {{ __('lms.common.full') }} @endif
                 </option>
             @endforeach
         </select>
-        <p class="text-xs text-slate-400 mt-1">Program yang sudah penuh tidak dapat dipilih.</p>
+        <p class="text-xs text-slate-400 mt-1">{{ __('lms.common.program_full_hint') }}</p>
         @error('program_id')
             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror
@@ -28,10 +28,10 @@
     <!-- INSTRUCTOR -->
     <div>
         <label class="block text-xs font-medium text-slate-500 mb-1">
-            Instructor <span class="text-red-500">*</span>
+            {{ __('lms.report.instructor') }} <span class="text-red-500">*</span>
         </label>
         <select name="instructor_id" class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
-            <option value="">Select an instructor</option>
+            <option value="">{{ __('lms.common.select_instructor') }}</option>
             @foreach($instructors as $instructor)
                 <option value="{{ $instructor->id }}" {{ old('instructor_id', $class->instructor_id ?? '') == $instructor->id ? 'selected' : '' }}>
                     {{ $instructor->name }}
@@ -46,11 +46,11 @@
     <!-- CLASS TITLE -->
     <div>
         <label class="block text-xs font-medium text-slate-500 mb-1">
-            Class Title <span class="text-red-500">*</span>
+            {{ __('lms.common.class_title') }} <span class="text-red-500">*</span>
         </label>
         <input type="text" name="title" id="class-title" value="{{ old('title', $class->title ?? '') }}"
                data-original-title="{{ isset($class) ? $class->title : '' }}"
-               placeholder="Example: Web Development"
+               placeholder="{{ __('lms.common.class_title_ph') }}"
                class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
         @error('title')
             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -60,23 +60,23 @@
     <!-- CLASS CODE -->
     <div>
         <label class="block text-xs font-medium text-slate-500 mb-1">
-            Class Code
+            {{ __('lms.common.class_code') }}
         </label>
         <input type="text" id="class-code" value="{{ old('code', $class->code ?? '') }}"
                data-current-code="{{ $class->code ?? '' }}"
                data-exclude-id="{{ $class->id ?? '' }}"
-               placeholder="Contoh: WEB-0001"
+               placeholder="{{ __('lms.common.class_code_ph') }}"
                readonly
                class="input-3d w-full rounded-lg border-slate-200 bg-slate-50 text-slate-600 text-sm px-3 py-2 cursor-not-allowed">
-        <p class="text-xs text-slate-400 mt-1">Kode dibuat otomatis dari nama kelas (format: PREFIX-0001).</p>
+        <p class="text-xs text-slate-400 mt-1">{{ __('lms.common.code_auto_hint') }}</p>
     </div>
 
     <!-- DESCRIPTION -->
     <div>
         <label class="block text-xs font-medium text-slate-500 mb-1">
-            Description
+            {{ __('lms.common.description') }}
         </label>
-        <textarea name="description" rows="3" placeholder="Enter class description..."
+        <textarea name="description" rows="3" placeholder="{{ __('lms.common.class_desc_ph') }}"
                   class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">{{ old('description', $class->description ?? '') }}</textarea>
         @error('description')
             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -86,7 +86,7 @@
     <!-- DATES -->
     <div class="grid md:grid-cols-2 gap-4">
         <div>
-            <label class="block text-xs font-medium text-slate-500 mb-1">Start Date <span class="text-red-500">*</span></label>
+            <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.common.start_date') }} <span class="text-red-500">*</span></label>
             <input type="date" name="start_date" value="{{ old('start_date', isset($class) ? $class->start_date->format('Y-m-d') : '') }}"
                    class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
             @error('start_date')
@@ -94,7 +94,7 @@
             @enderror
         </div>
         <div>
-            <label class="block text-xs font-medium text-slate-500 mb-1">End Date <span class="text-red-500">*</span></label>
+            <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.common.end_date') }} <span class="text-red-500">*</span></label>
             <input type="date" name="end_date" value="{{ old('end_date', isset($class) ? $class->end_date->format('Y-m-d') : '') }}"
                    class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
             @error('end_date')
@@ -106,7 +106,7 @@
     <!-- QUOTA & STATUS -->
     <div class="grid md:grid-cols-2 gap-4">
         <div>
-            <label class="block text-xs font-medium text-slate-500 mb-1">Student Quota</label>
+            <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.common.student_quota') }}</label>
             <input type="number" name="quota" value="{{ old('quota', $class->quota ?? '') }}" placeholder="30" min="1"
                    class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
             @error('quota')
@@ -114,12 +114,12 @@
             @enderror
         </div>
         <div>
-            <label class="block text-xs font-medium text-slate-500 mb-1">Status</label>
+            <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.common.status') }}</label>
             <select name="status" class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
-                <option value="draft" {{ old('status', $class->status ?? '') == 'draft' ? 'selected' : '' }}>Draft</option>
-                <option value="active" {{ old('status', $class->status ?? '') == 'active' ? 'selected' : '' }}>Active</option>
-                <option value="completed" {{ old('status', $class->status ?? '') == 'completed' ? 'selected' : '' }}>Completed</option>
-                <option value="cancelled" {{ old('status', $class->status ?? '') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                <option value="draft" {{ old('status', $class->status ?? '') == 'draft' ? 'selected' : '' }}>{{ __('lms.common.draft') }}</option>
+                <option value="active" {{ old('status', $class->status ?? '') == 'active' ? 'selected' : '' }}>{{ __('lms.active') }}</option>
+                <option value="completed" {{ old('status', $class->status ?? '') == 'completed' ? 'selected' : '' }}>{{ __('lms.common.completed') }}</option>
+                <option value="cancelled" {{ old('status', $class->status ?? '') == 'cancelled' ? 'selected' : '' }}>{{ __('lms.common.cancelled') }}</option>
             </select>
             @error('status')
                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

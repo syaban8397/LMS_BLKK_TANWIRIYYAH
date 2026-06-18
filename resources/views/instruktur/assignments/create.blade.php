@@ -1,27 +1,20 @@
 <x-app-layout>
-<div class="create-assignment-wrapper space-y-6">
-        {{-- Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Create Assignment</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Add a new assignment to <span class="font-semibold">{{ $class->title }}</span></p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition shadow-sm">
-                    ← Back to Stream
-                </a>
-            </div>
-        </div>
+<div class="create-assignment-wrapper lms-page-shell space-y-6">
+        <x-lms-page-header
+            title="Buat Tugas"
+            :subtitle="'Tambah tugas baru untuk ' . $class->title"
+            :back-url="route('instruktur.classes.stream', $class)"
+            back-label="← Kembali ke Stream"
+        />
 
-        {{-- Error Messages --}}
         @if ($errors->any())
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 text-sm shadow-sm animate-pulse">
+            <x-lms-flash type="error">
                 <ul class="list-disc list-inside space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-            </div>
+            </x-lms-flash>
         @endif
 
         {{-- Form Card --}}
@@ -103,7 +96,7 @@
                 {{-- Action Buttons --}}
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
                     <a href="{{ route('instruktur.classes.stream', $class) }}" class="btn-3d px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition">
-                        Cancel
+                        Batal
                     </a>
                     <button type="submit" class="btn-3d px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
                         Create Assignment

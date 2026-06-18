@@ -108,7 +108,7 @@ class ClassController extends Controller
 
         return redirect()
             ->route('instruktur.classes.add-student', $class)
-            ->with('success', 'Siswa berhasil ditambahkan ke kelas.');
+            ->with('success', __('lms.flash.student_added'));
     }
 
     public function removeStudent(ClassModel $class, ClassParticipant $participant)
@@ -123,7 +123,7 @@ class ClassController extends Controller
 
         return redirect()
             ->route('instruktur.classes.add-student', $class)
-            ->with('success', 'Siswa berhasil dihapus dari kelas.');
+            ->with('success', __('lms.flash.student_removed'));
     }
 
     public function updateStudentStatus(Request $request, ClassModel $class, ClassParticipant $participant)
@@ -142,6 +142,6 @@ class ClassController extends Controller
 
         return redirect()
             ->route('instruktur.classes.add-student', $class)
-            ->with('success', 'Status siswa berhasil diperbarui.');
+            ->with('success', __('lms.flash.student_status_updated'));
     }
 }

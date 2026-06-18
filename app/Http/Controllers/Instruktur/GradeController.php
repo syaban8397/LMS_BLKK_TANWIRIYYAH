@@ -61,7 +61,7 @@ class GradeController extends Controller
         $this->updateFinalGrade($class, $submission->participant_id);
 
         return redirect()->route('instruktur.grades.index', [$class, $assignment])
-            ->with('success', 'Grade saved.');
+            ->with('success', __('lms.flash.grade_saved'));
     }
 
     protected function updateFinalGrade(ClassModel $class, $participantId)

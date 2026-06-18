@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="programs-wrapper lms-page-shell space-y-5">
-        <x-lms-page-header title="Training Programs" subtitle="Manage all training programs available in the LMS.">
+        <x-lms-page-header :title="__('lms.nav.training_programs')" :subtitle="__('lms.common.manage_programs_desc')">
             <x-slot:actions>
-                <a href="{{ route('admin.programs.create') }}" class="lms-btn-primary btn-create">+ New Program</a>
+                <a href="{{ route('admin.programs.create') }}" class="lms-btn-primary btn-create">{{ __('lms.common.new_program') }}</a>
             </x-slot:actions>
         </x-lms-page-header>
 
@@ -14,7 +14,7 @@
             <div class="stat-card p-4">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs text-slate-400 uppercase tracking-wide">Total Programs</p>
+                        <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.common.total_programs') }}</p>
                         <p class="text-2xl font-bold text-blue-600 mt-1">{{ $totalPrograms }}</p>
                     </div>
                     <div class="lms-kpi-icon bg-blue-50 dark:bg-blue-950/40">📚</div>
@@ -23,7 +23,7 @@
             <div class="stat-card p-4">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs text-slate-400 uppercase tracking-wide">Active Programs</p>
+                        <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.common.active_programs') }}</p>
                         <p class="text-2xl font-bold text-green-600 mt-1">{{ $activePrograms }}</p>
                     </div>
                     <div class="lms-kpi-icon bg-green-50 dark:bg-green-950/40">✅</div>
@@ -32,7 +32,7 @@
             <div class="stat-card p-4">
                 <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-xs text-slate-400 uppercase tracking-wide">Inactive Programs</p>
+                        <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.common.inactive_programs') }}</p>
                         <p class="text-2xl font-bold text-red-600 mt-1">{{ $inactivePrograms }}</p>
                     </div>
                     <div class="lms-kpi-icon bg-red-50 dark:bg-red-950/40">⏸️</div>
@@ -45,11 +45,11 @@
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50 text-slate-500 text-xs font-semibold">
                         <tr>
-                            <th class="px-4 py-3 text-left">Program</th>
-                            <th class="px-4 py-3 text-center">Period</th>
-                            <th class="px-4 py-3 text-center">Status</th>
-                            <th class="px-4 py-3 text-center">Classes</th>
-                            <th class="px-4 py-3 text-center">Actions</th>
+                            <th class="px-4 py-3 text-left">{{ __('lms.report.program') }}</th>
+                            <th class="px-4 py-3 text-center">{{ __('lms.common.period') }}</th>
+                            <th class="px-4 py-3 text-center">{{ __('lms.common.status') }}</th>
+                            <th class="px-4 py-3 text-center">{{ __('lms.nav.classes') }}</th>
+                            <th class="px-4 py-3 text-center">{{ __('lms.common.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -64,28 +64,28 @@
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     @if($program->status == 'active')
-                                        <span class="lms-badge lms-badge--success">Active</span>
+                                        <span class="lms-badge lms-badge--success">{{ __('lms.active') }}</span>
                                     @else
-                                        <span class="lms-badge bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">Inactive</span>
+                                        <span class="lms-badge bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">{{ __('lms.inactive') }}</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 text-center text-slate-700 font-medium text-xs">
-                                    {{ $program->classes_count }}/{{ $program->capacity }} kelas
+                                    {{ __('lms.common.classes_slot', ['current' => $program->classes_count, 'max' => $program->capacity]) }}
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex justify-center gap-1.5">
-                                        <a href="{{ route('admin.programs.show', $program) }}" class="btn-action px-2 py-1 bg-sky-500 hover:bg-sky-600 text-white rounded-md text-xs transition shadow-sm">View</a>
-                                        <a href="{{ route('admin.programs.edit', $program) }}" class="btn-action px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-xs transition shadow-sm">Edit</a>
-                                        <form action="{{ route('admin.programs.destroy', $program) }}" method="POST" data-lms-confirm="Delete this program?" class="inline">
+                                        <a href="{{ route('admin.programs.show', $program) }}" class="btn-action px-2 py-1 bg-sky-500 hover:bg-sky-600 text-white rounded-md text-xs transition shadow-sm">{{ __('lms.view') }}</a>
+                                        <a href="{{ route('admin.programs.edit', $program) }}" class="btn-action px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-xs transition shadow-sm">{{ __('lms.edit') }}</a>
+                                        <form action="{{ route('admin.programs.destroy', $program) }}" method="POST" data-lms-confirm="{{ __('lms.common.delete_program') }}" class="inline">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn-action px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-xs transition shadow-sm">Del</button>
+                                            <button type="submit" class="btn-action px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-xs transition shadow-sm">{{ __('lms.common.del') }}</button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-8 text-center text-slate-400 text-sm">No training programs available.</td>
+                                <td colspan="5" class="py-8 text-center text-slate-400 text-sm">{{ __('lms.common.no_programs') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

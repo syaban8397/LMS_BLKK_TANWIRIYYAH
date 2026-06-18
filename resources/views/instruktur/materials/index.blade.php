@@ -1,13 +1,13 @@
 <x-app-layout>
     <div class="materials-wrapper lms-page-shell max-w-7xl mx-auto">
         <x-lms-page-header
-            title="Materials Library"
+            title="Perpustakaan Materi"
             :subtitle="$class->title"
             :back-url="route('instruktur.classes.stream', $class)"
-            back-label="← Back to Stream"
+            back-label="← Kembali ke Stream"
         >
             <x-slot:actions>
-                <a href="{{ route('instruktur.materials.create', $class) }}" class="lms-btn-primary btn-3d">+ New Material</a>
+                <a href="{{ route('instruktur.materials.create', $class) }}" class="lms-btn-primary btn-3d">+ Materi Baru</a>
             </x-slot:actions>
         </x-lms-page-header>
 
@@ -15,7 +15,7 @@
             <x-lms-flash type="success">{{ session('success') }}</x-lms-flash>
         @endif
 
-        <x-lms-card class="materials-card" title="Materials Library" :meta="'Total: ' . $materials->total() . ' items'">
+        <x-lms-card class="materials-card" title="Daftar Materi" :meta="'Total: ' . $materials->total() . ' item'">
             @if($materials->count() > 0)
                 <div class="divide-y divide-slate-100 dark:divide-slate-700/55">
                     @foreach($materials as $material)

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>YMT Creator Base | Pusat Kreativitas & Skill Masa Depan</title>
+    <title>{{ __('lms.app_name') }}</title>
     <meta name="description" content="YMT Creator Base – Ekosistem pembelajaran modern untuk mencetak talenta kreatif siap masa depan. #SkillUpFutureReady">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -161,17 +161,18 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-10">
             <div class="h-20 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <img src="{{ asset('storage/images/Logo.png') }}" alt="YMT Creator Base" class="h-14 w-auto drop-shadow-lg">
+                    <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-14 w-auto drop-shadow-lg">
                 </div>
                 <div class="hidden lg:flex items-center gap-8">
-                    <a href="#tentang" class="text-slate-700 hover:text-blue-700 font-medium transition">Tentang</a>
-                    <a href="#program" class="text-slate-700 hover:text-blue-700 font-medium transition">Program</a>
-                    <a href="#fasilitas" class="text-slate-700 hover:text-blue-700 font-medium transition">Fasilitas</a>
-                    <a href="#kontak" class="text-slate-700 hover:text-blue-700 font-medium transition">Kontak</a>
+                    <a href="#tentang" class="text-slate-700 hover:text-blue-700 font-medium transition">{{ __('lms.welcome.about') }}</a>
+                    <a href="#program" class="text-slate-700 hover:text-blue-700 font-medium transition">{{ __('lms.welcome.programs') }}</a>
+                    <a href="#fasilitas" class="text-slate-700 hover:text-blue-700 font-medium transition">{{ __('lms.welcome.facilities') }}</a>
+                    <a href="#kontak" class="text-slate-700 hover:text-blue-700 font-medium transition">{{ __('lms.welcome.contact') }}</a>
                 </div>
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('login') }}" class="px-5 py-2.5 rounded-xl text-blue-700 font-semibold hover:bg-blue-50 transition btn-outline">Login</a>
-                    <a href="{{ route('register') }}" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition btn-primary btn-3d">Register</a>
+                    <a href="{{ route('login') }}" class="px-5 py-2.5 rounded-xl text-blue-700 font-semibold hover:bg-blue-50 transition btn-outline">{{ __('lms.welcome.login') }}</a>
+                    <a href="{{ route('register') }}" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition btn-primary btn-3d">{{ __('lms.welcome.register') }}</a>
+                    <x-locale-switcher />
                 </div>
             </div>
         </div>
@@ -195,11 +196,11 @@
                             Pusat pengembangan kreativitas dan keterampilan masa depan. Bangun kompetensi, ciptakan karya, raih kesiapan menghadapi dunia industri.
                         </p>
                         <div class="flex flex-wrap gap-5 mt-10">
-                            <a href="{{ route('register') }}" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-700 to-blue-800 text-white font-bold shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 btn-primary">
-                                Daftar Sekarang <i class="fas fa-arrow-right ml-2"></i>
+                            <a href="{{ route('register') }}" class="px-8 py-4 rounded-lg bg-gradient-to-r from-blue-700 to-blue-800 text-white font-bold shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 btn-primary">
+                                {{ __('lms.welcome.register_now') }} <i class="fas fa-arrow-right ml-2"></i>
                             </a>
-                            <a href="{{ route('login') }}" class="px-8 py-4 rounded-2xl border border-blue-300 bg-white/60 backdrop-blur-sm text-blue-700 font-semibold hover:bg-white transition transform hover:-translate-y-1 btn-outline">
-                                Masuk LMS
+                            <a href="{{ route('login') }}" class="px-8 py-4 rounded-lg border border-blue-300 bg-white/60 backdrop-blur-sm text-blue-700 font-semibold hover:bg-white transition transform hover:-translate-y-1 btn-outline">
+                                {{ __('lms.welcome.login_lms') }}
                             </a>
                         </div>
                     </div>
@@ -236,7 +237,7 @@
                             <ul class="mt-5 space-y-3 text-blue-100">
                                 <li><i class="fas fa-check-circle mr-2 text-blue-300"></i> Pelatihan berbasis kompetensi kreatif.</li>
                                 <li><i class="fas fa-check-circle mr-2 text-blue-300"></i> Ekosistem teori & praktik seimbang.</li>
-                                <li><i class="fas fa-check-circle mr-2 text-blue-300"></i> Kemandirian melalui portofolio dan proyek nyata.</li>
+                                <li><i class="fas fa-check-circle mr-2 text-blue-300"></i> Kemandirian melalui proyek nyata dan praktik langsung.</li>
                                 <li><i class="fas fa-check-circle mr-2 text-blue-300"></i> Talenta siap kerja dan wirausaha digital.</li>
                             </ul>
                         </div>
@@ -249,10 +250,10 @@
         <section class="py-20 bg-white">
             <div class="max-w-7xl mx-auto px-6 lg:px-10">
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">👨‍🎨</div><h3 class="text-4xl font-extrabold text-blue-700">500+</h3><p class="mt-3 text-slate-500">Alumni Kreatif</p></div>
-                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">📚</div><h3 class="text-4xl font-extrabold text-blue-700">20+</h3><p class="mt-3 text-slate-500">Program Pelatihan</p></div>
-                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">🎯</div><h3 class="text-4xl font-extrabold text-blue-700">92%</h3><p class="mt-3 text-slate-500">Tingkat Kepuasan</p></div>
-                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">🏆</div><h3 class="text-4xl font-extrabold text-blue-700">100+</h3><p class="mt-3 text-slate-500">Sertifikasi Terbit</p></div>
+                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">👨‍🎨</div><h3 class="text-4xl font-extrabold text-blue-700">{{ $participantCount }}</h3><p class="mt-3 text-slate-500">{{ __('lms.welcome.stat_participants') }}</p></div>
+                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">📚</div><h3 class="text-4xl font-extrabold text-blue-700">{{ $programCount }}</h3><p class="mt-3 text-slate-500">{{ __('lms.welcome.stat_programs') }}</p></div>
+                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">🏫</div><h3 class="text-4xl font-extrabold text-blue-700">{{ $classCount }}</h3><p class="mt-3 text-slate-500">{{ __('lms.welcome.stat_classes') }}</p></div>
+                    <div class="stat-card blue-card p-8 text-center"><div class="text-5xl mb-4">🏆</div><h3 class="text-4xl font-extrabold text-blue-700">{{ $certificateCount }}</h3><p class="mt-3 text-slate-500">{{ __('lms.welcome.stat_certificates') }}</p></div>
                 </div>
             </div>
         </section>
@@ -316,10 +317,10 @@
         <section class="py-24 bg-gradient-to-r from-blue-800 to-blue-900 text-white">
             <div class="max-w-5xl mx-auto text-center px-6">
                 <h2 class="text-5xl font-extrabold">#SkillUpFutureReady</h2>
-                <p class="mt-8 text-xl text-blue-100">Tingkatkan keterampilan, bangun portofolio, dan raih peluang karir di industri kreatif.</p>
+                <p class="mt-8 text-xl text-blue-100">Tingkatkan keterampilan, kerjakan proyek nyata, dan raih peluang karir di industri kreatif.</p>
                 <div class="flex flex-wrap justify-center gap-5 mt-12">
-                    <a href="{{ route('register') }}" class="px-8 py-4 rounded-2xl bg-white text-blue-800 font-bold shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 btn-primary">Daftar Sekarang <i class="fas fa-user-plus ml-2"></i></a>
-                    <a href="{{ route('login') }}" class="px-8 py-4 rounded-2xl border border-white/30 bg-white/10 backdrop-blur-md font-semibold hover:bg-white/20 transition transform hover:-translate-y-1 btn-outline">Masuk LMS <i class="fas fa-sign-in-alt ml-2"></i></a>
+                    <a href="{{ route('register') }}" class="px-8 py-4 rounded-lg bg-white text-blue-800 font-bold shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 btn-primary">Daftar Sekarang <i class="fas fa-user-plus ml-2"></i></a>
+                    <a href="{{ route('login') }}" class="px-8 py-4 rounded-lg border border-white/30 bg-white/10 backdrop-blur-md font-semibold hover:bg-white/20 transition transform hover:-translate-y-1 btn-outline">Masuk LMS <i class="fas fa-sign-in-alt ml-2"></i></a>
                 </div>
             </div>
         </section>
@@ -328,11 +329,11 @@
         <footer id="kontak" class="bg-slate-900 text-slate-300">
             <div class="max-w-7xl mx-auto px-6 lg:px-10 py-16">
                 <div class="grid lg:grid-cols-3 gap-12">
-                    <div><img src="{{ asset('storage/images/Logo.png') }}" alt="YMT Creator Base" class="h-14 w-auto mb-4"><p>Pusat pengembangan kreativitas dan keterampilan masa depan.</p></div>
-                    <div><h3 class="text-xl font-bold text-white">Tautan</h3><ul class="space-y-3 mt-5"><li><a href="#tentang" class="hover:text-blue-400 transition">Tentang</a></li><li><a href="#program" class="hover:text-blue-400 transition">Program</a></li><li><a href="#fasilitas" class="hover:text-blue-400 transition">Fasilitas</a></li></ul></div>
+                    <div><img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-14 w-auto mb-4"><p>{{ __('lms.app_name') }} — Pusat pelatihan vokasi dan keterampilan.</p></div>
+                    <div><h3 class="text-xl font-bold text-white">Tautan</h3><ul class="space-y-3 mt-5"><li><a href="#tentang" class="hover:text-blue-400 transition">{{ __('lms.welcome.about') }}</a></li><li><a href="#program" class="hover:text-blue-400 transition">{{ __('lms.welcome.programs') }}</a></li><li><a href="{{ route('legal.privacy') }}" class="hover:text-blue-400 transition">{{ __('lms.welcome.privacy') }}</a></li><li><a href="{{ route('legal.terms') }}" class="hover:text-blue-400 transition">{{ __('lms.welcome.terms') }}</a></li></ul></div>
                     <div><h3 class="text-xl font-bold text-white">Kontak</h3><p>Jl. Ariawiratanudatar KM.05, Sindanglaka, Karangtengah, Cianjur 43281</p><p class="mt-2"><i class="fas fa-envelope mr-2"></i> info@ymtcreatorbase.id</p><p class="mt-2"><i class="fas fa-phone-alt mr-2"></i> +62 857 9570 0651</p></div>
                 </div>
-                <div class="border-t border-slate-800 mt-12 pt-8 text-center">© {{ date('Y') }} YMT Creator Base. Formerly BLKK Tanwiriyyah.</div>
+                <div class="border-t border-slate-800 mt-12 pt-8 text-center">© {{ date('Y') }} {{ __('lms.app_name') }}</div>
             </div>
         </footer>
     </div>

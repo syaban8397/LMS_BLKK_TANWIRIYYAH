@@ -1,46 +1,80 @@
 <?php
 
+
+
 namespace App\Exports\Reports;
 
+use App\Exports\Concerns\BindsExcelTextValues;
+use App\Support\ReportUserFields;
+
 use Illuminate\Support\Collection;
+
 use Maatwebsite\Excel\Concerns\FromCollection;
+
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+
 use Maatwebsite\Excel\Concerns\WithMapping;
+
 use Maatwebsite\Excel\Concerns\WithStyles;
+
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class InstructorsReportExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+
+
+class InstructorsReportExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithCustomValueBinder
 {
+    use BindsExcelTextValues;
+
     public function __construct(protected Collection $instructors) {}
 
+
+
     public function collection(): Collection
+
     {
+
         return $this->instructors;
+
     }
+
+
 
     public function headings(): array
+
     {
-        return ['No', 'Nama', 'Email', 'Telepon', 'Status Akun', 'Jumlah Kelas'];
+
+        return array_merge(['No'], ReportUserFields::headings());
+
     }
+
+
 
     public function map($user): array
+
     {
+
         static $no = 0;
+
         $no++;
 
-        return [
-            $no,
-            $user->name,
-            $user->email,
-            $user->phone ?? '-',
-            $user->is_active ? 'Aktif' : 'Nonaktif',
-            $user->classes_count,
-        ];
+
+
+        return array_merge([$no], ReportUserFields::excelRow($user));
+
     }
 
+
+
     public function styles(Worksheet $sheet): array
+
     {
+
         return [1 => ['font' => ['bold' => true]]];
+
     }
+
 }
+

@@ -1,9 +1,10 @@
 <x-app-layout>
-    <div class="space-y-5">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">Sertifikat Saya</h1>
-            <p class="text-sm text-slate-500 mt-0.5">Daftar sertifikat yang telah diterbitkan untuk Anda.</p>
-        </div>
+    <div class="lms-page-shell space-y-5">
+        <x-lms-page-header
+            title="Sertifikat Saya"
+            subtitle="Daftar sertifikat yang telah diterbitkan untuk Anda."
+            :back-url="route('peserta.dashboard')"
+        />
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <table class="w-full text-sm">
@@ -29,7 +30,7 @@
                             <td class="px-4 py-3 text-center">
                                 <a href="{{ route('peserta.certificates.download', $certificate) }}"
                                    class="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-medium">
-                                    📜 Cetak / Download
+                                    📜 Cetak / Unduh
                                 </a>
                             </td>
                         </tr>
