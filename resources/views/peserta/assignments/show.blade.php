@@ -190,22 +190,5 @@
                 </div>
             </div>
         @endif
-
-        {{-- Jika ada submission yang sudah di-graded, tampilkan score --}}
-        @if($submission && $submission->isGraded() && $submission->score)
-            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
-                <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-green-50 to-white">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                        <span>🏆</span> {{ __('lms.assignment.your_score') }}
-                    </h3>
-                </div>
-                <div class="p-5 text-center">
-                    <div class="text-4xl font-bold text-green-600">{{ $submission->score }}<span class="text-lg text-slate-500">/100</span></div>
-                    @if($submission->feedback)
-                        <p class="text-slate-600 text-sm mt-2">{{ $submission->feedback }}</p>
-                    @endif
-                </div>
-            </div>
-        @endif
     </div>
 </x-app-layout>

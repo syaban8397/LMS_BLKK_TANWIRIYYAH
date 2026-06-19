@@ -6,7 +6,9 @@
             </div>
 
             <div class="text-center mb-8">
-                <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-20 w-auto mx-auto drop-shadow-md mb-4">
+                <div class="lms-brand-logo-pad mx-auto mb-4">
+                    <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-16 w-auto">
+                </div>
                 <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100">{{ __('lms.auth.forgot_page_title') }}</h2>
                 <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 leading-relaxed max-w-md mx-auto">{{ __('lms.auth.forgot_page_desc') }}</p>
             </div>

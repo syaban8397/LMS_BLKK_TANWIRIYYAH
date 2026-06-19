@@ -1,0 +1,208 @@
+/**
+ * SaaS Premium Shell — indigo/slate/emerald enterprise dashboard
+ * Consolidates layout, shell, tables, forms (no backend changes)
+ */
+
+@layer components {
+    html[data-authenticated-app="1"] {
+        --saas-primary: 79 70 229;
+        --saas-accent: 16 185 129;
+        --saas-surface: 248 250 252;
+        --saas-border: 226 232 240;
+        --saas-radius: 1rem;
+        --saas-radius-lg: 1.25rem;
+        --saas-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 24px -6px rgba(15, 23, 42, 0.08);
+        --saas-shadow-hover: 0 4px 8px -2px rgba(15, 23, 42, 0.06), 0 16px 40px -12px rgba(79, 70, 229, 0.12);
+    }
+
+    /* ── Sticky glass navbar (struktur — warna di theme-modes.css) ── */
+    html[data-authenticated-app="1"] .glass-nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        backdrop-filter: blur(16px) saturate(1.25);
+        -webkit-backdrop-filter: blur(16px) saturate(1.25);
+        transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    html[data-authenticated-app="1"] .glass-panel {
+        backdrop-filter: blur(8px);
+        border-radius: var(--saas-radius);
+        box-shadow: var(--saas-shadow);
+    }
+
+    /* ── Premium sidebar — warna di theme-modes.css ── */
+    html[data-authenticated-app="1"] .premium-sidebar {
+        transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    html[data-authenticated-app="1"] .sidebar-nav-link {
+        border-radius: 0.75rem;
+        padding: 0.625rem 0.75rem;
+        font-weight: 500;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    html[data-authenticated-app="1"] .sidebar-nav-link:hover {
+        transform: translateX(2px);
+    }
+
+    /* ── Main content area ── */
+    html[data-authenticated-app="1"] .lms-main-shell {
+        transition: margin-left 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    html[data-authenticated-app="1"] main.page-content-3d {
+        animation: saasPageEnter 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes saasPageEnter {
+        from { opacity: 0; transform: translateY(6px) scale(0.995); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ── Kill cardPop flicker on module cards ── */
+    html[data-authenticated-app="1"] main .form-card,
+    html[data-authenticated-app="1"] main .detail-card,
+    html[data-authenticated-app="1"] main .table-card,
+    html[data-authenticated-app="1"] main .info-card,
+    html[data-authenticated-app="1"] main .timeline-item,
+    html[data-authenticated-app="1"] main .sidebar-card,
+    html[data-authenticated-app="1"] main .grade-card,
+    html[data-authenticated-app="1"] main .submission-card,
+    html[data-authenticated-app="1"] main .attendance-card,
+    html[data-authenticated-app="1"] main .materials-card {
+        animation: none;
+        opacity: 1;
+        border-radius: var(--saas-radius-lg);
+        box-shadow: var(--saas-shadow);
+    }
+
+    /* ── Premium cards unified ── */
+    html[data-authenticated-app="1"] .premium-card,
+    html[data-authenticated-app="1"] .dashboard-card,
+    html[data-authenticated-app="1"] .stat-card,
+    html[data-authenticated-app="1"] .lms-form-card,
+    html[data-authenticated-app="1"] .lms-list-card,
+    html[data-authenticated-app="1"] .lms-filter-bar,
+    html[data-authenticated-app="1"] .lms-data-table {
+        border-radius: var(--saas-radius-lg);
+        border: 1px solid rgb(var(--saas-border) / 1);
+        box-shadow: var(--saas-shadow);
+    }
+
+    html[data-authenticated-app="1"] .dashboard-card:hover,
+    html[data-authenticated-app="1"] .stat-card:hover,
+    html[data-authenticated-app="1"] .lms-form-card:hover,
+    html[data-authenticated-app="1"] .lms-list-card:hover {
+        box-shadow: var(--saas-shadow-hover);
+        transform: translateY(-2px);
+    }
+
+    /* ── Data tables: sticky header + zebra ── */
+    html[data-authenticated-app="1"] .lms-data-table__head th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        backdrop-filter: blur(8px);
+        background: rgba(248, 250, 252, 0.92);
+    }
+
+    html[data-authenticated-app="1"].dark .lms-data-table__head th {
+        background: rgba(30, 41, 59, 0.92);
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__body tr:nth-child(even) td {
+        background: rgba(248, 250, 252, 0.65);
+    }
+
+    html[data-authenticated-app="1"].dark .lms-data-table__body tr:nth-child(even) td {
+        background: rgba(30, 41, 59, 0.35);
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__body tr:hover td {
+        background: rgba(238, 242, 255, 0.85);
+    }
+
+    html[data-authenticated-app="1"].dark .lms-data-table__body tr:hover td {
+        background: rgba(49, 46, 129, 0.25);
+    }
+
+    /* ── Primary buttons → indigo ── */
+    html[data-authenticated-app="1"] .lms-btn-primary,
+    html[data-authenticated-app="1"] .ds-btn.ds-btn--primary {
+        background-image: linear-gradient(180deg, rgb(99 102 241) 0%, rgb(79 70 229) 100%);
+        border-color: rgba(67, 56, 202, 0.35);
+    }
+
+    html[data-authenticated-app="1"] .lms-btn-primary:hover,
+    html[data-authenticated-app="1"] .ds-btn.ds-btn--primary:hover:not(:disabled) {
+        background-image: linear-gradient(180deg, rgb(129 140 248) 0%, rgb(99 102 241) 100%);
+    }
+
+    html[data-authenticated-app="1"] .lms-btn-success,
+    html[data-authenticated-app="1"] .ds-btn.ds-btn--primary.lms-btn-success {
+        background-image: linear-gradient(180deg, rgb(52 211 153) 0%, rgb(16 185 129) 100%);
+        border-color: rgba(5, 150, 105, 0.35);
+    }
+
+    /* ── Profile dropdown ── */
+    html[data-authenticated-app="1"] #profileMenu.premium-card {
+        border-radius: var(--saas-radius);
+        box-shadow: 0 12px 40px -8px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(226, 232, 240, 0.8);
+        overflow: hidden;
+    }
+
+    /* ── Page header ── */
+    html[data-authenticated-app="1"] .lms-page-header h1 {
+        font-size: 1.375rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        color: #0f172a;
+    }
+
+    html[data-authenticated-app="1"].dark .lms-page-header h1 {
+        color: #f1f5f9;
+    }
+
+    /* ── Badges emerald accent ── */
+    html[data-authenticated-app="1"] .lms-badge--success {
+        background: rgba(16, 185, 129, 0.12);
+        color: #047857;
+        border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    /* ── Modal panel polish ── */
+    html[data-authenticated-app="1"] .ds-modal-panel {
+        border-radius: var(--saas-radius-lg);
+        box-shadow: 0 24px 64px -16px rgba(15, 23, 42, 0.22);
+    }
+
+    html[data-authenticated-app="1"] .ds-modal-backdrop {
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(4px);
+    }
+
+    /* ── Stat KPI cards ── */
+    html[data-authenticated-app="1"] .lms-stat-card {
+        border-radius: var(--saas-radius-lg);
+        border: 1px solid rgb(var(--saas-border) / 1);
+        background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: var(--saas-shadow);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    html[data-authenticated-app="1"] .lms-stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--saas-shadow-hover);
+    }
+
+    /* ── Focus rings ── */
+    html[data-authenticated-app="1"] .input-3d:focus,
+    html[data-authenticated-app="1"] main select:focus,
+    html[data-authenticated-app="1"] main input:focus:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    html[data-authenticated-app="1"] main textarea:focus {
+        border-color: rgb(129 140 248);
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05), 0 0 0 3px rgba(99, 102, 241, 0.18);
+    }
+}

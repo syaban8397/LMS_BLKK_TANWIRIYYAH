@@ -12,10 +12,11 @@ use App\Models\Material;
 use App\Models\Submission;
 use App\Models\User;
 use App\Support\SecureStorage;
+use BaconQrCode\Common\ErrorCorrectionLevel;
+use BaconQrCode\Encoder\Encoder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class CertificateService
 {
@@ -164,6 +165,15 @@ class CertificateService
         return compact('issued', 'errors');
     }
 
+    public function delete(Certificate $certificate): void
+    {
+        DB::transaction(function () use ($certificate) {
+            SecureStorage::delete($certificate->pdf_file);
+            SecureStorage::delete($certificate->qr_code);
+            $certificate->delete();
+        });
+    }
+
     public function issue(ClassModel $class, int $participantId): Certificate
     {
         return DB::transaction(function () use ($class, $participantId) {
@@ -227,22 +237,62 @@ class CertificateService
 
     protected function storeQrCode(string $number, string $url): string
     {
-        $path = 'certificates/qr/' . $number . '.svg';
-        $svg = QrCode::format('svg')
-            ->size(200)
-            ->margin(1)
-            ->color(0, 64, 113)
-            ->backgroundColor(255, 255, 255)
-            ->generate($url);
-        SecureStorage::put($path, $svg);
+        $path = 'certificates/qr/' . $number . '.png';
+        SecureStorage::put($path, $this->renderQrPng($url));
 
         return $path;
+    }
+
+    protected function renderQrPng(string $content, int $targetSize = 320, int $marginModules = 1): string
+    {
+        if (! extension_loaded('gd')) {
+            throw new \RuntimeException('GD extension required to render certificate QR codes.');
+        }
+
+        $qr = Encoder::encode($content, ErrorCorrectionLevel::L());
+        $matrix = $qr->getMatrix();
+        $moduleCount = $matrix->getWidth();
+        $totalModules = $moduleCount + ($marginModules * 2);
+        $moduleSize = max(1, (int) floor($targetSize / $totalModules));
+        $imageSize = $totalModules * $moduleSize;
+
+        $img = imagecreatetruecolor($imageSize, $imageSize);
+        $white = imagecolorallocate($img, 255, 255, 255);
+        $black = imagecolorallocate($img, 0, 0, 0);
+        imagefill($img, 0, 0, $white);
+
+        for ($y = 0; $y < $moduleCount; $y++) {
+            for ($x = 0; $x < $moduleCount; $x++) {
+                if ($matrix->get($x, $y) === 1) {
+                    $px = ($x + $marginModules) * $moduleSize;
+                    $py = ($y + $marginModules) * $moduleSize;
+                    imagefilledrectangle(
+                        $img,
+                        $px,
+                        $py,
+                        $px + $moduleSize - 1,
+                        $py + $moduleSize - 1,
+                        $black
+                    );
+                }
+            }
+        }
+
+        ob_start();
+        imagepng($img);
+        $png = ob_get_clean();
+        imagedestroy($img);
+
+        return $png;
     }
 
     protected function qrDataUri(string $path): string
     {
         $content = SecureStorage::get($path);
-        $mime = str_ends_with(strtolower($path), '.svg') ? 'image/svg+xml' : 'image/png';
+        $lower = strtolower($path);
+        $mime = str_ends_with($lower, '.svg')
+            ? 'image/svg+xml'
+            : (str_ends_with($lower, '.png') ? 'image/png' : 'image/png');
 
         return 'data:' . $mime . ';base64,' . base64_encode($content);
     }
@@ -256,6 +306,77 @@ class CertificateService
         }
 
         return null;
+    }
+
+    protected function page2WatermarkBase64(): ?string
+    {
+        $path = null;
+        foreach (['page2-watermark.png', 'modules-watermark.png'] as $filename) {
+            foreach ($this->certificateImagePaths($filename) as $candidate) {
+                if (file_exists($candidate)) {
+                    $path = $candidate;
+                    break 2;
+                }
+            }
+        }
+
+        if ($path === null || !function_exists('imagecreatefrompng')) {
+            return $path !== null ? base64_encode(file_get_contents($path)) : null;
+        }
+
+        $source = @imagecreatefrompng($path);
+        if ($source === false) {
+            return base64_encode(file_get_contents($path));
+        }
+
+        $targetSize = 480;
+        $target = imagecreatetruecolor($targetSize, $targetSize);
+        imagealphablending($target, false);
+        imagesavealpha($target, true);
+        $transparent = imagecolorallocatealpha($target, 255, 255, 255, 127);
+        imagefill($target, 0, 0, $transparent);
+        imagealphablending($target, true);
+
+        $sourceWidth = imagesx($source);
+        $sourceHeight = imagesy($source);
+        imagecopyresampled(
+            $target,
+            $source,
+            0,
+            0,
+            0,
+            0,
+            $targetSize,
+            $targetSize,
+            $sourceWidth,
+            $sourceHeight
+        );
+        imagedestroy($source);
+
+        imagealphablending($target, false);
+        imagesavealpha($target, true);
+        for ($x = 0; $x < $targetSize; $x++) {
+            for ($y = 0; $y < $targetSize; $y++) {
+                $rgba = imagecolorat($target, $x, $y);
+                $alpha = ($rgba >> 24) & 0x7F;
+                if ($alpha === 127) {
+                    continue;
+                }
+                $red = ($rgba >> 16) & 0xFF;
+                $green = ($rgba >> 8) & 0xFF;
+                $blue = $rgba & 0xFF;
+                $fadedAlpha = 127 - (int) round((127 - $alpha) * 0.10);
+                $color = imagecolorallocatealpha($target, $red, $green, $blue, $fadedAlpha);
+                imagesetpixel($target, $x, $y, $color);
+            }
+        }
+
+        ob_start();
+        imagepng($target);
+        $png = ob_get_clean();
+        imagedestroy($target);
+
+        return base64_encode($png);
     }
 
     /**
@@ -286,13 +407,13 @@ class CertificateService
             'kemnaker' => $this->imageBase64('logo-kemnaker.png'),
             'kemnaker_mark' => $this->imageBase64('logo-kemnaker-mark.png'),
             'logo' => $logo,
-            'ymt' => $logo ?: $this->imageBase64('logo-ymt-creatorbase.png'),
+            'ymt' => $this->imageBase64('logo-ymt-creatorbase.png') ?: $logo,
             'vokasi' => $this->imageBase64('logo-pelatihan-vokasi.png'),
             'indonesia_skills' => $this->imageBase64('logo-indonesia-skills.png'),
             'skills_swoosh' => $this->imageBase64('logo-skills-swoosh.png'),
             'blkk_mark' => $this->imageBase64('logo-blkk.png'),
             'siapkerja' => $this->imageBase64('logo-siapkerja.png'),
-            'page2_watermark' => $this->imageBase64('page2-watermark.png'),
+            'page2_watermark' => $this->page2WatermarkBase64(),
             'materials_watermark' => $this->imageBase64('modules-watermark.png'),
         ];
     }
@@ -332,8 +453,10 @@ class CertificateService
             'directorTitleLine2' => config('certificate.director_title_line2', 'BLKK Tanwiriyyah'),
         ])
             ->setPaper('a4', 'landscape')
-            ->setOption('dpi', 150)
-            ->setOption('isHtml5ParserEnabled', true);
+            ->setOption('dpi', 200)
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isFontSubsettingEnabled', true);
 
         $path = 'certificates/pdf/' . $certificate->certificate_number . '.pdf';
         SecureStorage::put($path, $pdf->output());
@@ -348,5 +471,16 @@ class CertificateService
         }
 
         return SecureStorage::path($certificate->pdf_file);
+    }
+
+    public function downloadFilename(Certificate $certificate): string
+    {
+        $certificate->loadMissing('participant');
+
+        $name = strtoupper(trim($certificate->participant->name ?? 'SERTIFIKAT'));
+        $name = preg_replace('/[\\\\\/:*?"<>|]/', '', $name);
+        $name = preg_replace('/\s+/', ' ', $name);
+
+        return ($name !== '' ? $name : 'SERTIFIKAT') . '.pdf';
     }
 }

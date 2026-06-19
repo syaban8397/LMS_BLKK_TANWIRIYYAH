@@ -9,9 +9,11 @@
 
         <div class="lms-auth-card lms-auth-card--register p-6 md:p-8 relative">
             <div class="text-center mb-5">
-                <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-16 w-auto mx-auto drop-shadow-md mb-2">
-                <h2 class="text-2xl font-bold text-slate-800">{{ __('lms.auth.create_account') }}</h2>
-                <p class="text-slate-500 text-sm">{{ __('lms.auth.register_subtitle') }}</p>
+                <div class="lms-brand-logo-pad mx-auto mb-3">
+                    <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-14 w-auto">
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ __('lms.auth.create_account') }}</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">{{ __('lms.auth.register_subtitle') }}</p>
             </div>
 
             <form method="POST" action="{{ route('register') }}">

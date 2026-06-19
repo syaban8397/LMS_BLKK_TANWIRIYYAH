@@ -49,20 +49,22 @@
 </div>
 
 <div id="mainContent" class="ml-64 min-h-screen lms-main-shell">
-    <header class="glass-nav h-16 shrink-0">
+    <header class="glass-nav lms-appbar h-16 shrink-0 sticky top-0 z-40 relative">
         <div class="h-full px-6 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <button id="toggleSidebarBtn"
-                        class="theme-toggle-btn w-9 h-9 text-lg text-slate-600"
+                        class="theme-toggle-btn w-9 h-9 text-lg"
                         aria-label="{{ __('lms.layout.toggle_sidebar') }}">
                     ☰
                 </button>
-                <img src="{{ asset('storage/images/Logo.png') }}"
-                     alt="{{ __('lms.app_name') }}"
-                     class="h-8 w-auto max-w-[9rem] object-contain hidden sm:block">
+                <div class="lms-appbar-logo">
+                    <img src="{{ asset('storage/images/Logo.png') }}"
+                         alt="{{ __('lms.app_name') }}"
+                         class="lms-appbar-logo__img">
+                </div>
                 <div>
-                    <h1 class="text-base font-bold text-slate-800">{{ __('lms.app_name') }}</h1>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-wider">{{ __('lms.tagline') }}</p>
+                    <h1 class="text-base font-bold lms-appbar__title">{{ __('lms.app_name') }}</h1>
+                    <p class="text-[10px] lms-appbar__tagline uppercase tracking-wider">{{ __('lms.tagline') }}</p>
                 </div>
             </div>
 
@@ -71,8 +73,8 @@
                 <x-theme-toggle />
 
                 <div class="hidden sm:block text-right glass-panel px-3 py-1.5">
-                    <div id="current-date" class="text-[10px] text-slate-500 dark:text-slate-400"></div>
-                    <div id="current-time" class="font-semibold text-brand-700 dark:text-brand-300 text-sm tabular-nums"></div>
+                    <div id="current-date" class="text-[10px]"></div>
+                    <div id="current-time" class="font-semibold text-sm tabular-nums"></div>
                 </div>
 
                 <div class="relative">
@@ -82,15 +84,15 @@
                         @if($user->hasProfilePhoto())
                             <img src="{{ $user->profilePhotoUrl() }}" class="w-9 h-9 rounded-lg object-cover ring-1 ring-slate-200 dark:ring-slate-600 shadow-3d-sm" alt="">
                         @else
-                            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-600 to-indigo-700 flex items-center justify-center text-white font-semibold text-sm shadow-3d-sm">
+                            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center text-white font-semibold text-sm shadow-3d-sm">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             </div>
                         @endif
                         <div class="text-left hidden md:block">
-                            <div class="font-semibold text-sm text-slate-800">{{ $user->name }}</div>
-                            <div class="text-[10px] text-slate-500 capitalize">{{ __('lms.roles.' . $user->role) }}</div>
+                            <div class="font-semibold text-sm lms-appbar__profile-name">{{ $user->name }}</div>
+                            <div class="text-[10px] lms-appbar__profile-role capitalize">{{ __('lms.roles.' . $user->role) }}</div>
                         </div>
-                        <span class="text-slate-400 text-xs hidden md:inline">▼</span>
+                        <span class="lms-appbar__chevron text-xs hidden md:inline">▼</span>
                     </button>
 
                     <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 premium-card py-1 z-50 border border-slate-200/80 dark:border-slate-600/60">

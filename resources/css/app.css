@@ -1,6 +1,10 @@
 @import './design-system.css';
 @import './classroom.css';
 @import './ui-consistency.css';
+@import './premium-ui.css';
+@import './saas-shell.css';
+@import './theme-modes.css';
+@import './ui-polish.css';
 
 @tailwind base;
 @tailwind components;
@@ -141,47 +145,7 @@
     }
 
     html[data-authenticated-app="1"] .premium-sidebar {
-        box-shadow: 1px 0 0 0 rgba(255, 255, 255, 0.06);
         transition: width 0.3s ease;
-    }
-
-    html[data-authenticated-app="1"] .glass-nav {
-        box-shadow: 0 1px 0 0 #e2e8f0;
-        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-        border-color: #e2e8f0;
-        color: #1e293b;
-    }
-
-    html[data-authenticated-app="1"].dark .glass-nav {
-        background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-        border-color: #e2e8f0;
-        box-shadow: 0 1px 0 0 #e2e8f0;
-    }
-
-    html[data-authenticated-app="1"] .glass-nav .glass-panel {
-        background: #ffffff;
-        border-color: #e2e8f0;
-    }
-
-    html[data-authenticated-app="1"] .glass-nav h1,
-    html[data-authenticated-app="1"] .glass-nav .font-semibold {
-        color: #1e293b !important;
-    }
-
-    html[data-authenticated-app="1"] .glass-nav .text-slate-500,
-    html[data-authenticated-app="1"] .glass-nav .text-slate-400,
-    html[data-authenticated-app="1"] .glass-nav #current-date {
-        color: #64748b !important;
-    }
-
-    html[data-authenticated-app="1"] .glass-nav #current-time {
-        color: #1d4ed8 !important;
-    }
-
-    html[data-authenticated-app="1"] .glass-nav .theme-toggle-btn {
-        color: #475569 !important;
-        background: #ffffff;
-        border-color: #e2e8f0;
     }
 
     .lms-content-stage {
@@ -261,8 +225,7 @@
 
     .premium-sidebar {
         @apply fixed inset-y-0 left-0 z-50 overflow-hidden transition-all duration-200;
-        background: #0f172a;
-        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        border-right: 1px solid var(--lms-sidebar-border, #e2e8f0);
         box-shadow: none;
     }
 
@@ -410,8 +373,6 @@
         border-color: var(--color-border);
         box-shadow: var(--shadow-card);
         transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
-        animation: cardPop 0.4s ease forwards;
-        opacity: 0;
     }
 
     .form-card:hover, .detail-card:hover, .table-card:hover, .assignments-card:hover,
@@ -420,18 +381,6 @@
         transform: translateY(-2px);
         box-shadow: var(--shadow-card-hover);
     }
-
-    .form-card { animation-delay: 0.06s; }
-    .table-card, .assignments-card, .materials-card { animation-delay: 0.1s; }
-    .detail-card:nth-child(1), .info-card:nth-child(1) { animation-delay: 0.06s; }
-    .detail-card:nth-child(2), .info-card:nth-child(2) { animation-delay: 0.12s; }
-    .detail-card:nth-child(3), .info-card:nth-child(3) { animation-delay: 0.18s; }
-    .detail-card:nth-child(4), .info-card:nth-child(4) { animation-delay: 0.24s; }
-    .timeline-item:nth-child(1) { animation-delay: 0.14s; }
-    .timeline-item:nth-child(2) { animation-delay: 0.2s; }
-    .timeline-item:nth-child(3) { animation-delay: 0.26s; }
-    .sidebar-card { animation-delay: 0.08s; }
-    .sidebar-card:nth-child(2) { animation-delay: 0.14s; }
 
     /* List rows — subtle fade, no scale hover */
     .assignment-row, .attendance-row, .material-row, .class-row,
@@ -736,23 +685,9 @@
         box-shadow: var(--shadow-btn-active);
     }
 
-    /* ── Sidebar navigation ── */
+    /* Sidebar nav — warna di theme-modes.css */
     .sidebar-nav-link {
         @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-150;
-        color: rgba(255, 255, 255, 0.78);
-    }
-
-    .sidebar-nav-link:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: #ffffff;
-    }
-
-    .sidebar-nav-link--active {
-        @apply font-medium;
-        background: rgba(255, 255, 255, 0.12);
-        color: #ffffff;
-        box-shadow: inset 2px 0 0 0 #60a5fa;
-        padding-left: calc(0.75rem - 2px);
     }
 
     .sidebar-nav-icon {
@@ -1192,7 +1127,7 @@
     }
 
     html.dark .lms-page-loader__overlay {
-        background: rgba(241, 245, 249, 0.78);
+        background: rgba(6, 13, 24, 0.78);
     }
 
     .lms-page-loader__panel {
@@ -1712,20 +1647,10 @@
     }
 
     :root:not(.dark) .glass-panel,
-    :root:not(.dark) .glass-nav,
     :root:not(.dark) .theme-toggle-btn {
         background: #ffffff;
         border-color: rgba(148, 163, 184, 0.32);
     }
-
-    html.dark .glass-nav {
-        background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-        border-color: #e2e8f0;
-    }
-
-    /* ══════════════════════════════════════════
-       LMS PRO — Enterprise UI Redesign Layer
-    ══════════════════════════════════════════ */
 
     .lms-app-body {
         background: #f4f5f7;
@@ -1737,22 +1662,6 @@
 
     .lms-main-shell {
         background: transparent;
-    }
-
-    html[data-authenticated-app="1"] .glass-nav {
-        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-        border-color: #e2e8f0;
-        box-shadow: 0 1px 0 0 #e2e8f0;
-    }
-
-    html[data-authenticated-app="1"]:not(.dark) .glass-nav {
-        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-        border-color: #e2e8f0;
-    }
-
-    html[data-authenticated-app="1"].dark .glass-nav {
-        background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-        border-color: #e2e8f0;
     }
 
     .lms-page-shell {

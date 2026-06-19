@@ -69,7 +69,28 @@ class CertificateController extends Controller
             abort(404, __('lms.flash.certificate_file_not_found'));
         }
 
-        return response()->download($path, $certificate->certificate_number . '.pdf');
+        return response()->download($path, $this->certificateService->downloadFilename($certificate));
+    }
+
+    public function destroy(ClassModel $class, Certificate $certificate)
+    {
+        if ($certificate->class_id !== $class->id) {
+            abort(404);
+        }
+
+        if (!$certificate->pdf_file) {
+            return redirect()
+                ->route('admin.certificates.show', $class)
+                ->with('error', __('lms.flash.certificate_not_issued'));
+        }
+
+        $certificate->load('participant');
+        $participantName = $certificate->participant?->name ?? __('lms.certificate_page.participant');
+        $this->certificateService->delete($certificate);
+
+        return redirect()
+            ->route('admin.certificates.show', $class)
+            ->with('success', __('lms.flash.certificate_deleted', ['name' => $participantName]));
     }
 
     public function exportExcel(ClassModel $class)

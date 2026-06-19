@@ -19,6 +19,9 @@ class LmsDoctorCommand extends Command
         $checks = [
             $this->checkAppKey(),
             $this->checkDebugMode(),
+            $this->checkSessionSecurity(),
+            $this->checkDatabase(),
+            $this->checkMigrations(),
             $this->checkStorageLink(),
             $this->checkLogo(),
             $this->checkCertificateAssets(),
@@ -82,7 +85,16 @@ class LmsDoctorCommand extends Command
     private function checkStorageLink(): array
     {
         $link = public_path('storage');
-        $ok = is_link($link) || File::isDirectory($link);
+        $probePaths = [
+            $link . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'Logo.png',
+            $link . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'logo.png',
+        ];
+
+        $ok = collect($probePaths)->contains(fn (string $path) => file_exists($path));
+
+        if (! $ok) {
+            $ok = (is_link($link) || is_dir($link)) && is_dir(storage_path('app/public'));
+        }
 
         return $this->report(
             'Storage symlink (public/storage)',
@@ -118,8 +130,13 @@ class LmsDoctorCommand extends Command
     private function checkCertificateAssets(): array
     {
         $required = [
+            'sidebar-bg.png',
             'logo-kemnaker.png',
-            'logo-blkk.png',
+            'logo-kemnaker-mark.png',
+            'logo-pelatihan-vokasi.png',
+            'logo-indonesia-skills.png',
+            'logo-siapkerja.png',
+            'page2-watermark.png',
         ];
 
         $missing = collect($required)->filter(
@@ -135,6 +152,87 @@ class LmsDoctorCommand extends Command
                 ? 'File utama tersedia.'
                 : 'Kurang: ' . $missing->implode(', ')
         );
+    }
+
+    /**
+     * @return array{ok: bool, label: string, detail: string}
+     */
+    private function checkSessionSecurity(): array
+    {
+        if (! app()->environment('production')) {
+            return $this->report(
+                'Session security (SESSION_ENCRYPT)',
+                true,
+                'Environment non-production — lewati.'
+            );
+        }
+
+        $encrypt = (bool) config('session.encrypt');
+        $secure = (bool) config('session.secure');
+
+        $ok = $encrypt && $secure;
+
+        return $this->report(
+            'Session security (SESSION_ENCRYPT + SESSION_SECURE_COOKIE)',
+            $ok,
+            $ok
+                ? 'Session terenkripsi & cookie secure aktif.'
+                : 'Production wajib SESSION_ENCRYPT=true dan SESSION_SECURE_COOKIE=true (HTTPS).'
+        );
+    }
+
+    /**
+     * @return array{ok: bool, label: string, detail: string}
+     */
+    private function checkDatabase(): array
+    {
+        try {
+            \Illuminate\Support\Facades\DB::connection()->getPdo();
+
+            return $this->report(
+                'Database connection',
+                true,
+                'Terhubung (' . config('database.default') . ').'
+            );
+        } catch (\Throwable $e) {
+            return $this->report(
+                'Database connection',
+                false,
+                'Gagal: periksa DB_* di .env'
+            );
+        }
+    }
+
+    /**
+     * @return array{ok: bool, label: string, detail: string}
+     */
+    private function checkMigrations(): array
+    {
+        try {
+            $files = collect(File::glob(database_path('migrations/*.php')))
+                ->map(fn (string $path) => pathinfo($path, PATHINFO_FILENAME))
+                ->values();
+
+            $ran = collect(\Illuminate\Support\Facades\DB::table('migrations')->pluck('migration'));
+            $pending = $files->diff($ran);
+            $ok = $pending->isEmpty();
+            $total = $files->count();
+            $ranCount = $total - $pending->count();
+
+            return $this->report(
+                'Database migrations',
+                $ok,
+                $ok
+                    ? "{$ranCount}/{$total} migration dijalankan."
+                    : 'Pending: ' . $pending->take(3)->implode(', ') . ($pending->count() > 3 ? '…' : '') . ' — jalankan: php artisan migrate --force'
+            );
+        } catch (\Throwable) {
+            return $this->report(
+                'Database migrations',
+                false,
+                'Tidak dapat memeriksa — pastikan database aktif.'
+            );
+        }
     }
 
     /**

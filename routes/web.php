@@ -110,6 +110,7 @@ Route::middleware(['auth', 'role.check:admin', 'user.active'])
         Route::post('/classes/{class}/certificates/bulk-issue', [AdminCertificateController::class, 'bulkIssue'])->name('certificates.bulk-issue');
         Route::get('/classes/{class}/certificates/export', [AdminCertificateController::class, 'exportExcel'])->name('certificates.export');
         Route::get('/certificates/{certificate}/download', [AdminCertificateController::class, 'download'])->name('certificates.download');
+        Route::delete('/classes/{class}/certificates/{certificate}', [AdminCertificateController::class, 'destroy'])->name('certificates.destroy');
 
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/participants', [ReportController::class, 'participants'])->name('reports.participants');
@@ -204,6 +205,7 @@ Route::middleware(['auth', 'role.check:instruktur', 'user.active'])
         Route::post('/classes/{class}/certificates/bulk-issue', [InstrukturCertificateController::class, 'bulkIssue'])->name('certificates.bulk-issue');
         Route::get('/classes/{class}/certificates/export', [InstrukturCertificateController::class, 'exportExcel'])->name('certificates.export');
         Route::get('/certificates/{certificate}/download', [InstrukturCertificateController::class, 'download'])->name('certificates.download');
+        Route::delete('/classes/{class}/certificates/{certificate}', [InstrukturCertificateController::class, 'destroy'])->name('certificates.destroy');
     });
 
 /*

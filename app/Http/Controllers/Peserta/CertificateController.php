@@ -32,6 +32,6 @@ class CertificateController extends Controller
             abort(404, __('lms.flash.certificate_file_not_found'));
         }
 
-        return response()->download($path, $certificate->certificate_number . '.pdf');
+        return response()->download($path, $this->certificateService->downloadFilename($certificate));
     }
 }

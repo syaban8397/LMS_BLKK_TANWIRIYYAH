@@ -13,9 +13,11 @@
 
         <div class="lms-auth-card lms-auth-card--login p-8 md:p-10 relative">
             <div class="text-center mb-8">
-                <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-20 w-auto mx-auto drop-shadow-md mb-4">
-                <h2 class="text-3xl font-bold text-slate-800">{{ __('lms.auth.welcome_back') }}</h2>
-                <p class="text-slate-500 text-sm mt-1">{{ __('lms.auth.login_subtitle') }}</p>
+                <div class="lms-brand-logo-pad mx-auto mb-4">
+                    <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-16 w-auto">
+                </div>
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100">{{ __('lms.auth.welcome_back') }}</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">{{ __('lms.auth.login_subtitle') }}</p>
             </div>
 
             <form method="POST" action="{{ route('login') }}" id="loginForm">

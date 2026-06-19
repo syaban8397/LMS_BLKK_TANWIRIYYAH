@@ -3,17 +3,19 @@
 @endphp
 
 <nav class="relative z-10 h-screen flex flex-col">
-    <div class="px-3 py-5 border-b border-white/10">
-        <div class="flex items-center justify-center px-1">
-            <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="logo-text h-9 w-auto max-w-[11rem] object-contain">
-            <div class="sidebar-logo-mark hidden w-10 h-10 rounded-lg bg-white p-1 items-center justify-center shadow-sm ring-1 ring-white/20 overflow-hidden">
-                <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-full w-auto max-w-none object-contain object-left origin-left scale-[2.2]">
-            </div>
+    <div class="lms-sidebar-header">
+        <div class="lms-sidebar-logo logo-text">
+            <img src="{{ asset('storage/images/Logo.png') }}"
+                 alt="{{ __('lms.app_name') }}"
+                 class="lms-sidebar-logo__img">
+        </div>
+        <div class="lms-sidebar-logo__mark sidebar-logo-mark hidden">
+            <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}">
         </div>
     </div>
 
-    <div class="flex-1 px-3 py-4 overflow-y-auto">
-        <div class="space-y-1.5">
+    <div class="lms-sidebar-nav">
+        <div class="space-y-1">
             <a href="{{ route($role.'.dashboard') }}"
                class="sidebar-nav-link {{ request()->routeIs($role.'.dashboard') ? 'sidebar-nav-link--active' : '' }}">
                 <span class="sidebar-nav-icon">📊</span>
@@ -86,10 +88,10 @@
         </div>
     </div>
 
-    <div class="border-t border-white/10 p-4">
-        <div class="logo-text text-center">
-            <p class="text-[10px] text-blue-200/70 uppercase tracking-wider">{{ __('lms.app_name') }}</p>
-            <p class="text-[10px] text-blue-300/50 mt-0.5">{{ __('lms.version') }} 1.0</p>
+    <div class="lms-sidebar-footer">
+        <div class="logo-text">
+            <p class="lms-sidebar-footer__title">{{ __('lms.app_name') }}</p>
+            <p class="lms-sidebar-footer__version">{{ __('lms.version') }} 1.0</p>
         </div>
     </div>
 </nav>
