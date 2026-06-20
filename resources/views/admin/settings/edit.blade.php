@@ -9,7 +9,7 @@
             @csrf
             @method('PUT')
 
-            <x-lms-form-card :title="__('lms.settings.branding')" icon="🏷️">
+            <x-lms-form-card :title="__('lms.settings.branding')" icon="tag">
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
                         <x-input-label for="app_display_name" :value="__('lms.settings.app_name')" />
@@ -27,7 +27,7 @@
                 </div>
             </x-lms-form-card>
 
-            <x-lms-form-card :title="__('lms.settings.appearance')" icon="🎨">
+            <x-lms-form-card :title="__('lms.settings.appearance')" icon="palette">
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
                         <x-input-label for="default_theme" :value="__('lms.settings.default_theme')" />
@@ -46,7 +46,7 @@
                 </div>
             </x-lms-form-card>
 
-            <x-lms-form-card :title="__('lms.settings.smtp')" icon="📧">
+            <x-lms-form-card :title="__('lms.settings.smtp')" icon="mail">
                 <p class="text-xs text-slate-500 mb-4">{{ __('lms.settings.smtp_hint') }}</p>
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>

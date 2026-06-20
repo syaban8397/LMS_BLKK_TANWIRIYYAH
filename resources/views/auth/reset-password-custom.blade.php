@@ -26,10 +26,7 @@
                     <div class="relative">
                         <input type="password" name="password" id="password" required minlength="8"
                                class="input-luxury pr-12" placeholder="••••••••">
-                        <button type="button" onclick="toggleField('password', 'togglePasswordIcon')"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">
-                            <span id="togglePasswordIcon">👁️</span>
-                        </button>
+                        <x-lms-password-toggle target="password" />
                     </div>
                     @error('password')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -41,10 +38,7 @@
                     <div class="relative">
                         <input type="password" name="password_confirmation" id="password_confirmation" required minlength="8"
                                class="input-luxury pr-12" placeholder="••••••••">
-                        <button type="button" onclick="toggleField('password_confirmation', 'toggleConfirmIcon')"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">
-                            <span id="toggleConfirmIcon">👁️</span>
-                        </button>
+                        <x-lms-password-toggle target="password_confirmation" />
                     </div>
                 </div>
 
@@ -62,18 +56,4 @@
             </form>
         </div>
     </div>
-
-    <script>
-        function toggleField(fieldId, iconId) {
-            const field = document.getElementById(fieldId);
-            const icon = document.getElementById(iconId);
-            if (field.type === 'password') {
-                field.type = 'text';
-                icon.textContent = '🙈';
-            } else {
-                field.type = 'password';
-                icon.textContent = '👁️';
-            }
-        }
-    </script>
 </x-guest-layout>

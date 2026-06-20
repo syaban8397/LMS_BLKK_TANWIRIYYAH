@@ -1,0 +1,72 @@
+StartFontMetrics 4.1
+Notice Converted by PHP-font-lib
+Comment https://github.com/dompdf/php-font-lib
+EncodingScheme FontSpecific
+Copyright Copyright 2011 The Montserrat Project Authors (https://github.com/JulietaUla/Montserrat)
+FontName Montserrat
+FontSubfamily Regular
+UniqueID 7.200;ULA ;Montserrat-Regular
+FullName Montserrat Regular
+Version Version 7.200
+PostScriptName Montserrat-Regular
+Weight Medium
+ItalicAngle 0
+IsFixedPitch false
+UnderlineThickness 50
+UnderlinePosition -75
+FontHeightOffset 0
+Ascender 968
+Descender -251
+FontBBox -823 -262 1586 1043
+StartCharMetrics 1868
+U 32 ; WX 262 ; N uni0020 ; G 3
+U 40 ; WX 329 ; N uni0028 ; G 1634
+U 41 ; WX 329 ; N uni0029 ; G 1635
+U 46 ; WX 212 ; N uni002e ; G 1616
+U 47 ; WX 335 ; N uni002f ; G 1622
+U 48 ; WX 662 ; N uni0030 ; G 1486
+U 49 ; WX 361 ; N uni0031 ; G 1487
+U 50 ; WX 568 ; N uni0032 ; G 1488
+U 51 ; WX 564 ; N uni0033 ; G 1489
+U 52 ; WX 661 ; N uni0034 ; G 1490
+U 53 ; WX 566 ; N uni0035 ; G 1491
+U 54 ; WX 609 ; N uni0036 ; G 1492
+U 55 ; WX 589 ; N uni0037 ; G 1493
+U 56 ; WX 638 ; N uni0038 ; G 1494
+U 57 ; WX 609 ; N uni0039 ; G 1495
+U 65 ; WX 717 ; N uni0041 ; G 4
+U 66 ; WX 754 ; N uni0042 ; G 32
+U 68 ; WX 826 ; N uni0044 ; G 40
+U 71 ; WX 773 ; N uni0047 ; G 74
+U 73 ; WX 302 ; N uni0049 ; G 88
+U 74 ; WX 501 ; N uni004a ; G 104
+U 75 ; WX 711 ; N uni004b ; G 107
+U 77 ; WX 955 ; N uni004d ; G 120
+U 79 ; WX 839 ; N uni004f ; G 133
+U 80 ; WX 718 ; N uni0050 ; G 168
+U 82 ; WX 723 ; N uni0052 ; G 171
+U 83 ; WX 615 ; N uni0053 ; G 179
+U 84 ; WX 574 ; N uni0054 ; G 193
+U 87 ; WX 1111 ; N uni0057 ; G 225
+U 97 ; WX 590 ; N uni0061 ; G 399
+U 98 ; WX 678 ; N uni0062 ; G 427
+U 99 ; WX 563 ; N uni0063 ; G 428
+U 100 ; WX 678 ; N uni0064 ; G 435
+U 101 ; WX 604 ; N uni0065 ; G 442
+U 103 ; WX 686 ; N uni0067 ; G 469
+U 104 ; WX 677 ; N uni0068 ; G 477
+U 105 ; WX 269 ; N uni0069 ; G 483
+U 107 ; WX 601 ; N uni006b ; G 504
+U 108 ; WX 269 ; N uni006c ; G 508
+U 109 ; WX 1061 ; N uni006d ; G 517
+U 110 ; WX 677 ; N uni006e ; G 519
+U 111 ; WX 627 ; N uni006f ; G 530
+U 112 ; WX 678 ; N uni0070 ; G 565
+U 114 ; WX 401 ; N uni0072 ; G 568
+U 115 ; WX 489 ; N uni0073 ; G 576
+U 116 ; WX 406 ; N uni0074 ; G 590
+U 117 ; WX 673 ; N uni0075 ; G 598
+U 118 ; WX 542 ; N uni0076 ; G 622
+U 119 ; WX 879 ; N uni0077 ; G 623
+EndCharMetrics
+EndFontMetrics

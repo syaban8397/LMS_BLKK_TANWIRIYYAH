@@ -24,19 +24,19 @@ class DashboardController extends Controller
             ? round(($positiveAttendance / $totalAttendance) * 100, 1)
             : 0;
 
+        $participantCountsByProgram = ClassParticipant::query()
+            ->join('classes', 'classes.id', '=', 'class_participants.class_id')
+            ->selectRaw('classes.program_id, COUNT(*) as aggregate')
+            ->groupBy('classes.program_id')
+            ->pluck('aggregate', 'program_id');
+
         $programDistribution = Program::query()
             ->orderBy('name')
             ->get()
-            ->map(function (Program $program) {
-                $count = ClassParticipant::query()
-                    ->whereHas('class', fn ($q) => $q->where('program_id', $program->id))
-                    ->count();
-
-                return [
-                    'name' => $program->name,
-                    'count' => $count,
-                ];
-            })
+            ->map(fn (Program $program) => [
+                'name' => $program->name,
+                'count' => (int) ($participantCountsByProgram[$program->id] ?? 0),
+            ])
             ->filter(fn ($row) => $row['count'] > 0)
             ->values();
 

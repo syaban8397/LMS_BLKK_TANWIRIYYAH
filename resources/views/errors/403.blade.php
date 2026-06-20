@@ -1,15 +1,12 @@
 <x-guest-layout>
     <x-slot:title>{{ __('lms.errors_page.403_title') }}</x-slot:title>
-    <div class="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-        <div class="fixed top-4 right-4 z-50"><x-locale-switcher /></div>
-        <div class="max-w-md w-full text-center">
-            <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-16 w-auto mx-auto mb-6">
-            <p class="text-6xl font-extrabold text-amber-600">403</p>
-            <h1 class="mt-4 text-2xl font-bold text-slate-800">{{ __('lms.errors_page.403_title') }}</h1>
-            <p class="mt-2 text-slate-500">{{ __('lms.errors_page.403_desc') }}</p>
-            <a href="{{ url('/') }}" class="inline-block mt-8 lms-btn-primary px-6 py-3">
-                {{ __('lms.errors_page.back_home') }}
-            </a>
-        </div>
-    </div>
+    <x-lms-public-shell centered>
+        <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="lms-public-card__logo">
+        <p class="lms-error-code lms-error-code--warning">403</p>
+        <h1 class="mt-4">{{ __('lms.errors_page.403_title') }}</h1>
+        <p class="mt-2 text-slate-500">{{ __('lms.errors_page.403_desc') }}</p>
+        <a href="{{ url('/') }}" class="inline-block mt-8 lms-btn-primary px-6 py-3">
+            {{ __('lms.errors_page.back_home') }}
+        </a>
+    </x-lms-public-shell>
 </x-guest-layout>

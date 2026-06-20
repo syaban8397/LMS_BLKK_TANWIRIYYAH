@@ -1,0 +1,34 @@
+StartFontMetrics 4.1
+Notice Converted by PHP-font-lib
+Comment https://github.com/dompdf/php-font-lib
+EncodingScheme FontSpecific
+Copyright Copyright 2011 The Montserrat Project Authors (https://github.com/JulietaUla/Montserrat)
+FontName Montserrat
+FontSubfamily Italic
+UniqueID 7.200;ULA ;Montserrat-Italic
+FullName Montserrat Italic
+Version Version 7.200
+PostScriptName Montserrat-Italic
+Weight Medium
+ItalicAngle -11.3
+IsFixedPitch false
+UnderlineThickness 50
+UnderlinePosition -75
+FontHeightOffset 0
+Ascender 968
+Descender -251
+FontBBox -807 -262 1600 1043
+StartCharMetrics 194
+U 32 ; WX 262 ; N uni0020 ; G 3
+U 65 ; WX 717 ; N uni0041 ; G 4
+U 67 ; WX 719 ; N uni0043 ; G 33
+U 69 ; WX 669 ; N uni0045 ; G 48
+U 70 ; WX 633 ; N uni0046 ; G 73
+U 71 ; WX 773 ; N uni0047 ; G 74
+U 73 ; WX 302 ; N uni0049 ; G 88
+U 78 ; WX 813 ; N uni004e ; G 122
+U 79 ; WX 839 ; N uni004f ; G 133
+U 82 ; WX 723 ; N uni0052 ; G 171
+U 84 ; WX 574 ; N uni0054 ; G 193
+EndCharMetrics
+EndFontMetrics

@@ -1,0 +1,55 @@
+StartFontMetrics 4.1
+Notice Converted by PHP-font-lib
+Comment https://github.com/dompdf/php-font-lib
+EncodingScheme FontSpecific
+Copyright Copyright 2011 The Montserrat Project Authors (https://github.com/JulietaUla/Montserrat)
+FontName Montserrat Black
+FontSubfamily Regular
+UniqueID 7.200;ULA ;Montserrat-Black
+FullName Montserrat Black
+Version Version 7.200
+PostScriptName Montserrat-Black
+Weight Bold
+ItalicAngle 0
+IsFixedPitch false
+UnderlineThickness 50
+UnderlinePosition -75
+FontHeightOffset 0
+Ascender 968
+Descender -251
+FontBBox -931 -270 1755 1106
+StartCharMetrics 1868
+U 32 ; WX 300 ; N uni0020 ; G 3
+U 40 ; WX 381 ; N uni0028 ; G 1634
+U 41 ; WX 381 ; N uni0029 ; G 1635
+U 46 ; WX 304 ; N uni002e ; G 1616
+U 65 ; WX 806 ; N uni0041 ; G 4
+U 67 ; WX 744 ; N uni0043 ; G 33
+U 68 ; WX 826 ; N uni0044 ; G 40
+U 69 ; WX 673 ; N uni0045 ; G 48
+U 70 ; WX 644 ; N uni0046 ; G 73
+U 71 ; WX 769 ; N uni0047 ; G 74
+U 72 ; WX 804 ; N uni0048 ; G 82
+U 73 ; WX 350 ; N uni0049 ; G 88
+U 75 ; WX 765 ; N uni004b ; G 107
+U 76 ; WX 617 ; N uni004c ; G 110
+U 77 ; WX 954 ; N uni004d ; G 120
+U 78 ; WX 804 ; N uni004e ; G 122
+U 81 ; WX 848 ; N uni0051 ; G 170
+U 82 ; WX 745 ; N uni0052 ; G 171
+U 83 ; WX 657 ; N uni0053 ; G 179
+U 84 ; WX 654 ; N uni0054 ; G 193
+U 85 ; WX 784 ; N uni0055 ; G 200
+U 86 ; WX 786 ; N uni0056 ; G 224
+U 89 ; WX 710 ; N uni0059 ; G 231
+U 97 ; WX 639 ; N uni0061 ; G 399
+U 100 ; WX 705 ; N uni0064 ; G 435
+U 101 ; WX 653 ; N uni0065 ; G 442
+U 105 ; WX 326 ; N uni0069 ; G 483
+U 107 ; WX 713 ; N uni006b ; G 504
+U 108 ; WX 326 ; N uni006c ; G 508
+U 110 ; WX 702 ; N uni006e ; G 519
+U 111 ; WX 678 ; N uni006f ; G 530
+U 115 ; WX 565 ; N uni0073 ; G 576
+EndCharMetrics
+EndFontMetrics

@@ -22,6 +22,8 @@ class LmsDoctorCommand extends Command
             $this->checkSessionSecurity(),
             $this->checkDatabase(),
             $this->checkMigrations(),
+            $this->checkGdExtension(),
+            $this->checkPrivateDiskServe(),
             $this->checkStorageLink(),
             $this->checkLogo(),
             $this->checkCertificateAssets(),
@@ -76,6 +78,36 @@ class LmsDoctorCommand extends Command
             'Debug mode (APP_DEBUG)',
             $ok,
             $ok ? 'APP_DEBUG=false.' : 'Production wajib APP_DEBUG=false.'
+        );
+    }
+
+    /**
+     * @return array{ok: bool, label: string, detail: string}
+     */
+    private function checkGdExtension(): array
+    {
+        $ok = extension_loaded('gd');
+
+        return $this->report(
+            'PHP GD extension (sertifikat QR)',
+            $ok,
+            $ok ? 'Aktif.' : 'Wajib untuk menerbitkan sertifikat — aktifkan ext-gd di php.ini.'
+        );
+    }
+
+    /**
+     * @return array{ok: bool, label: string, detail: string}
+     */
+    private function checkPrivateDiskServe(): array
+    {
+        $ok = ! config('filesystems.disks.local.serve', false);
+
+        return $this->report(
+            'Private disk tidak di-serve publik',
+            $ok,
+            $ok
+                ? 'File private hanya via SecureFileController.'
+                : 'Set filesystems.disks.local.serve=false agar file sertifikat/submission tidak publik.'
         );
     }
 

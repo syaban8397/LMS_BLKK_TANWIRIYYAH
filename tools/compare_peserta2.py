@@ -1,92 +1,106 @@
-"""Compare PESERTA 2.pdf vs reference RAIHAN PDF."""
+"""Compare PESERTA 2.pdf vs RAIHAN reference."""
 import fitz
 from pathlib import Path
 
-REF = Path(r"C:\Users\Sya'ban\Downloads\RAIHAN TAUVIQUL HADY IFDAL.pdf")
-GEN = Path(r"C:\Users\Sya'ban\Downloads\PESERTA 2.pdf")
-PT_TO_MM = 25.4 / 72.0
+PT = 25.4 / 72.0
+REF = Path(r"C:/Users/Sya'ban/Downloads/RAIHAN TAUVIQUL HADY IFDAL.pdf")
+GEN = Path(r"C:/Users/Sya'ban/Downloads/PESERTA 2.pdf")
 
-
-def page_info(path, page_idx=0):
-    doc = fitz.open(path)
-    page = doc[page_idx]
-    print(f"\n{'='*60}\nFILE: {path.name}  PAGE {page_idx+1}  {page.rect.width:.0f}x{page.rect.height:.0f}pt\n{'='*60}")
-    items = []
-    for block in page.get_text("dict")["blocks"]:
-        if block.get("type") != 0:
-            continue
-        for line in block["lines"]:
-            for span in line["spans"]:
-                t = span["text"].strip()
-                if not t:
-                    continue
-                x0, y0, x1, y1 = span["bbox"]
-                items.append((y0, x0, t, round(y0 * PT_TO_MM, 1), round(x0 * PT_TO_MM, 1), round(span.get("size", 0), 1)))
-    items.sort(key=lambda x: (round(x[0], 1), x[1]))
-    for _, _, t, ymm, xmm, fpt in items:
-        print(f"y={ymm:6.1f} x={xmm:6.1f} {fpt:5.1f}pt | {t[:90]}")
-
-    print("\n--- IMAGE BLOCKS ---")
-    for block in page.get_text("dict")["blocks"]:
-        if block.get("type") == 1:
-            x0, y0, x1, y1 = block["bbox"]
-            print(f"img y={y0*PT_TO_MM:.1f}-{y1*PT_TO_MM:.1f} x={x0*PT_TO_MM:.1f}-{x1*PT_TO_MM:.1f} w={(x1-x0)*PT_TO_MM:.1f} h={(y1-y0)*PT_TO_MM:.1f}")
-
-
-for p in [0, 1]:
-    if p < fitz.open(GEN).page_count:
-        page_info(GEN, p)
-    if p < fitz.open(REF).page_count:
-        page_info(REF, p)
-
-# Side-by-side key labels page 1
-print("\n\n=== DELTA PAGE 1 (PESERTA2 - REF) mm ===")
-ref_doc = fitz.open(REF)
-gen_doc = fitz.open(GEN)
-ref_items = {}
-gen_items = {}
-for label, doc, store in [("ref", ref_doc, ref_items), ("gen", gen_doc, gen_items)]:
-    page = doc[0]
-    for block in page.get_text("dict")["blocks"]:
-        if block.get("type") != 0:
-            continue
-        for line in block["lines"]:
-            for span in line["spans"]:
-                t = span["text"].strip()
-                if t:
-                    store[t[:80]] = round(span["bbox"][1] * PT_TO_MM, 1)
-
-needles = [
-    "SERTIFIKAT INI",
-    "This Certificate",
-    "yang diselenggarakan",
-    "Telah Berpartisipasi",
-    "Skema",
-    "Organized by",
-    "Serta berhak",
-    "C.DM",
-    "Sertifikat ini berlaku",
-    "Diverifikasi",
-    "Certified Number",
-    "Issued Date",
-    "Zaid Ahmad",
-    "Direktur",
-    "BLKK Tanwiriyyah",
-    "Kementerian",
+KEYS = [
+    "SERTIFIKAT INI", "This Certificate", "yang diselenggarakan",
+    "BLKK Tanwiriyyah", "Kementerian", "Telah Berpartisipasi",
+    "Skema", "Organized by", "Serta berhak", "As well as",
+    "C.DM", "C.DS", "C.CC", "Sertifikat ini berlaku",
+    "This Certificate is valid", "Diverifikasi", "Zaid Ahmad",
+    "Direktur", "Certified Number", "Issued Date",
 ]
 
-for needle in needles:
-    rk = next((k for k in ref_items if needle in k), None)
-    gk = next((k for k in gen_items if needle in k), None)
-    if rk and gk:
-        d = gen_items[gk] - ref_items[rk]
-        print(f"{needle:28} ref={ref_items[rk]:6.1f} gen={gen_items[gk]:6.1f} delta={d:+.1f}")
-        if rk != gk:
-            print(f"  ref text: {rk[:70]}")
-            print(f"  gen text: {gk[:70]}")
-    elif gk and not rk:
-        print(f"{needle:28} MISSING in ref | gen={gen_items[gk]:.1f} | {gk[:60]}")
-    elif rk and not gk:
-        print(f"{needle:28} MISSING in gen | ref={ref_items[rk]:.1f} | {rk[:60]}")
-    else:
-        print(f"{needle:28} not found in either")
+
+def lines(path):
+    doc = fitz.open(path)
+    out = []
+    for pi in range(min(2, doc.page_count)):
+        for block in doc[pi].get_text("dict")["blocks"]:
+            if block.get("type") != 0:
+                continue
+            for line in block["lines"]:
+                txt = "".join(s["text"] for s in line["spans"]).strip()
+                if not txt:
+                    continue
+                out.append({
+                    "page": pi + 1,
+                    "y": line["bbox"][1] * PT,
+                    "x": line["bbox"][0] * PT,
+                    "x1": line["bbox"][2] * PT,
+                    "sz": line["spans"][0]["size"],
+                    "t": txt,
+                })
+    doc.close()
+    return out
+
+
+def imgs(path):
+    doc = fitz.open(path)
+    out = []
+    for pi in range(min(2, doc.page_count)):
+        for block in doc[pi].get_text("dict")["blocks"]:
+            if block.get("type") == 1:
+                b = block["bbox"]
+                out.append({
+                    "page": pi + 1,
+                    "x0": b[0] * PT,
+                    "y0": b[1] * PT,
+                    "w": (b[2] - b[0]) * PT,
+                    "h": (b[3] - b[1]) * PT,
+                })
+    doc.close()
+    return out
+
+
+def pick(lines, needle):
+    for ln in lines:
+        if needle.lower() in ln["t"].lower():
+            return ln
+    return None
+
+
+ref = lines(REF)
+gen = lines(GEN)
+
+print("=== PAGE 1 TEXT (GEN - REF) ===")
+for k in KEYS:
+    r, g = pick(ref, k), pick(gen, k)
+    if r and g and r["page"] == 1 and g["page"] == 1:
+        print(
+            f"{k:28} dY={g['y'] - r['y']:+5.2f} dX={g['x'] - r['x']:+5.2f} "
+            f"REF(x={r['x']:.1f},y={r['y']:.1f},sz={r['sz']:.1f}) "
+            f"GEN(x={g['x']:.1f},y={g['y']:.1f},sz={g['sz']:.1f})"
+        )
+    elif r and not g:
+        print(f"{k:28} MISSING IN GEN")
+    elif g and not r:
+        print(f"{k:28} EXTRA IN GEN: {g['t'][:70]}")
+
+print("\n=== GEN PAGE 1 ALL LINES (y=30-210) ===")
+for ln in sorted(gen, key=lambda l: (l["y"], l["x"])):
+    if ln["page"] == 1 and ln["y"] >= 30:
+        print(f"  y={ln['y']:6.2f} x={ln['x']:6.2f} x1={ln['x1']:6.2f} sz={ln['sz']:4.1f} | {ln['t'][:75]}")
+
+print("\n=== REF PAGE 1 ALL LINES (y=30-210) ===")
+for ln in sorted(ref, key=lambda l: (l["y"], l["x"])):
+    if ln["page"] == 1 and ln["y"] >= 30:
+        print(f"  y={ln['y']:6.2f} x={ln['x']:6.2f} x1={ln['x1']:6.2f} sz={ln['sz']:4.1f} | {ln['t'][:75]}")
+
+print("\n=== PAGE 1 IMAGES ===")
+ri = sorted([x for x in imgs(REF) if x["page"] == 1], key=lambda i: (i["y0"], i["x0"]))
+gi = sorted([x for x in imgs(GEN) if x["page"] == 1], key=lambda i: (i["y0"], i["x0"]))
+for i in range(max(len(ri), len(gi))):
+    r = ri[i] if i < len(ri) else None
+    g = gi[i] if i < len(gi) else None
+    if r and g:
+        print(
+            f"img{i} dX={g['x0']-r['x0']:+5.2f} dY={g['y0']-r['y0']:+5.2f} "
+            f"dW={g['w']-r['w']:+5.2f} dH={g['h']-r['h']:+5.2f} "
+            f"REF({r['x0']:.1f},{r['y0']:.1f},{r['w']:.1f}x{r['h']:.1f}) "
+            f"GEN({g['x0']:.1f},{g['y0']:.1f},{g['w']:.1f}x{g['h']:.1f})"
+        )

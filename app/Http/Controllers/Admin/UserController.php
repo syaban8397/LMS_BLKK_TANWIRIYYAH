@@ -157,6 +157,16 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
+        if (
+            $user->role === 'admin'
+            && $request->role !== 'admin'
+            && User::where('role', 'admin')->count() <= 1
+        ) {
+            return back()
+                ->withInput()
+                ->with('error', __('lms.flash.user_cannot_demote_last_admin'));
+        }
+
         $user->fill($data);
         $user->role = $request->role;
         $user->save();

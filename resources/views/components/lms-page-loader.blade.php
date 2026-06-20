@@ -15,7 +15,7 @@
         <div class="lms-page-loader__orb lms-page-loader__orb--mid"></div>
         <div class="lms-page-loader__core">
             <div class="lms-page-loader__logo">
-                <img src="{{ $loaderLogo }}" alt="BLKK Tanwiriyyah" class="lms-page-loader__logo-img" width="56" height="56">
+                <img src="{{ $loaderLogo }}" alt="{{ __('lms.app_name') }}" class="lms-page-loader__logo-img" width="56" height="56">
             </div>
             <div class="lms-page-loader__spinner"></div>
         </div>

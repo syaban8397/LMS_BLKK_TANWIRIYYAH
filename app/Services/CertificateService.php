@@ -238,7 +238,7 @@ class CertificateService
     protected function storeQrCode(string $number, string $url): string
     {
         $path = 'certificates/qr/' . $number . '.png';
-        SecureStorage::put($path, $this->renderQrPng($url));
+        $this->putRequired($path, $this->renderQrPng($url));
 
         return $path;
     }
@@ -311,17 +311,19 @@ class CertificateService
     protected function page2WatermarkBase64(): ?string
     {
         $path = null;
-        foreach (['page2-watermark.png', 'modules-watermark.png'] as $filename) {
-            foreach ($this->certificateImagePaths($filename) as $candidate) {
-                if (file_exists($candidate)) {
-                    $path = $candidate;
-                    break 2;
-                }
+        foreach ($this->certificateImagePaths('logo-blkk.png') as $candidate) {
+            if (file_exists($candidate)) {
+                $path = $candidate;
+                break;
             }
         }
 
-        if ($path === null || !function_exists('imagecreatefrompng')) {
-            return $path !== null ? base64_encode(file_get_contents($path)) : null;
+        if ($path === null) {
+            return null;
+        }
+
+        if (!function_exists('imagecreatefrompng')) {
+            return base64_encode(file_get_contents($path));
         }
 
         $source = @imagecreatefrompng($path);
@@ -398,11 +400,34 @@ class CertificateService
         return $paths;
     }
 
+    protected function certificateFonts(): array
+    {
+        $dir = storage_path('fonts/certificates');
+        $files = [
+            'bold' => 'Montserrat-Bold.ttf',
+            'bold_italic' => 'Montserrat-BoldItalic.ttf',
+            'black' => 'Montserrat-Black.ttf',
+            'italic' => 'Montserrat-Italic.ttf',
+            'regular' => 'Montserrat-Regular.ttf',
+        ];
+        $fonts = [];
+
+        foreach ($files as $key => $filename) {
+            $path = $dir . DIRECTORY_SEPARATOR . $filename;
+            if (file_exists($path)) {
+                $fonts[$key] = base64_encode(file_get_contents($path));
+            }
+        }
+
+        return $fonts;
+    }
+
     protected function certificateLogos(): array
     {
         $logo = $this->imageBase64('logo.png');
 
         return [
+            'page1_reference_bg' => $this->imageBase64('page1-reference-bg.png'),
             'sidebar_bg' => $this->imageBase64('sidebar-bg.png'),
             'kemnaker' => $this->imageBase64('logo-kemnaker.png'),
             'kemnaker_mark' => $this->imageBase64('logo-kemnaker-mark.png'),
@@ -434,6 +459,7 @@ class CertificateService
 
         $qrPath = $certificate->qr_code;
         $logos = $this->certificateLogos();
+        $fonts = $this->certificateFonts();
 
         $pdf = Pdf::loadView('certificates.pdf', [
             'certificate' => $certificate,
@@ -446,6 +472,7 @@ class CertificateService
             'trainingYear' => $class->end_date->format('Y'),
             'qrDataUri' => $this->qrDataUri($qrPath),
             'logos' => $logos,
+            'fonts' => $fonts,
             'organization' => config('certificate.organization', 'YMT Creator Base BLKK Tanwiriyyah - Kementerian Ketenagakerjaan RI'),
             'organizationEn' => config('certificate.organization_en', 'BLKK Tanwiriyyah - Ministry of Manpower'),
             'directorName' => config('certificate.director_name', 'Zaid Ahmad, S.Kom.'),
@@ -454,14 +481,23 @@ class CertificateService
         ])
             ->setPaper('a4', 'landscape')
             ->setOption('dpi', 200)
-            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('defaultFont', 'Montserrat')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isFontSubsettingEnabled', true);
 
         $path = 'certificates/pdf/' . $certificate->certificate_number . '.pdf';
-        SecureStorage::put($path, $pdf->output());
+        $this->putRequired($path, $pdf->output());
 
         return $path;
+    }
+
+    protected function putRequired(string $path, $contents): void
+    {
+        SecureStorage::put($path, $contents);
+
+        if (!SecureStorage::exists($path)) {
+            throw new \RuntimeException(__('lms.flash.certificate_storage_failed'));
+        }
     }
 
     public function downloadPath(Certificate $certificate): ?string

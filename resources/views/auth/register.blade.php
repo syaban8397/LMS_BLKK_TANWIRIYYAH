@@ -75,7 +75,7 @@
                         <label>{{ __('lms.auth.password') }}</label>
                         <div class="relative">
                             <input type="password" name="password" id="password" required class="input-luxury pr-12" placeholder="••••••••">
-                            <button type="button" onclick="togglePassword('password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">👁️</button>
+                            <x-lms-password-toggle target="password" />
                         </div>
                         @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
@@ -84,7 +84,7 @@
                         <label>{{ __('lms.auth.confirm_password') }}</label>
                         <div class="relative">
                             <input type="password" name="password_confirmation" id="password_confirmation" required class="input-luxury pr-12" placeholder="••••••••">
-                            <button type="button" onclick="togglePassword('password_confirmation')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">👁️</button>
+                            <x-lms-password-toggle target="password_confirmation" />
                         </div>
                     </div>
                 </div>
@@ -116,25 +116,4 @@
             </form>
         </div>
     </div>
-
-    <script>
-        function togglePassword(id) {
-            const field = document.getElementById(id);
-            const btn = field.parentElement.querySelector('button');
-            if (field.type === 'password') {
-                field.type = 'text';
-                btn.textContent = '🙈';
-            } else {
-                field.type = 'password';
-                btn.textContent = '👁️';
-            }
-        }
-
-        setTimeout(() => {
-            document.querySelectorAll('.lms-flash').forEach(el => {
-                el.style.opacity = '0';
-                setTimeout(() => el.remove(), 500);
-            });
-        }, 3000);
-    </script>
 </x-guest-layout>

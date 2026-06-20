@@ -19,7 +19,7 @@
             :title="__('lms.material.list_with_count', ['count' => $materials->total()])"
             :meta="__('lms.material.learning_resources')"
             :paginator="$materials"
-            emptyIcon="📚"
+            emptyIcon="book"
             :emptyTitle="__('lms.material.no_materials_available')"
         >
             <div class="divide-y divide-slate-100 dark:divide-slate-700/55">

@@ -1,4 +1,4 @@
-@props(['label', 'value', 'icon' => '📊', 'tone' => 'blue'])
+@props(['label', 'value', 'icon' => 'chart', 'tone' => 'blue'])
 
 @php
     $toneClass = match ($tone) {
@@ -15,5 +15,7 @@
         <p class="lms-stat-card__label">{{ $label }}</p>
         <p class="lms-stat-card__value">{{ $value }}</p>
     </div>
-    <div class="lms-stat-card__icon">{{ $icon }}</div>
+    <div class="lms-stat-card__icon">
+        <x-lms-icon :name="$icon" class="w-5 h-5" />
+    </div>
 </div>

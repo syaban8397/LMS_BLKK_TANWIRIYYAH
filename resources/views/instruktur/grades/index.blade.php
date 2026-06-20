@@ -18,25 +18,25 @@
             <x-lms-stat-card
                 :label="__('lms.common.total')"
                 :value="$stats['total']"
-                icon="📋"
+                icon="clipboard"
                 tone="blue"
             />
             <x-lms-stat-card
                 :label="__('lms.common.submitted')"
                 :value="$stats['submitted']"
-                icon="✅"
+                icon="check-circle"
                 tone="green"
             />
             <x-lms-stat-card
                 :label="__('lms.grade.late')"
                 :value="$stats['late']"
-                icon="⏰"
+                icon="clock"
                 tone="amber"
             />
             <x-lms-stat-card
                 :label="__('lms.common.graded')"
                 :value="$stats['graded']"
-                icon="📝"
+                icon="document"
                 tone="indigo"
             />
         </x-lms-stat-grid>
@@ -78,7 +78,7 @@
                         :colspan="5"
                         :message="__('lms.grade.no_submissions')"
                         :description="__('lms.grade.no_submissions_hint')"
-                        icon="📝"
+                        icon="document"
                     />
                 @endforelse
             </x-lms-data-table>

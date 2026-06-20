@@ -13,9 +13,22 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', 'Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', 'system-ui', ...defaultTheme.fontFamily.sans],
+                display: ['Plus Jakarta Sans', 'Inter', 'system-ui', ...defaultTheme.fontFamily.sans],
             },
             colors: {
+                navy: {
+                    50: '#f0f6fb',
+                    100: '#dceaf5',
+                    200: '#b8d4ea',
+                    300: '#7fb0d9',
+                    400: '#4589c1',
+                    500: '#004071',
+                    600: '#003560',
+                    700: '#0c2340',
+                    800: '#061525',
+                    900: '#030b14',
+                },
                 brand: {
                     50: '#eef2ff',
                     100: '#e0e7ff',

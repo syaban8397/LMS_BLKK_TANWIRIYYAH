@@ -23,7 +23,7 @@
             :title="__('lms.material.list')"
             :meta="__('lms.material.total_meta', ['total' => $materials->total()])"
             :paginator="$materials"
-            emptyIcon="📚"
+            emptyIcon="book"
             :emptyTitle="__('lms.material.empty_title')"
             :emptyDescription="__('lms.material.empty_desc')"
         >

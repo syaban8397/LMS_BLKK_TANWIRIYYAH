@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
             view()->share('lmsAppDisplayName', $settings->appName());
         } else {
             view()->share('lmsDefaultTheme', 'light');
-            view()->share('lmsAppDisplayName', config('app.name', 'LMS BLKK Tanwiriyyah'));
+            view()->share('lmsAppDisplayName', __('lms.app_name'));
         }
     }
 }

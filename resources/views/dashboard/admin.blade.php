@@ -30,7 +30,10 @@
         <div class="grid lg:grid-cols-3 gap-4">
             <div class="analytics-card p-5 lg:col-span-2">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-semibold text-slate-900 text-sm">📊 {{ __('lms.dashboard.recent_activity') }}</h3>
+                    <h3 class="font-semibold text-slate-900 text-sm flex items-center gap-2">
+                        <x-lms-icon name="chart" class="w-4 h-4 text-indigo-600" />
+                        {{ __('lms.dashboard.recent_activity') }}
+                    </h3>
                     <span id="lastUpdate" class="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">{{ __('lms.loading') }}...</span>
                 </div>
                 <div class="space-y-4 text-sm">
@@ -53,7 +56,10 @@
             </div>
 
             <div class="analytics-card p-5">
-                <h3 class="font-semibold text-slate-900 text-sm mb-4">📋 {{ __('lms.dashboard.program_distribution') }}</h3>
+                <h3 class="font-semibold text-slate-900 text-sm mb-4 flex items-center gap-2">
+                    <x-lms-icon name="clipboard" class="w-4 h-4 text-indigo-600" />
+                    {{ __('lms.dashboard.program_distribution') }}
+                </h3>
                 @forelse($programDistribution ?? [] as $program)
                     <div class="mb-4">
                         <div class="flex justify-between text-sm mb-1">

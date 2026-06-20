@@ -1,0 +1,80 @@
+StartFontMetrics 4.1
+Notice Converted by PHP-font-lib
+Comment https://github.com/dompdf/php-font-lib
+EncodingScheme FontSpecific
+Copyright Copyright 2011 The Montserrat Project Authors (https://github.com/JulietaUla/Montserrat)
+FontName Montserrat
+FontSubfamily Bold
+UniqueID 7.200;ULA ;Montserrat-Bold
+FullName Montserrat Bold
+Version Version 7.200
+PostScriptName Montserrat-Bold
+Weight Bold
+ItalicAngle 0
+IsFixedPitch false
+UnderlineThickness 50
+UnderlinePosition -75
+FontHeightOffset 0
+Ascender 968
+Descender -251
+FontBBox -882 -266 1679 1076
+StartCharMetrics 1868
+U 32 ; WX 283 ; N uni0020 ; G 3
+U 40 ; WX 357 ; N uni0028 ; G 1634
+U 41 ; WX 358 ; N uni0029 ; G 1635
+U 44 ; WX 262 ; N uni002c ; G 1611
+U 45 ; WX 386 ; N uni002d ; G 1646
+U 46 ; WX 262 ; N uni002e ; G 1616
+U 48 ; WX 679 ; N uni0030 ; G 1486
+U 49 ; WX 392 ; N uni0031 ; G 1487
+U 50 ; WX 590 ; N uni0032 ; G 1488
+U 51 ; WX 592 ; N uni0033 ; G 1489
+U 54 ; WX 637 ; N uni0036 ; G 1492
+U 56 ; WX 660 ; N uni0038 ; G 1494
+U 57 ; WX 637 ; N uni0039 ; G 1495
+U 58 ; WX 262 ; N uni003a ; G 1610
+U 65 ; WX 766 ; N uni0041 ; G 4
+U 66 ; WX 765 ; N uni0042 ; G 32
+U 67 ; WX 733 ; N uni0043 ; G 33
+U 68 ; WX 826 ; N uni0044 ; G 40
+U 69 ; WX 671 ; N uni0045 ; G 48
+U 70 ; WX 639 ; N uni0046 ; G 73
+U 71 ; WX 771 ; N uni0047 ; G 74
+U 72 ; WX 808 ; N uni0048 ; G 82
+U 73 ; WX 328 ; N uni0049 ; G 88
+U 75 ; WX 740 ; N uni004b ; G 107
+U 76 ; WX 604 ; N uni004c ; G 110
+U 77 ; WX 955 ; N uni004d ; G 120
+U 78 ; WX 808 ; N uni004e ; G 122
+U 79 ; WX 844 ; N uni004f ; G 133
+U 80 ; WX 732 ; N uni0050 ; G 168
+U 82 ; WX 735 ; N uni0052 ; G 171
+U 83 ; WX 638 ; N uni0053 ; G 179
+U 84 ; WX 618 ; N uni0054 ; G 193
+U 87 ; WX 1163 ; N uni0057 ; G 225
+U 89 ; WX 676 ; N uni0059 ; G 231
+U 90 ; WX 671 ; N uni005a ; G 241
+U 97 ; WX 617 ; N uni0061 ; G 399
+U 98 ; WX 690 ; N uni0062 ; G 427
+U 100 ; WX 692 ; N uni0064 ; G 435
+U 101 ; WX 631 ; N uni0065 ; G 442
+U 102 ; WX 387 ; N uni0066 ; G 468
+U 103 ; WX 700 ; N uni0067 ; G 469
+U 104 ; WX 691 ; N uni0068 ; G 477
+U 105 ; WX 301 ; N uni0069 ; G 483
+U 106 ; WX 307 ; N uni006a ; G 500
+U 107 ; WX 660 ; N uni006b ; G 504
+U 108 ; WX 301 ; N uni006c ; G 508
+U 109 ; WX 1049 ; N uni006d ; G 517
+U 110 ; WX 691 ; N uni006e ; G 519
+U 111 ; WX 655 ; N uni006f ; G 530
+U 112 ; WX 690 ; N uni0070 ; G 565
+U 114 ; WX 431 ; N uni0072 ; G 568
+U 115 ; WX 531 ; N uni0073 ; G 576
+U 116 ; WX 435 ; N uni0074 ; G 590
+U 117 ; WX 687 ; N uni0075 ; G 598
+U 118 ; WX 598 ; N uni0076 ; G 622
+U 119 ; WX 937 ; N uni0077 ; G 623
+U 121 ; WX 598 ; N uni0079 ; G 629
+EndCharMetrics
+EndFontMetrics

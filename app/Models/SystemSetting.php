@@ -67,6 +67,6 @@ class SystemSetting extends Model
 
     public function appName(): string
     {
-        return $this->app_display_name ?: config('app.name', __('lms.app_name'));
+        return $this->app_display_name ?: __('lms.app_name');
     }
 }

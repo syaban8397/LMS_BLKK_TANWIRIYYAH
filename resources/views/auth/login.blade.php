@@ -37,10 +37,7 @@
                     <div class="relative">
                         <input type="password" name="password" id="password" required
                                class="input-luxury pr-12" placeholder="••••••••">
-                        <button type="button" onclick="togglePassword()"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition text-sm">
-                            <span id="toggleIcon">👁️</span>
-                        </button>
+                        <x-lms-password-toggle target="password" />
                     </div>
                     @error('password')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -70,25 +67,4 @@
             </form>
         </div>
     </div>
-
-    <script>
-        function togglePassword() {
-            const pwd = document.getElementById('password');
-            const icon = document.getElementById('toggleIcon');
-            if (pwd.type === 'password') {
-                pwd.type = 'text';
-                icon.textContent = '🙈';
-            } else {
-                pwd.type = 'password';
-                icon.textContent = '👁️';
-            }
-        }
-
-        setTimeout(() => {
-            document.querySelectorAll('.lms-flash').forEach(el => {
-                el.style.opacity = '0';
-                setTimeout(() => el.remove(), 500);
-            });
-        }, 3000);
-    </script>
 </x-guest-layout>

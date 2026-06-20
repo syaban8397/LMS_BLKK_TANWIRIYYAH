@@ -5,8 +5,9 @@
             :subtitle="__('lms.dashboard.peserta_subtitle', ['name' => auth()->user()->name])"
         >
             <x-slot:actions>
-                <div class="hidden md:flex items-center gap-1 px-3 py-1.5 lms-badge lms-badge--info">
-                    👨‍🎓 {{ __('lms.dashboard.peserta_panel') }}
+                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 lms-badge lms-badge--info">
+                    <x-lms-icon name="graduation-cap" class="w-4 h-4" />
+                    {{ __('lms.dashboard.peserta_panel') }}
                 </div>
             </x-slot:actions>
         </x-lms-page-header>
@@ -18,7 +19,7 @@
                         <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.my_classes') }}</p>
                         <p class="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1 counter" data-value="{{ $classes ?? 0 }}">0</p>
                     </div>
-                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">🏫</div>
+                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><x-lms-icon name="building" class="w-5 h-5" /></div>
                 </div>
                 <div class="mt-3 text-xs text-slate-500">{{ __('lms.dashboard.my_classes_enrolled') }}</div>
             </div>
@@ -28,7 +29,7 @@
                         <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.materials') }}</p>
                         <p class="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1 counter" data-value="{{ $materials ?? 0 }}">0</p>
                     </div>
-                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">📖</div>
+                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><x-lms-icon name="book" class="w-5 h-5" /></div>
                 </div>
                 <div class="mt-3 text-xs text-slate-500">{{ __('lms.dashboard.materials_available') }}</div>
             </div>
@@ -38,7 +39,7 @@
                         <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.assignments') }}</p>
                         <p class="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1 counter" data-value="{{ $assignments ?? 0 }}">0</p>
                     </div>
-                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">📝</div>
+                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><x-lms-icon name="document" class="w-5 h-5" /></div>
                 </div>
                 <div class="mt-3 text-xs text-slate-500">{{ __('lms.dashboard.assignments_total') }}</div>
             </div>
@@ -48,7 +49,7 @@
                         <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.nav.certificates') }}</p>
                         <p class="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1 counter" data-value="{{ $certificates ?? 0 }}">0</p>
                     </div>
-                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">📜</div>
+                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><x-lms-icon name="certificate" class="w-5 h-5" /></div>
                 </div>
                 <div class="mt-3 text-xs text-slate-500">{{ __('lms.dashboard.earned_certificates') }}</div>
             </div>
@@ -58,7 +59,7 @@
                         <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.announcements') }}</p>
                         <p class="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1 counter" data-value="{{ $announcementCount ?? 0 }}">0</p>
                     </div>
-                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">📢</div>
+                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><x-lms-icon name="megaphone" class="w-5 h-5" /></div>
                 </div>
                 <div class="mt-3 text-xs text-slate-500">{{ __('lms.dashboard.announcements_from_classes') }}</div>
             </div>

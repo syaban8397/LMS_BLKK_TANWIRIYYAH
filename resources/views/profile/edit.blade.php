@@ -11,7 +11,7 @@
 
             <div class="grid lg:grid-cols-3 gap-5">
                 <div class="card-3d">
-                    <x-lms-form-card :title="__('lms.common.profile_photo')" icon="📸">
+                    <x-lms-form-card :title="__('lms.common.profile_photo')" icon="camera">
                         <div class="flex flex-col items-center text-center">
                             <img id="photo-preview"
                                  src="{{ $user->profilePhotoUrl() }}"
@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="lg:col-span-2 card-3d">
-                    <x-lms-form-card :title="__('lms.common.user_information')" icon="📝">
+                    <x-lms-form-card :title="__('lms.common.user_information')" icon="edit">
                         <p class="text-xs text-slate-500 mb-4">{{ __('lms.profile_page.subtitle') }}</p>
 
                         <div class="grid md:grid-cols-2 gap-4">

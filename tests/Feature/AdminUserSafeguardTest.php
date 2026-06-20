@@ -58,4 +58,27 @@ class AdminUserSafeguardTest extends TestCase
             'is_active' => true,
         ]);
     }
+
+    public function test_admin_cannot_demote_last_admin(): void
+    {
+        $context = $this->createTrainingContext();
+
+        $response = $this->actingAs($context['admin'])->put(
+            route('admin.users.update', $context['admin']),
+            [
+                'role' => 'instruktur',
+                'name' => $context['admin']->name,
+                'email' => $context['admin']->email,
+                'approval_status' => 'approved',
+                'is_active' => true,
+            ]
+        );
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+        $this->assertDatabaseHas('users', [
+            'id' => $context['admin']->id,
+            'role' => 'admin',
+        ]);
+    }
 }

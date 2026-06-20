@@ -12,25 +12,25 @@
             <x-lms-stat-card
                 :label="__('lms.common.total_users')"
                 :value="$users->total()"
-                icon="👥"
+                icon="users"
                 tone="blue"
             />
             <x-lms-stat-card
                 :label="__('lms.active')"
                 :value="$userStats['active']"
-                icon="✅"
+                icon="check-circle"
                 tone="green"
             />
             <x-lms-stat-card
                 :label="__('lms.common.pending')"
                 :value="$userStats['pending']"
-                icon="⏳"
+                icon="clock"
                 tone="amber"
             />
             <x-lms-stat-card
                 :label="__('lms.common.instructors')"
                 :value="$userStats['instructors']"
-                icon="👨‍🏫"
+                icon="academic-cap"
                 tone="indigo"
             />
         </x-lms-stat-grid>

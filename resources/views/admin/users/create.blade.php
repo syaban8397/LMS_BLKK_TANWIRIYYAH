@@ -18,7 +18,7 @@
             @csrf
             <div class="grid lg:grid-cols-3 gap-5">
                 <div class="card-3d">
-                    <x-lms-form-card :title="__('lms.common.profile_photo')" icon="📸">
+                    <x-lms-form-card :title="__('lms.common.profile_photo')" icon="camera">
                         <div class="flex flex-col items-center">
                             <img id="photo-preview" src="https://ui-avatars.com/api/?name=User&size=120&background=3B82F6&color=fff"
                                  class="w-28 h-28 rounded-xl object-cover border shadow-sm">
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="lg:col-span-2 card-3d">
-                    <x-lms-form-card :title="__('lms.common.user_information')" icon="📝">
+                    <x-lms-form-card :title="__('lms.common.user_information')" icon="edit">
                         <div class="grid md:grid-cols-2 gap-3">
                             <div class="form-group">
                                 <label class="block text-xs font-medium text-slate-600 mb-0.5">{{ __('lms.common.role') }} *</label>

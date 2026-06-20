@@ -19,7 +19,7 @@
             :title="__('lms.assignment.list')"
             :meta="__('lms.assignment.total_meta', ['total' => $assignments->total()])"
             :paginator="$assignments"
-            emptyIcon="📋"
+            emptyIcon="clipboard"
             :emptyTitle="__('lms.assignment.no_assignments_available')"
         >
             <div class="divide-y divide-slate-100 dark:divide-slate-700/55">

@@ -1,0 +1,61 @@
+StartFontMetrics 4.1
+Notice Converted by PHP-font-lib
+Comment https://github.com/dompdf/php-font-lib
+EncodingScheme FontSpecific
+Copyright Copyright 2011 The Montserrat Project Authors (https://github.com/JulietaUla/Montserrat)
+FontName Montserrat
+FontSubfamily Bold Italic
+UniqueID 7.200;ULA ;Montserrat-BoldItalic
+FullName Montserrat Bold Italic
+Version Version 7.200
+PostScriptName Montserrat-BoldItalic
+Weight Bold
+ItalicAngle -11.3
+IsFixedPitch false
+UnderlineThickness 50
+UnderlinePosition -75
+FontHeightOffset 0
+Ascender 968
+Descender -251
+FontBBox -859 -266 1693 1076
+StartCharMetrics 1895
+U 32 ; WX 283 ; N uni0020 ; G 3
+U 40 ; WX 357 ; N uni0028 ; G 1661
+U 41 ; WX 357 ; N uni0029 ; G 1662
+U 45 ; WX 386 ; N uni002d ; G 1673
+U 51 ; WX 592 ; N uni0033 ; G 1516
+U 58 ; WX 262 ; N uni003a ; G 1637
+U 65 ; WX 766 ; N uni0041 ; G 4
+U 66 ; WX 765 ; N uni0042 ; G 32
+U 67 ; WX 733 ; N uni0043 ; G 33
+U 68 ; WX 826 ; N uni0044 ; G 40
+U 75 ; WX 740 ; N uni004b ; G 107
+U 76 ; WX 604 ; N uni004c ; G 110
+U 77 ; WX 955 ; N uni004d ; G 120
+U 78 ; WX 808 ; N uni004e ; G 122
+U 79 ; WX 844 ; N uni004f ; G 133
+U 84 ; WX 618 ; N uni0054 ; G 193
+U 97 ; WX 690 ; N uni0061 ; G 399
+U 98 ; WX 690 ; N uni0062 ; G 427
+U 99 ; WX 591 ; N uni0063 ; G 428
+U 100 ; WX 692 ; N uni0064 ; G 435
+U 101 ; WX 628 ; N uni0065 ; G 442
+U 102 ; WX 387 ; N uni0066 ; G 468
+U 103 ; WX 700 ; N uni0067 ; G 469
+U 104 ; WX 691 ; N uni0068 ; G 477
+U 105 ; WX 300 ; N uni0069 ; G 483
+U 108 ; WX 301 ; N uni006c ; G 508
+U 109 ; WX 1049 ; N uni006d ; G 517
+U 110 ; WX 691 ; N uni006e ; G 519
+U 111 ; WX 654 ; N uni006f ; G 530
+U 112 ; WX 690 ; N uni0070 ; G 565
+U 114 ; WX 431 ; N uni0072 ; G 568
+U 115 ; WX 531 ; N uni0073 ; G 576
+U 116 ; WX 435 ; N uni0074 ; G 590
+U 118 ; WX 598 ; N uni0076 ; G 622
+U 119 ; WX 941 ; N uni0077 ; G 623
+U 120 ; WX 595 ; N uni0078 ; G 628
+U 121 ; WX 598 ; N uni0079 ; G 629
+U 122 ; WX 543 ; N uni007a ; G 639
+EndCharMetrics
+EndFontMetrics

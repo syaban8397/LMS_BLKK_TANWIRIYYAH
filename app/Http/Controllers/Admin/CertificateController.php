@@ -54,6 +54,12 @@ class CertificateController extends Controller
             $this->validatedBulkIssueSelection($request)
         );
 
+        if ($participantIds === []) {
+            return redirect()
+                ->route('admin.certificates.show', $class)
+                ->with('error', __('lms.certificate_page.select_one_participant'));
+        }
+
         return $this->redirectAfterBulkIssue(
             $class,
             $this->certificateService->bulkIssue($class, $participantIds),
@@ -66,7 +72,9 @@ class CertificateController extends Controller
         $path = $this->certificateService->downloadPath($certificate);
 
         if (!$path) {
-            abort(404, __('lms.flash.certificate_file_not_found'));
+            return redirect()
+                ->route('admin.certificates.show', $certificate->class)
+                ->with('error', __('lms.flash.certificate_file_not_found'));
         }
 
         return response()->download($path, $this->certificateService->downloadFilename($certificate));

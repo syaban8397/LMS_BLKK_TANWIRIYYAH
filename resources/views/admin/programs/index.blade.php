@@ -12,19 +12,19 @@
             <x-lms-stat-card
                 :label="__('lms.common.total_programs')"
                 :value="$totalPrograms"
-                icon="📚"
+                icon="book"
                 tone="blue"
             />
             <x-lms-stat-card
                 :label="__('lms.common.active_programs')"
                 :value="$activePrograms"
-                icon="✅"
+                icon="check-circle"
                 tone="green"
             />
             <x-lms-stat-card
                 :label="__('lms.common.inactive_programs')"
                 :value="$inactivePrograms"
-                icon="⏸️"
+                icon="pause"
                 tone="red"
             />
         </x-lms-stat-grid>

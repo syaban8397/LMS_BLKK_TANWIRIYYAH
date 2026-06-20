@@ -12,19 +12,19 @@
             <x-lms-stat-card
                 :label="__('lms.common.total_classes')"
                 :value="$totalClasses"
-                icon="📚"
+                icon="book"
                 tone="blue"
             />
             <x-lms-stat-card
                 :label="__('lms.common.active_classes')"
                 :value="$activeClasses"
-                icon="✅"
+                icon="check-circle"
                 tone="green"
             />
             <x-lms-stat-card
                 :label="__('lms.common.draft_classes')"
                 :value="$draftClasses"
-                icon="📝"
+                icon="document"
                 tone="amber"
             />
         </x-lms-stat-grid>

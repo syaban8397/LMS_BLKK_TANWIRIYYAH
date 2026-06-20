@@ -16,11 +16,10 @@
             trim($skemaMatch[2]) . ' Tahun ' . $trainingYear,
         ];
     } else {
-        $programFull = 'Telah Berpartisipasi Pada Pelatihan ' . $programName . ' Tahun ' . $trainingYear;
-        $programLines = [$programFull];
-        if (preg_match('/^(Telah Berpartisipasi Pada Pelatihan .+?) (Skema .+ Tahun \d{4})$/u', $programFull, $matches)) {
-            $programLines = [trim($matches[1]), trim($matches[2])];
-        }
+        $programLines = [
+            'Telah Berpartisipasi Pada Pelatihan ' . $programName,
+            'Tahun ' . $trainingYear,
+        ];
     }
 
     $orgParts = preg_split('/\s-\s/', $organization, 2);
@@ -36,39 +35,47 @@
     $materialCount = $materials->count();
     $hasProgramLine2 = isset($programLines[1]) && trim($programLines[1]) !== '';
 
-    // Koordinat mm diekstrak langsung dari RAIHAN TAUVIQUL HADY IFDAL.pdf (PyMuPDF)
-    // Dikompensasi offset render DomPDF (~1.1mm body, ~2.3mm meta kanan)
+    // Koordinat mm diekstrak dari RAIHAN TAUVIQUL HADY IFDAL.pdf (PyMuPDF, analyze_ref_pdf.py)
     $ref = [
         'sidebar_w'    => 63.0,
         'content_l'    => 63.0,
         'content_w'    => 234.0,
         'divider_top'  => 30.0,
-        'intro_id'     => 31.8,
-        'intro_en'     => 38.1,
-        'name'         => 46.8,
-        'org_line1'    => 60.7,
-        'org_line2'    => 68.1,
-        'program'      => 78.5,
-        'program_2'    => 85.9,
-        'en_org'       => 94.8,
-        'non_akademik' => 101.9,
-        'en_degree'    => 109.7,
-        'degree'       => 121.2,
-        'validity'     => 133.4,
-        'validity_en'  => 141.2,
-        'verify'       => 153.2,
-        'qr_top'       => 168.5,
-        'qr_size'      => 20.6,
-        'sign_name'    => 185.4,
-        'sign_title1'  => 192.0,
-        'sign_title2'  => 198.2,
-        'meta_number'  => 184.7,
-        'meta_value'   => 189.5,
-        'meta_issued'  => 194.2,
-        'p2_box_top'   => 21.6,
+        'intro_id'     => 32.9,
+        'intro_en'     => 39.2,
+        'name'         => 47.9,
+        'org_line1'    => 61.8,
+        'org_line2'    => 69.2,
+        'program'      => 79.6,
+        'program_2'    => 87.0,
+        'en_org'       => 95.9,
+        'non_akademik' => 103.0,
+        'en_degree'    => 110.8,
+        'degree'       => 122.3,
+        'validity'     => 134.5,
+        'validity_en'  => 142.3,
+        'verify'       => 154.3,
+        'qr_top'       => 164.4,
+        'qr_size'      => 20.7,
+        'qr_left'      => 171.65,
+        'sign_name'    => 187.0,
+        'sign_title1'  => 193.6,
+        'sign_title2'  => 199.8,
+        'meta_number'  => 187.0,
+        'meta_value'   => 191.8,
+        'meta_issued'  => 196.5,
+        'p2_box_top'   => 24.2,
         'p2_box_left'  => 10.6,
         'p2_box_w'     => 276.3,
         'p2_box_h'     => 165.0,
+        'p2_header_h'  => 13.8,
+        'p2_row_h'     => 13.75,
+        'p2_col_no'    => 14.0,
+        'p2_col_code'  => 46.0,
+        'p2_col_no_pt' => 40,
+        'p2_col_code_pt' => 130,
+        'p2_col_title_pt' => 613,
+        'p2_table_w_pt' => 783,
         'p2_wm_left'   => 64.0,
         'p2_wm_top'    => 20.5,
         'p2_wm_w'      => 169.1,
@@ -78,37 +85,57 @@
         'logo_4' => ['l' => 206.2, 't' => 15.9, 'w' => 20.0, 'h' => 10.0, 'img_h' => 10],
         'logo_5' => ['l' => 227.5, 't' => 9.7, 'w' => 15.4, 'h' => 16.1, 'img_h' => 11],
         'logo_6' => ['l' => 242.9, 't' => 10.7, 'w' => 33.6, 'h' => 18.8, 'img_h' => 11],
+        'box' => [
+            'intro_id'     => ['l' => 124.5],
+            'intro_en'     => ['l' => 140.2],
+            'name'         => ['l' => 106.2, 'w' => 152.0, 'align' => 'center'],
+            'org_line1'    => ['l' => 89.3],
+            'org_line2'    => ['l' => 134.6],
+            'program'      => ['l' => 83.5],
+            'program_2'    => ['l' => 125.5],
+            'en_org'       => ['l' => 116.3],
+            'non_akademik' => ['l' => 133.1],
+            'en_degree'    => ['l' => 131.6],
+            'degree'       => ['l' => 121.6],
+            'validity'     => ['l' => 125.4],
+            'validity_en'  => ['l' => 135.3],
+            'verify'       => ['l' => 156.6],
+            'sign_name'    => ['l' => 159.0],
+            'sign_title1'  => ['l' => 155.3],
+            'sign_title2'  => ['l' => 164.8],
+            'meta_number'  => ['l' => 246.5],
+            'meta_value'   => ['l' => 238.0, 'w' => 49.0],
+            'meta_issued'  => ['l' => 241.9, 'w' => 44.5],
+        ],
     ];
 
-    // QR center X referensi: (171.7 + 192.3) / 2 = 182.0mm
-    $ref['qr_left'] = 182.0 - ($ref['qr_size'] / 2);
+    $boxStyle = static function (array $box): string {
+        if (($box['align'] ?? 'left') === 'center') {
+            return sprintf('left: %smm; width: %smm; text-align: center;', $box['l'], $box['w']);
+        }
 
-    $singleLineShift = $hasProgramLine2 ? 0 : 7.4;
-    $layout = [
-        'intro_id'     => $ref['intro_id'],
-        'intro_en'     => $ref['intro_en'],
-        'name'         => $ref['name'],
-        'org_line1'    => $ref['org_line1'],
-        'org_line2'    => $ref['org_line2'],
-        'program'      => $ref['program'],
-        'program_2'    => $hasProgramLine2 ? $ref['program_2'] : null,
-        'en_org'       => $ref['en_org'] - $singleLineShift,
-        'non_akademik' => $ref['non_akademik'] - $singleLineShift,
-        'en_degree'    => $ref['en_degree'] - $singleLineShift,
-        'degree'       => $ref['degree'] - $singleLineShift,
-        'validity'     => $ref['validity'] - $singleLineShift,
-        'validity_en'  => $ref['validity_en'] - $singleLineShift,
-        'verify'       => $ref['verify'],
-        'qr_top'       => $ref['qr_top'],
-        'qr_left'      => $ref['qr_left'],
-        'qr_size'      => $ref['qr_size'],
-        'sign_name'    => $ref['sign_name'],
-        'sign_title1'  => $ref['sign_title1'],
-        'sign_title2'  => $ref['sign_title2'],
-        'meta_number'  => $ref['meta_number'],
-        'meta_value'   => $ref['meta_value'],
-        'meta_issued'  => $ref['meta_issued'],
+        $width = isset($box['w'])
+            ? sprintf('width: %smm;', $box['w'])
+            : '';
+
+        return sprintf('left: %smm; %stext-align: left;', $box['l'], $width);
+    };
+
+    // Halaman 1: mask putih menutup teks dinamis pada background referensi Raihan
+    $p1Masks = [
+        'name'        => ['l' => 105.5, 't' => 46.5, 'w' => 156.5, 'h' => 14.5],
+        'program'     => ['l' => 82.0, 't' => 78.5, 'w' => 190.5, 'h' => 9.5],
+        'program_2'   => ['l' => 124.0, 't' => 86.0, 'w' => 106.5, 'h' => 9.5],
+        'degree'      => ['l' => 120.0, 't' => 120.5, 'w' => 130.0, 'h' => 12.5],
+        'validity'    => ['l' => 124.0, 't' => 133.5, 'w' => 122.0, 'h' => 9.5],
+        'validity_en' => ['l' => 134.0, 't' => 141.3, 'w' => 102.0, 'h' => 9.5],
+        'meta_value'  => ['l' => 237.5, 't' => 190.8, 'w' => 50.0, 'h' => 6.5],
+        'meta_issued' => ['l' => 241.0, 't' => 195.5, 'w' => 46.0, 'h' => 6.5],
+        'qr'          => ['l' => 171.0, 't' => 163.8, 'w' => 22.0, 'h' => 22.0],
     ];
+
+    $p1DynamicOffset = -2.5;
+    $fonts = $fonts ?? [];
 @endphp
 <!DOCTYPE html>
 <html lang="id">
@@ -118,13 +145,54 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+@if(!empty($fonts['regular']))
+@font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    src: url('data:font/truetype;charset=utf-8;base64,{{ $fonts['regular'] }}') format('truetype');
+}
+@endif
+@if(!empty($fonts['bold']))
+@font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 700;
+    src: url('data:font/truetype;charset=utf-8;base64,{{ $fonts['bold'] }}') format('truetype');
+}
+@endif
+@if(!empty($fonts['black']))
+@font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 900;
+    src: url('data:font/truetype;charset=utf-8;base64,{{ $fonts['black'] }}') format('truetype');
+}
+@endif
+@if(!empty($fonts['italic']))
+@font-face {
+    font-family: 'Montserrat';
+    font-style: italic;
+    font-weight: 400;
+    src: url('data:font/truetype;charset=utf-8;base64,{{ $fonts['italic'] }}') format('truetype');
+}
+@endif
+@if(!empty($fonts['bold_italic']))
+@font-face {
+    font-family: 'Montserrat';
+    font-style: italic;
+    font-weight: 700;
+    src: url('data:font/truetype;charset=utf-8;base64,{{ $fonts['bold_italic'] }}') format('truetype');
+}
+@endif
+
 @page {
     size: 297mm 210mm;
     margin: 0;
 }
 
 body {
-    font-family: 'DejaVu Sans', Arial, sans-serif;
+    font-family: 'Montserrat', 'DejaVu Sans', Arial, sans-serif;
     color: #111827;
     width: 297mm;
     margin: 0;
@@ -143,200 +211,90 @@ body {
 
 .abs { position: absolute; }
 
-/* PAGE 1 — SIDEBAR (referensi: 63mm) */
-.p1-sidebar {
+/* PAGE 1 — background referensi + overlay dinamis */
+.p1-bg {
     left: 0;
     top: 0;
-    width: {{ $ref['sidebar_w'] }}mm;
+    width: 297mm;
     height: 210mm;
-    background-color: #002d5b;
-    background-repeat: no-repeat;
-    background-size: {{ $ref['sidebar_w'] }}mm 210mm;
-    background-position: top left;
-    z-index: 1;
+    z-index: 0;
 }
 
-.txt-org-prefix { font-weight: normal; }
-.txt-org-name { font-weight: bold; }
-
-.p1-sidebar-text {
-    display: none;
+.field-mask {
+    background: #ffffff;
+    z-index: 2;
 }
 
-/* PAGE 1 — LOGO BAR (posisi dari image blocks referensi) */
-.p1-logo {
-    text-align: center;
-    overflow: hidden;
-}
-.p1-logo img,
-.p1-logo .logo-indonesia-text {
-    display: inline-block;
-    vertical-align: middle;
-    line-height: normal;
-    max-width: 100%;
-}
-
-.logo-indonesia-text {
-    font-size: 10.1pt;
-    font-weight: bold;
-    color: #111827;
-    line-height: 1.05;
-    text-align: center;
-    padding-top: 0;
-}
-
-.p1-divider {
-    left: {{ $ref['content_l'] }}mm;
-    top: {{ $ref['divider_top'] }}mm;
-    width: {{ $ref['content_w'] }}mm;
-    height: 0;
-    border: none;
-    border-top: 0.5px solid #b8c4d4;
-}
-
-/* PAGE 1 — BODY */
-.p1-text,
-.p1-center,
-.footer-meta {
+.p1-dynamic {
     z-index: 5;
+    font-family: 'Montserrat', 'DejaVu Sans', Arial, sans-serif;
 }
 
-.p1-text {
-    left: {{ $ref['content_l'] }}mm;
-    width: {{ $ref['content_w'] }}mm;
-    text-align: center;
-}
-
-.p1-center {
-    left: {{ $ref['content_l'] }}mm;
-    width: {{ $ref['content_w'] }}mm;
-    text-align: center;
-}
-
-.txt-intro-id {
-    font-size: 10.5pt;
-    font-weight: bold;
-    color: #002d5b;
-    letter-spacing: 0.2px;
-}
-.txt-intro-en {
-    font-size: 8.5pt;
-    font-style: italic;
-    color: #757575;
-}
-.txt-name {
+.p1-name {
     font-size: 25pt;
-    font-weight: bold;
+    font-weight: 900;
     color: #000000;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     line-height: 1.05;
+    white-space: nowrap;
 }
-.txt-org {
-    font-size: 10.5pt;
-    font-weight: normal;
+
+.p1-program {
+    font-size: 15pt;
+    font-weight: 700;
     color: #002d5b;
     line-height: 1.45;
-    padding: 0 6mm;
+    white-space: nowrap;
 }
-.txt-program {
-    font-size: 10.5pt;
-    font-weight: bold;
-    color: #002d5b;
-    line-height: 1.45;
-    padding: 0 6mm;
-}
-.txt-program-2 {
-    font-size: 10.5pt;
-    font-weight: bold;
-    color: #002d5b;
-    line-height: 1.45;
-    padding: 0 6mm;
-}
-.txt-en {
-    font-size: 8.5pt;
-    font-style: italic;
-    color: #757575;
-    line-height: 1.35;
-}
-.txt-non-akademik {
-    font-size: 10.5pt;
-    font-weight: bold;
-    color: #002d5b;
-}
-.txt-degree {
+
+.p1-degree {
     font-size: 17pt;
-    font-weight: bold;
+    font-weight: 900;
     color: #d32f2f;
     letter-spacing: 0.3px;
     line-height: 1.15;
-}
-.txt-validity {
-    font-size: 10.5pt;
-    color: #002d5b;
-    font-weight: bold;
-}
-.txt-validity-en {
-    font-size: 8.5pt;
-    font-style: italic;
-    color: #757575;
+    white-space: nowrap;
 }
 
-.lbl-verify {
-    font-size: 10.5pt;
-    font-weight: bold;
+.p1-validity {
+    font-size: 15pt;
+    font-weight: 700;
     color: #002d5b;
-    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.p1-validity-en {
+    font-size: 13pt;
+    font-weight: 700;
+    font-style: italic;
+    color: #757575;
+    white-space: nowrap;
+}
+
+.p1-meta {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #002d5b;
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+    hyphens: manual;
+    line-height: 1.1;
 }
 
 .qr-wrap {
     z-index: 6;
+    top: {{ $ref['qr_top'] }}mm;
+    left: {{ $ref['qr_left'] }}mm;
 }
 .qr-img {
-    width: 20.6mm;
-    height: 20.6mm;
-    display: block;
-}
-.qr-mark {
-    position: absolute;
-    top: 6.8mm;
-    left: 6.8mm;
-    width: 7mm;
-    height: 7mm;
-}
-.qr-mark img {
-    width: 7mm;
-    height: 7mm;
+    width: {{ $ref['qr_size'] }}mm;
+    height: {{ $ref['qr_size'] }}mm;
     display: block;
 }
 
-.sign-name {
-    font-size: 12.5pt;
-    font-weight: bold;
-    color: #000000;
-    line-height: 1.25;
-}
-.sign-title {
-    font-size: 12.5pt;
-    font-weight: normal;
-    color: #000000;
-    line-height: 1.25;
-}
-
-.footer-meta {
-    right: 8mm;
-    text-align: right;
-    font-size: 10pt;
-    font-weight: bold;
-    color: #1e40af;
-    line-height: 1.55;
-    z-index: 5;
-}
-.footer-meta-line {
-    white-space: nowrap;
-}
-
-/* PAGE 2 — MATERI */
+/* PAGE 2 — MATERI (koordinat dari RAIHAN TAUVIQUL HADY IFDAL.pdf hal. 2) */
 .p2-wrap {
     left: 0;
     top: 0;
@@ -346,22 +304,16 @@ body {
 .p2-watermark {
     z-index: 0;
 }
-.p2-box {
-    border: 2px solid #111111;
+.p2-table-shell {
     overflow: hidden;
     z-index: 2;
     position: absolute;
     background: transparent;
 }
-.p2-table-wrap {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    height: 100%;
-}
 .p2-table {
     width: 100%;
     height: 100%;
+    border: 2px solid #111111;
     border-collapse: collapse;
     table-layout: fixed;
 }
@@ -369,128 +321,90 @@ body {
 .p2-table td {
     border: 1px solid #111111;
     vertical-align: middle;
-    padding: 1mm 2mm;
+    padding: 0 1.5mm;
 }
 .p2-table th {
     font-weight: bold;
     text-align: center;
-    font-size: 12pt;
-    height: 13.8mm;
+    font-size: 13pt;
+    height: {{ $ref['p2_header_h'] }}mm;
     background: transparent;
     letter-spacing: 0.3px;
-    border-bottom-width: 1.5px;
+    border-bottom: 1.5px solid #111111;
+    line-height: 1;
+    white-space: nowrap;
+    padding: 0;
 }
-.p2-table td { height: 13.75mm; font-size: 11pt; background: transparent; }
-.p2-no  { width: 14mm; text-align: center; font-size: 12pt; }
-.p2-title { text-align: left; padding-left: 3mm; font-size: 11pt; }
-.p2-code { width: 52mm; text-align: center; font-size: 11pt; }
+.p2-table th.p2-code-head {
+    font-size: 11pt;
+}
+.p2-table td {
+    height: {{ $ref['p2_row_h'] }}mm;
+    background: transparent;
+    line-height: 1.1;
+    overflow: hidden;
+}
+.p2-no {
+    width: 5%;
+    text-align: center;
+    font-size: 13pt;
+    white-space: nowrap;
+    padding: 0;
+}
+.p2-title {
+    width: 78%;
+    text-align: left;
+    padding-left: 5mm;
+    padding-right: 1.5mm;
+    font-size: 12pt;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.p2-code {
+    width: 17%;
+    text-align: center;
+    font-size: 13pt;
+    white-space: nowrap;
+    padding: 0;
+}
+.p2-code-head {
+    font-size: 11pt;
+}
 </style>
 </head>
 <body>
 
 <div class="page">
 
-    <div class="abs p1-sidebar" @if(!empty($logos['sidebar_bg'])) style="background-image: url('data:image/png;base64,{{ $logos['sidebar_bg'] }}');" @endif></div>
-
-    @if(empty($logos['sidebar_bg']))
-    <div class="abs p1-sidebar-text" style="display:block;left:0;top:0;width:{{ $ref['sidebar_w'] }}mm;height:210mm;z-index:2;">
-        <table style="width:{{ $ref['sidebar_w'] }}mm;height:210mm;border-collapse:collapse;" cellpadding="0" cellspacing="0">
-            <tr>
-                <td style="vertical-align:middle;text-align:center;color:#fff;font-size:21pt;font-weight:bold;">SERTIFIKAT</td>
-            </tr>
-        </table>
-    </div>
+    @if(!empty($logos['page1_reference_bg']))
+        <img src="data:image/png;base64,{{ $logos['page1_reference_bg'] }}" class="abs p1-bg" alt="">
     @endif
 
-    <div class="abs p1-logo p1-logo-1" style="left: {{ $ref['logo_1']['l'] }}mm; top: {{ $ref['logo_1']['t'] }}mm; width: {{ $ref['logo_1']['w'] }}mm; height: {{ $ref['logo_1']['h'] }}mm; line-height: {{ $ref['logo_1']['h'] }}mm;">
-        @if(!empty($logos['kemnaker']))
-            <img src="data:image/png;base64,{{ $logos['kemnaker'] }}" style="width:{{ $ref['logo_1']['w'] }}mm;height:{{ $ref['logo_1']['h'] }}mm;" alt="">
-        @endif
-    </div>
-    <div class="abs p1-logo p1-logo-2" style="left: {{ $ref['logo_2']['l'] }}mm; top: {{ $ref['logo_2']['t'] }}mm; width: {{ $ref['logo_2']['w'] }}mm; height: {{ $ref['logo_2']['h'] }}mm; line-height: {{ $ref['logo_2']['h'] }}mm;">
-        @if(!empty($logos['ymt']))
-            <img src="data:image/png;base64,{{ $logos['ymt'] }}" style="width:{{ $ref['logo_2']['w'] }}mm;height:{{ $ref['logo_2']['h'] }}mm;" alt="">
-        @endif
-    </div>
-    <div class="abs p1-logo p1-logo-3" style="left: {{ $ref['logo_3']['l'] }}mm; top: {{ $ref['logo_3']['t'] }}mm; width: {{ $ref['logo_3']['w'] }}mm; height: {{ $ref['logo_3']['h'] }}mm; line-height: {{ $ref['logo_3']['h'] }}mm;">
-        @if(!empty($logos['vokasi']))
-            <img src="data:image/png;base64,{{ $logos['vokasi'] }}" style="width:{{ $ref['logo_3']['w'] }}mm;height:{{ $ref['logo_3']['h'] }}mm;" alt="">
-        @endif
-    </div>
-    <div class="abs p1-logo p1-logo-4" style="left: {{ $ref['logo_4']['l'] }}mm; top: {{ $ref['logo_4']['t'] }}mm; width: {{ $ref['logo_4']['w'] }}mm; height: {{ $ref['logo_4']['h'] }}mm; line-height: {{ $ref['logo_4']['h'] }}mm;">
-        @if(!empty($logos['indonesia_skills']))
-            <img src="data:image/png;base64,{{ $logos['indonesia_skills'] }}" style="width:{{ $ref['logo_4']['w'] }}mm;height:{{ $ref['logo_4']['h'] }}mm;" alt="">
-        @else
-            <div class="logo-indonesia-text">Indonesia<br>Skills</div>
-        @endif
-    </div>
-    <div class="abs p1-logo p1-logo-5" style="left: {{ $ref['logo_5']['l'] }}mm; top: {{ $ref['logo_5']['t'] }}mm; width: {{ $ref['logo_5']['w'] }}mm; height: {{ $ref['logo_5']['h'] }}mm; line-height: {{ $ref['logo_5']['h'] }}mm;">
-        @if(!empty($logos['skills_swoosh']))
-            <img src="data:image/png;base64,{{ $logos['skills_swoosh'] }}" style="width:{{ $ref['logo_5']['w'] }}mm;height:{{ $ref['logo_5']['h'] }}mm;" alt="">
-        @elseif(!empty($logos['blkk_mark']))
-            <img src="data:image/png;base64,{{ $logos['blkk_mark'] }}" style="width:{{ $ref['logo_5']['w'] }}mm;height:{{ $ref['logo_5']['h'] }}mm;" alt="">
-        @endif
-    </div>
-    <div class="abs p1-logo p1-logo-6" style="left: {{ $ref['logo_6']['l'] }}mm; top: {{ $ref['logo_6']['t'] }}mm; width: {{ $ref['logo_6']['w'] }}mm; height: {{ $ref['logo_6']['h'] }}mm; line-height: {{ $ref['logo_6']['h'] }}mm;">
-        @if(!empty($logos['siapkerja']))
-            <img src="data:image/png;base64,{{ $logos['siapkerja'] }}" style="width:{{ $ref['logo_6']['w'] }}mm;height:{{ $ref['logo_6']['h'] }}mm;" alt="">
-        @endif
-    </div>
+    @foreach($p1Masks as $mask)
+        <div class="abs field-mask" style="left: {{ $mask['l'] }}mm; top: {{ $mask['t'] }}mm; width: {{ $mask['w'] }}mm; height: {{ $mask['h'] }}mm;"></div>
+    @endforeach
 
-    <hr class="abs p1-divider">
+    <div class="abs p1-dynamic p1-name" style="top: {{ $ref['name'] + $p1DynamicOffset }}mm; {{ $boxStyle($ref['box']['name']) }}">{{ strtoupper($participant->name) }}</div>
 
-    <div class="abs p1-text txt-intro-id" style="top: {{ $layout['intro_id'] }}mm;">SERTIFIKAT INI MENERANGKAN BAHWA :</div>
-    <div class="abs p1-text txt-intro-en" style="top: {{ $layout['intro_en'] }}mm;">This Certificate explains that :</div>
-
-    <div class="abs p1-text txt-name" style="top: {{ $layout['name'] }}mm;">{{ strtoupper($participant->name) }}</div>
-
-    <div class="abs p1-text txt-org" style="top: {{ $layout['org_line1'] }}mm;">{!! $orgLine1Html !!}</div>
-    @if($orgLine2Html)
-        <div class="abs p1-text txt-org" style="top: {{ $layout['org_line2'] }}mm;">{!! $orgLine2Html !!}</div>
-    @endif
-
-    <div class="abs p1-text txt-program" style="top: {{ $layout['program'] }}mm;">{{ $programLines[0] }}</div>
+    <div class="abs p1-dynamic p1-program" style="top: {{ $ref['program'] + $p1DynamicOffset }}mm; {{ $boxStyle($ref['box']['program']) }}">{{ $programLines[0] }}</div>
     @if($hasProgramLine2)
-        <div class="abs p1-text txt-program-2" style="top: {{ $layout['program_2'] }}mm;">{{ $programLines[1] }}</div>
+        <div class="abs p1-dynamic p1-program" style="top: {{ $ref['program_2'] + $p1DynamicOffset }}mm; {{ $boxStyle($ref['box']['program_2']) }}">{{ $programLines[1] }}</div>
     @endif
 
-    <div class="abs p1-text txt-en" style="top: {{ $layout['en_org'] }}mm;">Organized by {{ $organizationEn }}</div>
+    <div class="abs p1-dynamic p1-degree" style="top: {{ $ref['degree'] + $p1DynamicOffset }}mm; {{ $boxStyle(['l' => 121.6, 'w' => 126.2, 'align' => 'center']) }}">{{ $degree }}</div>
 
-    <div class="abs p1-text txt-non-akademik" style="top: {{ $layout['non_akademik'] }}mm;">Serta berhak atas Gelar Non-Akademik</div>
-    <div class="abs p1-text txt-en" style="top: {{ $layout['en_degree'] }}mm;">As well as the rights to Non-Academic Degree</div>
-
-    <div class="abs p1-text txt-degree" style="top: {{ $layout['degree'] }}mm;">{{ $degree }}</div>
-
-    <div class="abs p1-text txt-validity" style="top: {{ $layout['validity'] }}mm;">
+    <div class="abs p1-dynamic p1-validity" style="top: {{ $ref['validity'] + $p1DynamicOffset }}mm; {{ $boxStyle($ref['box']['validity']) }}">
         Sertifikat ini berlaku untuk : {{ $validityYears }} ({{ $validityWordId }}) Tahun
     </div>
-    <div class="abs p1-text txt-validity-en" style="top: {{ $layout['validity_en'] }}mm;">
+    <div class="abs p1-dynamic p1-validity-en" style="top: {{ $ref['validity_en'] + $p1DynamicOffset }}mm; {{ $boxStyle($ref['box']['validity_en']) }}">
         This Certificate is valid for {{ $validityYears }} ({{ $validityWordEn }}) years
     </div>
 
-    <div class="abs p1-center lbl-verify" style="top: {{ $layout['verify'] }}mm;">Diverifikasi Oleh :</div>
+    <div class="abs p1-dynamic p1-meta" style="top: {{ $ref['meta_value'] + $p1DynamicOffset }}mm; {{ $boxStyle($ref['box']['meta_value']) }}"><span style="white-space: nowrap;">{{ $certificate->certificate_number }}</span></div>
+    <div class="abs p1-dynamic p1-meta" style="top: {{ $ref['meta_issued'] + $p1DynamicOffset }}mm; {{ $boxStyle($ref['box']['meta_issued']) }}"><span style="white-space: nowrap;">Issued Date: {{ $certificate->issued_at->format('Y-m-d') }}</span></div>
 
-    <div class="abs qr-wrap" style="top: {{ $layout['qr_top'] }}mm; left: {{ $layout['qr_left'] }}mm;">
+    <div class="abs qr-wrap">
         <img src="{{ $qrDataUri }}" class="qr-img" alt="QR">
-        @if(!empty($logos['kemnaker_mark']))
-            <div class="abs qr-mark">
-                <img src="data:image/png;base64,{{ $logos['kemnaker_mark'] }}" alt="">
-            </div>
-        @endif
-    </div>
-
-    <div class="abs p1-center sign-name" style="top: {{ $layout['sign_name'] }}mm;">{{ $directorName }}</div>
-    <div class="abs p1-center sign-title" style="top: {{ $layout['sign_title1'] }}mm;">{{ $directorTitleLine1 }}</div>
-    <div class="abs p1-center sign-title" style="top: {{ $layout['sign_title2'] }}mm;">{{ $directorTitleLine2 }}</div>
-
-    <div class="abs footer-meta footer-meta-line" style="top: {{ $layout['meta_number'] }}mm;">
-        Certified Number :
-    </div>
-    <div class="abs footer-meta footer-meta-line" style="top: {{ $layout['meta_value'] }}mm;">
-        {{ $certificate->certificate_number }}
-    </div>
-    <div class="abs footer-meta footer-meta-line" style="top: {{ $layout['meta_issued'] }}mm;">
-        Issued Date: {{ $certificate->issued_at->format('Y-m-d') }}
     </div>
 
 </div>
@@ -499,20 +413,23 @@ body {
     <div class="abs p2-wrap">
 
         @php
-            $p2Watermark = $logos['page2_watermark'] ?? $logos['materials_watermark'] ?? $logos['watermark'] ?? null;
+            $p2Watermark = $logos['page2_watermark'] ?? $logos['blkk_mark'] ?? null;
+            $p2TableOffset = 1.1;
+            $p2Top = $ref['p2_box_top'] - $p2TableOffset;
+            $p2WmTop = $ref['p2_wm_top'];
+            $p2ColTitle = $ref['p2_box_w'] - $ref['p2_col_no'] - $ref['p2_col_code'];
         @endphp
         @if(!empty($p2Watermark))
-            <img src="data:image/png;base64,{{ $p2Watermark }}" class="abs p2-watermark" style="left: {{ $ref['p2_wm_left'] }}mm; top: {{ $ref['p2_wm_top'] }}mm; width: {{ $ref['p2_wm_w'] }}mm; height: {{ $ref['p2_wm_w'] }}mm;" alt="">
+            <img src="data:image/png;base64,{{ $p2Watermark }}" class="abs p2-watermark" style="left: {{ $ref['p2_wm_left'] }}mm; top: {{ $p2WmTop }}mm; width: {{ $ref['p2_wm_w'] }}mm; height: {{ $ref['p2_wm_w'] }}mm;" alt="">
         @endif
 
-        <div class="abs p2-box" style="left: {{ $ref['p2_box_left'] }}mm; top: {{ $ref['p2_box_top'] }}mm; width: {{ $ref['p2_box_w'] }}mm; height: {{ $ref['p2_box_h'] }}mm;">
-            <div class="p2-table-wrap">
-            <table class="p2-table" cellpadding="0" cellspacing="0">
+        <div class="abs p2-table-shell" style="left: {{ $ref['p2_box_left'] }}mm; top: {{ $p2Top }}mm; width: {{ $ref['p2_box_w'] }}mm; height: {{ $ref['p2_box_h'] }}mm;">
+            <table class="p2-table" width="100%" cellpadding="0" cellspacing="0">
                 <thead>
                     <tr>
-                        <th class="p2-no">NO</th>
-                        <th class="p2-title">MATERI PELATIHAN</th>
-                        <th class="p2-code">KODE UNIT</th>
+                        <th class="p2-no" width="5%">NO</th>
+                        <th class="p2-title" width="78%">MATERI PELATIHAN</th>
+                        <th class="p2-code p2-code-head" width="17%">KODE UNIT</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -532,7 +449,6 @@ body {
                     @endfor
                 </tbody>
             </table>
-            </div>
         </div>
 
     </div>
