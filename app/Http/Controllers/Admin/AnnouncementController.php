@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\EnsuresNestedResourceBelongsToClass;
 use App\Http\Controllers\Concerns\ValidatesAnnouncement;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
 {
+    use EnsuresNestedResourceBelongsToClass;
     use ValidatesAnnouncement;
 
     public function index()
@@ -52,9 +54,7 @@ class AnnouncementController extends Controller
 
     public function update(Request $request, ClassModel $class, Announcement $announcement)
     {
-        if ($announcement->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($announcement, $class);
 
         $validated = $this->validatedAnnouncement($request);
 
@@ -67,9 +67,7 @@ class AnnouncementController extends Controller
 
     public function destroy(ClassModel $class, Announcement $announcement)
     {
-        if ($announcement->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($announcement, $class);
 
         $announcement->delete();
 

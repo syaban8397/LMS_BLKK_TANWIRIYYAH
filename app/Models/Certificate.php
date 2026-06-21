@@ -21,6 +21,8 @@ class Certificate extends Model
     {
         return [
             'issued_at' => 'datetime',
+            'final_score' => 'float',
+            'attendance_percentage' => 'float',
         ];
     }
 

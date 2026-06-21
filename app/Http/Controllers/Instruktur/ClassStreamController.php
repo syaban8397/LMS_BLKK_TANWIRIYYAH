@@ -14,11 +14,19 @@ class ClassStreamController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        $class->load(['program', 'instructor', 'participants']);
+        $class->load(['program', 'instructor']);
+        $class->loadCount('participants');
 
         $announcements = $class->announcements()->with('creator')->latest()->get();
         $materials = $class->materials()->with('creator')->orderBy('meeting_number')->get();
-        $assignments = $class->assignments()->with(['creator', 'submissions'])->latest()->get();
+        $assignments = $class->assignments()
+            ->with('creator')
+            ->withCount([
+                'submissions',
+                'submissions as graded_submissions_count' => fn ($query) => $query->whereNotNull('score'),
+            ])
+            ->latest()
+            ->get();
 
         return view(
             'instruktur.classes.stream',

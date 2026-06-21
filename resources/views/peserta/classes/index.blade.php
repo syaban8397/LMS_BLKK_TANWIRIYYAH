@@ -1,6 +1,6 @@
 <x-app-layout>
-    <div class="peserta-index-wrapper lms-module-shell space-y-6">
-        <x-lms-page-header
+    <x-lms-page-shell class="peserta-index-wrapper">
+    <x-lms-page-header
             :title="__('lms.nav.my_classes')"
             :subtitle="__('lms.common.view_enrolled')"
             :breadcrumbs="[
@@ -10,6 +10,8 @@
 
         <x-lms-session-flash />
 
+        <x-lms-section :title="__('lms.dashboard.overview')" icon="chart" compact>
+            <x-lms-panel flush pad="false">
         <x-lms-stat-grid>
             <x-lms-stat-card
                 :label="__('lms.common.total_classes')"
@@ -30,8 +32,10 @@
                 tone="indigo"
             />
         </x-lms-stat-grid>
+            </x-lms-panel>
+        </x-lms-section>
 
-        <x-lms-card class="table-card p-0" :title="__('lms.common.class_list')" :meta="__('lms.common.total') . ': ' . $enrolledClasses->total()">
+        <x-lms-section :title="__('lms.common.class_list')" :description="__('lms.common.total') . ': ' . $enrolledClasses->total()" icon="clipboard" compact>
             <x-lms-data-table :paginator="$enrolledClasses" :skeleton-cols="6">
                 <x-slot:head>
                     <tr>
@@ -80,6 +84,6 @@
                     <x-lms-table-empty :colspan="6" :message="__('lms.common.not_enrolled')" />
                 @endforelse
             </x-lms-data-table>
-        </x-lms-card>
-    </div>
+        </x-lms-section>
+    </x-lms-page-shell>
 </x-app-layout>

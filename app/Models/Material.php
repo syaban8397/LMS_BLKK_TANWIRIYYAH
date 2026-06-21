@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\UploadRules;
 use Illuminate\Database\Eloquent\Model;
 
 class Material extends Model
@@ -17,6 +18,25 @@ class Material extends Model
         'youtube_url',
         'created_by',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'meeting_number' => 'integer',
+        ];
+    }
+
+    public static function validationRules(): array
+    {
+        return [
+            'title' => 'required|max:255',
+            'material_code' => 'nullable|max:50',
+            'description' => 'nullable|string',
+            'meeting_number' => 'required|integer|min:1',
+            'file' => UploadRules::documentAttachment(),
+            'youtube_url' => 'nullable|url|max:255',
+        ];
+    }
 
     public function class()
     {

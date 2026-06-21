@@ -1,6 +1,6 @@
 <x-app-layout>
-<div class="create-attendance-wrapper lms-module-shell space-y-6">
-        <x-lms-page-header
+    <x-lms-page-shell class="create-attendance-wrapper">
+<x-lms-page-header
             :title="__('lms.attendance.create_session')"
             :subtitle="$class->title"
             :back-url="route('instruktur.attendances.index', $class)"
@@ -16,6 +16,8 @@
         <x-lms-session-flash />
         <x-lms-validation-errors />
 
+        <x-lms-section compact>
+            <div class="lms-form-layout lms-form-layout--wide\">
         <x-lms-form-card>
             <form action="{{ route('instruktur.attendances.store', $class) }}" method="POST" class="space-y-6">
                 @csrf
@@ -68,5 +70,7 @@
                 </x-lms-form-actions>
             </form>
         </x-lms-form-card>
-    </div>
+            </div>
+        </x-lms-section>
+    </x-lms-page-shell>
 </x-app-layout>

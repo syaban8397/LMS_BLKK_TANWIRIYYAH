@@ -1,0 +1,206 @@
+/**
+ * Compact enterprise layout — focused content width, natural height, no empty scroll
+ */
+
+@layer base {
+    html[data-authenticated-app="1"] {
+        --lms-content-max: 72rem;
+        --lms-form-max: 44rem;
+        --lms-narrow-max: 36rem;
+        --lms-page-x: 1.25rem;
+        --lms-section-gap: 1.25rem;
+        --lms-card-pad: 1.125rem;
+        overflow-x: clip;
+    }
+
+    html[data-authenticated-app="1"] body.lms-app-body {
+        overflow-x: clip;
+    }
+}
+
+@layer components {
+    /* ── Shell: single min-height chain, no forced empty scroll ── */
+    html[data-authenticated-app="1"] #mainContent.lms-main-shell {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    html[data-authenticated-app="1"] .lms-shell-inner {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    html[data-authenticated-app="1"] .lms-content-stage {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 0 var(--lms-page-x) 0.75rem;
+        overflow-x: clip;
+    }
+
+    html[data-authenticated-app="1"] .lms-content-container {
+        width: 100%;
+        max-width: var(--lms-content-max);
+        margin-left: auto;
+        margin-right: auto;
+        flex: 1 0 auto;
+    }
+
+    html[data-authenticated-app="1"] main.page-content-3d {
+        padding: 1rem var(--lms-page-x) 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+        html[data-authenticated-app="1"] {
+            --lms-page-x: 1.5rem;
+        }
+
+        html[data-authenticated-app="1"] main.page-content-3d {
+            padding: 1.25rem var(--lms-page-x) 1.75rem;
+        }
+    }
+
+    html[data-authenticated-app="1"] .lms-app-footer {
+        flex-shrink: 0;
+        width: 100%;
+        max-width: var(--lms-content-max);
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0.5rem;
+        padding: 1rem var(--lms-page-x) 1.25rem;
+    }
+
+    /* ── Page shells: compact rhythm ── */
+    html[data-authenticated-app="1"] .lms-page-shell,
+    html[data-authenticated-app="1"] .dashboard-wrapper,
+    html[data-authenticated-app="1"] .lms-module-shell,
+    html[data-authenticated-app="1"] [class$="-wrapper"] {
+        gap: var(--lms-section-gap);
+    }
+
+    html[data-authenticated-app="1"] .lms-page-header__title {
+        font-size: 1.3125rem;
+        max-width: 36rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-header__subtitle {
+        font-size: 0.875rem;
+        max-width: 40rem;
+        line-height: 1.5;
+    }
+
+    /* ── Dashboard: proportional stat grid ── */
+    html[data-authenticated-app="1"] main .dashboard-card,
+    html[data-authenticated-app="1"] main .stat-card,
+    html[data-authenticated-app="1"] main .lms-stat-card {
+        padding: var(--lms-card-pad);
+    }
+
+    html[data-authenticated-app="1"] main .dashboard-card h3,
+    html[data-authenticated-app="1"] main .stat-card h3 {
+        font-size: 1.5rem;
+    }
+
+    html[data-authenticated-app="1"] main .analytics-card,
+    html[data-authenticated-app="1"] main .filter-card,
+    html[data-authenticated-app="1"] main .quick-card {
+        padding: var(--lms-card-pad);
+    }
+
+    /* ── Forms: comfortable readable width ── */
+    html[data-authenticated-app="1"] main .form-card,
+    html[data-authenticated-app="1"] main .lms-form-card {
+        max-width: var(--lms-form-max);
+    }
+
+    html[data-authenticated-app="1"] main .form-group,
+    html[data-authenticated-app="1"] main .input-group {
+        margin-bottom: 0.125rem;
+    }
+
+    html[data-authenticated-app="1"] main .form-card .lms-card-header,
+    html[data-authenticated-app="1"] main .lms-form-card__body {
+        padding-left: 1.125rem;
+        padding-right: 1.125rem;
+    }
+
+    /* ── Tables: contained, readable ── */
+    html[data-authenticated-app="1"] main .lms-data-table,
+    html[data-authenticated-app="1"] main .table-card,
+    html[data-authenticated-app="1"] main .premium-table,
+    html[data-authenticated-app="1"] main .user-table {
+        max-width: 100%;
+    }
+
+    html[data-authenticated-app="1"] main table tbody td {
+        padding-top: 0.6875rem;
+        padding-bottom: 0.6875rem;
+    }
+
+    html[data-authenticated-app="1"] main .lms-data-table__footer {
+        padding: 0.75rem 1rem;
+    }
+
+    /* ── Cards: compact premium ── */
+    html[data-authenticated-app="1"] main .ds-card__header,
+    html[data-authenticated-app="1"] main .lms-card-header {
+        padding: 0.875rem 1.125rem;
+    }
+
+    html[data-authenticated-app="1"] main .lms-empty-state,
+    html[data-authenticated-app="1"] main .ds-empty {
+        padding: 2rem 1.5rem;
+    }
+
+    /* ── Filter bar ── */
+    html[data-authenticated-app="1"] .lms-filter-bar {
+        padding: 0.875rem 1rem;
+    }
+
+    /* ── Appbar without logo ── */
+    html[data-authenticated-app="1"] .lms-appbar__brand {
+        padding-left: 0.125rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-appbar__title {
+        font-size: 0.9375rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-appbar__tagline {
+        font-size: 0.625rem;
+    }
+
+    /* ── Scroll discipline ── */
+    html[data-authenticated-app="1"] .premium-sidebar {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    html[data-authenticated-app="1"] main {
+        overflow-x: clip;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table-wrap,
+    html[data-authenticated-app="1"] .ds-table-wrap {
+        overflow-x: auto;
+        overflow-y: visible;
+        max-width: 100%;
+    }
+
+    html[data-authenticated-app="1"] .lms-dialog-overlay {
+        overflow-y: auto;
+    }
+
+    html[data-authenticated-app="1"] .page-content-3d {
+        animation: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-loader {
+        overflow: hidden;
+    }
+}

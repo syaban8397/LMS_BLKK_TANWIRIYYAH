@@ -1,7 +1,7 @@
 @props([
     'colspan',
     'message' => null,
-    'icon' => '📭',
+    'icon' => 'inbox',
     'description' => null,
 ])
 

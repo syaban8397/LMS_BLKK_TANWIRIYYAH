@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
+use App\Http\Controllers\Concerns\EnsuresNestedResourceBelongsToClass;
 use App\Http\Controllers\Concerns\ValidatesAnnouncement;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 class AnnouncementController extends Controller
 {
     use AuthorizesInstructorClass;
+    use EnsuresNestedResourceBelongsToClass;
     use ValidatesAnnouncement;
 
     public function store(Request $request, ClassModel $class)
@@ -36,9 +38,7 @@ class AnnouncementController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($announcement->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($announcement, $class);
 
         return response()->json([
             'id' => $announcement->id,
@@ -51,9 +51,7 @@ class AnnouncementController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($announcement->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($announcement, $class);
 
         $validated = $this->validatedAnnouncement($request);
 
@@ -68,9 +66,7 @@ class AnnouncementController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($announcement->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($announcement, $class);
 
         $announcement->delete();
 

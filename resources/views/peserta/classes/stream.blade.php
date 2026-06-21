@@ -1,5 +1,5 @@
 <x-app-layout>
-<div class="peserta-stream-wrapper lms-module-shell space-y-6">
+    <x-lms-page-shell>
         <x-lms-page-header
             :title="$class->title"
             :subtitle="__('lms.common.subtitle_code_instructor', ['code' => $class->code, 'instructor' => $class->instructor->name])"
@@ -12,193 +12,190 @@
             ]"
         />
 
-        <x-lms-session-flash />
-
         <div class="grid lg:grid-cols-4 gap-6">
             <div class="lg:col-span-1 space-y-5">
-                <div class="sidebar-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
-                    <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                        <span>📋</span> {{ __('lms.common.class_info') }}
-                    </h3>
-                    <div class="space-y-3 text-sm">
-                        <div class="flex justify-between"><span class="text-slate-500">{{ __('lms.report.program') }}</span><span class="font-medium">{{ $class->program->name }}</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">{{ __('lms.common.status') }}</span>
-                            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ __('lms.active') }}</span>
+                <x-lms-section :title="__('lms.common.class_info')" icon="clipboard" compact>
+                    <x-lms-panel>
+                        <div class="lms-detail-list">
+                            <div class="lms-detail-row"><span class="lms-detail-row__label">{{ __('lms.report.program') }}</span><span class="lms-detail-row__value">{{ $class->program->name }}</span></div>
+                            <div class="lms-detail-row"><span class="lms-detail-row__label">{{ __('lms.common.status') }}</span><span class="lms-detail-row__value"><x-lms-status-badge :status="$class->status" type="class" /></span></div>
+                            <div class="lms-detail-row"><span class="lms-detail-row__label">{{ __('lms.common.period') }}</span><span class="lms-detail-row__value">{{ $class->start_date->format('d M Y') }} - {{ $class->end_date->format('d M Y') }}</span></div>
+                            <div class="lms-detail-row"><span class="lms-detail-row__label">{{ __('lms.common.description') }}</span><span class="lms-detail-row__value">{{ $class->description ?: __('lms.common.no_description') }}</span></div>
                         </div>
-                        <div class="flex justify-between"><span class="text-slate-500">{{ __('lms.common.period') }}</span><span class="font-medium">{{ $class->start_date->format('d M Y') }} - {{ $class->end_date->format('d M Y') }}</span></div>
-                        <div class="pt-2 border-t"><span class="text-slate-500 text-xs">{{ __('lms.common.description') }}</span><p class="text-slate-600 mt-1 text-sm">{{ $class->description ?: __('lms.common.no_description') }}</p></div>
-                    </div>
-                </div>
+                    </x-lms-panel>
+                </x-lms-section>
 
-                <div class="sidebar-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
-                    <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                        <span>🔗</span> {{ __('lms.common.quick_links') }}
-                    </h3>
-                    <div class="space-y-2">
-                        <a href="{{ route('peserta.materials.index', $class) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700 group">
-                            <span class="text-xl group-hover:scale-110 transition">📖</span><span class="font-medium">{{ __('lms.common.all_materials') }}</span>
-                        </a>
-                        <a href="{{ route('peserta.assignments.index', $class) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700 group">
-                            <span class="text-xl group-hover:scale-110 transition">📝</span><span class="font-medium">{{ __('lms.common.all_assignments') }}</span>
-                        </a>
-                        <a href="{{ route('peserta.attendances.index', $class) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition text-slate-700 group">
-                            <span class="text-xl group-hover:scale-110 transition">📅</span><span class="font-medium">{{ __('lms.common.my_attendance') }}</span>
-                        </a>
-                    </div>
-                </div>
+                <x-lms-section :title="__('lms.common.quick_links')" icon="bolt" compact>
+                    <x-lms-panel>
+                        <div class="lms-quick-grid">
+                            <a href="{{ route('peserta.materials.index', $class) }}" class="lms-quick-link">
+                                <span class="lms-quick-link__icon"><x-lms-icon name="book" /></span>
+                                <span>{{ __('lms.common.all_materials') }}</span>
+                            </a>
+                            <a href="{{ route('peserta.assignments.index', $class) }}" class="lms-quick-link">
+                                <span class="lms-quick-link__icon"><x-lms-icon name="document" /></span>
+                                <span>{{ __('lms.common.all_assignments') }}</span>
+                            </a>
+                            <a href="{{ route('peserta.attendances.index', $class) }}" class="lms-quick-link">
+                                <span class="lms-quick-link__icon"><x-lms-icon name="calendar" /></span>
+                                <span>{{ __('lms.common.my_attendance') }}</span>
+                            </a>
+                        </div>
+                    </x-lms-panel>
+                </x-lms-section>
 
-                <div class="stats-card bg-white rounded-xl p-5 shadow-md border border-slate-200">
-                    <h3 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                        <span>📊</span> {{ __('lms.common.statistics') }}
-                    </h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between"><span class="text-slate-600">{{ __('lms.common.announcements_label') }}</span><span class="font-bold text-slate-800">{{ $announcements->count() }}</span></div>
-                        <div class="flex justify-between"><span class="text-slate-600">{{ __('lms.dashboard.materials') }}</span><span class="font-bold text-slate-800">{{ $materials->count() }}</span></div>
-                        <div class="flex justify-between"><span class="text-slate-600">{{ __('lms.dashboard.assignments') }}</span><span class="font-bold text-slate-800">{{ $assignments->count() }}</span></div>
-                        @if(isset($attendances))<div class="flex justify-between"><span class="text-slate-600">{{ __('lms.dashboard.attendance_sessions') }}</span><span class="font-bold text-slate-800">{{ $attendances->count() }}</span></div>@endif
-                    </div>
-                </div>
+                <x-lms-section :title="__('lms.common.statistics')" icon="chart" compact>
+                    <x-lms-panel>
+                        <div class="lms-detail-list">
+                            <div class="lms-detail-row"><span class="lms-detail-row__label">{{ __('lms.common.announcements_label') }}</span><span class="lms-detail-row__value font-semibold tabular-nums">{{ $announcements->count() }}</span></div>
+                            <div class="lms-detail-row"><span class="lms-detail-row__label">{{ __('lms.dashboard.materials') }}</span><span class="lms-detail-row__value font-semibold tabular-nums">{{ $materials->count() }}</span></div>
+                            <div class="lms-detail-row"><span class="lms-detail-row__label">{{ __('lms.dashboard.assignments') }}</span><span class="lms-detail-row__value font-semibold tabular-nums">{{ $assignments->count() }}</span></div>
+                            @if(isset($attendances))
+                                <div class="lms-detail-row"><span class="lms-detail-row__label">{{ __('lms.dashboard.attendance_sessions') }}</span><span class="lms-detail-row__value font-semibold tabular-nums">{{ $attendances->count() }}</span></div>
+                            @endif
+                        </div>
+                    </x-lms-panel>
+                </x-lms-section>
             </div>
 
             <div class="lg:col-span-3 space-y-5">
-                <div class="grid grid-cols-3 gap-4">
-                    <a href="{{ route('peserta.materials.index', $class) }}" class="lms-stream-action">
-                        <span class="lms-stream-action__icon">📖</span>
-                        <p class="lms-stream-action__title">{{ __('lms.dashboard.materials') }}</p>
-                        <p class="lms-stream-action__desc">{{ __('lms.common.browse_resources') }}</p>
-                    </a>
-                    <a href="{{ route('peserta.assignments.index', $class) }}" class="lms-stream-action">
-                        <span class="lms-stream-action__icon">📝</span>
-                        <p class="lms-stream-action__title">{{ __('lms.dashboard.assignments') }}</p>
-                        <p class="lms-stream-action__desc">{{ __('lms.common.submit_tasks') }}</p>
-                    </a>
-                    <a href="{{ route('peserta.attendances.index', $class) }}" class="lms-stream-action">
-                        <span class="lms-stream-action__icon">📅</span>
-                        <p class="lms-stream-action__title">{{ __('lms.common.attendance') }}</p>
-                        <p class="lms-stream-action__desc">{{ __('lms.common.record_presence') }}</p>
-                    </a>
-                </div>
+                <x-lms-section compact>
+                    <x-lms-panel>
+                        <div class="lms-quick-grid lms-quick-grid--3">
+                            <a href="{{ route('peserta.materials.index', $class) }}" class="lms-quick-link">
+                                <span class="lms-quick-link__icon"><x-lms-icon name="book" /></span>
+                                <span>
+                                    <span class="lms-quick-link__title">{{ __('lms.dashboard.materials') }}</span>
+                                    <span class="lms-quick-link__desc">{{ __('lms.common.browse_resources') }}</span>
+                                </span>
+                            </a>
+                            <a href="{{ route('peserta.assignments.index', $class) }}" class="lms-quick-link">
+                                <span class="lms-quick-link__icon"><x-lms-icon name="document" /></span>
+                                <span>
+                                    <span class="lms-quick-link__title">{{ __('lms.dashboard.assignments') }}</span>
+                                    <span class="lms-quick-link__desc">{{ __('lms.common.submit_tasks') }}</span>
+                                </span>
+                            </a>
+                            <a href="{{ route('peserta.attendances.index', $class) }}" class="lms-quick-link">
+                                <span class="lms-quick-link__icon"><x-lms-icon name="calendar" /></span>
+                                <span>
+                                    <span class="lms-quick-link__title">{{ __('lms.common.attendance') }}</span>
+                                    <span class="lms-quick-link__desc">{{ __('lms.common.record_presence') }}</span>
+                                </span>
+                            </a>
+                        </div>
+                    </x-lms-panel>
+                </x-lms-section>
 
-                <div class="lms-timeline space-y-4">
-                    @forelse($announcements as $announcement)
-                    <div class="timeline-item lms-timeline-item--announcement bg-white rounded-xl p-5 shadow-md border border-slate-200">
-                        <div class="flex items-start justify-between">
-                            <div class="flex gap-3">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 flex items-center justify-center text-white text-lg">📢</div>
-                                <div>
-                                    <p class="font-semibold text-slate-800">{{ $announcement->creator?->name ?? __('lms.common.system') }}</p>
-                                    <p class="text-xs text-slate-400">{{ $announcement->created_at->diffForHumans() }}</p>
+                <x-lms-section :title="__('lms.common.class_stream')" icon="megaphone" compact>
+                    <div class="lms-timeline">
+                        @forelse($announcements as $announcement)
+                            <x-lms-panel class="lms-timeline-item lms-timeline-item--announcement">
+                                <div class="flex items-start gap-3">
+                                    <div class="lms-avatar-badge"><x-lms-icon name="megaphone" /></div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-semibold text-slate-800">{{ $announcement->creator?->name ?? __('lms.common.system') }}</p>
+                                        <p class="text-xs text-slate-400">{{ $announcement->created_at->diffForHumans() }}</p>
+                                        <h4 class="font-bold text-slate-800 mt-2">{{ $announcement->title }}</h4>
+                                        <p class="text-slate-600 text-sm mt-1 whitespace-pre-line">{{ $announcement->description }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <h4 class="font-bold text-slate-800">{{ $announcement->title }}</h4>
-                            <p class="text-slate-600 text-sm mt-1 whitespace-pre-line">{{ $announcement->description }}</p>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="timeline-item bg-white rounded-xl p-6 text-center text-slate-400">{{ __('lms.common.no_announcements') }}</div>
-                    @endforelse
+                            </x-lms-panel>
+                        @empty
+                            <x-lms-panel class="lms-timeline-item text-center text-slate-400">{{ __('lms.common.no_announcements') }}</x-lms-panel>
+                        @endforelse
 
-                    @forelse($materials as $material)
-                    <div class="timeline-item lms-timeline-item--material bg-white rounded-xl p-5 shadow-md border border-slate-200">
-                        <div class="flex items-start justify-between">
-                            <div class="flex gap-3">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center text-white text-lg">📖</div>
-                                <div>
-                                    <p class="font-semibold text-slate-800">{{ $material->creator?->name ?? __('lms.common.instructor_fallback') }}</p>
-                                    <p class="text-xs text-slate-400">{{ __('lms.common.meeting') }} {{ $material->meeting_number }} • {{ $material->created_at->diffForHumans() }}</p>
+                        @forelse($materials as $material)
+                            <x-lms-panel class="lms-timeline-item lms-timeline-item--material">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex gap-3 min-w-0">
+                                        <div class="lms-avatar-badge"><x-lms-icon name="book" /></div>
+                                        <div class="min-w-0">
+                                            <p class="font-semibold text-slate-800">{{ $material->creator?->name ?? __('lms.common.instructor_fallback') }}</p>
+                                            <p class="text-xs text-slate-400">{{ __('lms.common.meeting') }} {{ $material->meeting_number }} • {{ $material->created_at->diffForHumans() }}</p>
+                                            <h4 class="font-bold text-slate-800 mt-2">{{ $material->title }}</h4>
+                                            @if($material->description)<p class="text-slate-600 text-sm mt-1">{{ $material->description }}</p>@endif
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('peserta.materials.show', [$class, $material]) }}" class="lms-action-btn lms-action-btn--view shrink-0">{{ __('lms.view') }}</a>
                                 </div>
-                            </div>
-                            <a href="{{ route('peserta.materials.show', [$class, $material]) }}" class="lms-action-btn lms-action-btn--view">{{ __('lms.view') }}</a>
-                        </div>
-                        <h4 class="font-bold text-slate-800 mt-3">{{ $material->title }}</h4>
-                        @if($material->description)<p class="text-slate-600 text-sm mt-1">{{ $material->description }}</p>@endif
-                    </div>
-                    @empty
-                    <div class="timeline-item bg-white rounded-xl p-6 text-center text-slate-400">{{ __('lms.common.no_materials') }}</div>
-                    @endforelse
+                            </x-lms-panel>
+                        @empty
+                            <x-lms-panel class="lms-timeline-item text-center text-slate-400">{{ __('lms.common.no_materials') }}</x-lms-panel>
+                        @endforelse
 
-                    @forelse($assignments as $assignment)
-                    @php
-                        $submission = $assignment->submissions->where('participant_id', auth()->id())->first();
-                        if($submission && $submission->isGraded()) {
-                            $statusBadge = __('lms.common.graded');
-                            $statusColor = 'bg-green-100 text-green-700';
-                        } elseif($submission) {
-                            $statusBadge = __('lms.common.submitted');
-                            $statusColor = 'bg-yellow-100 text-yellow-700';
-                        } else {
-                            $statusBadge = __('lms.common.not_submitted');
-                            $statusColor = 'bg-red-100 text-red-700';
-                        }
-                    @endphp
-                    <div class="timeline-item lms-timeline-item--assignment bg-white rounded-xl p-5 shadow-md border border-slate-200 border-l-4 border-l-purple-500">
-                        <div class="flex items-start justify-between">
-                            <div class="flex gap-3">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white text-lg">📝</div>
-                                <div>
-                                    <p class="font-semibold text-slate-800">{{ $assignment->creator?->name ?? __('lms.common.instructor_fallback') }}</p>
-                                    <p class="text-xs text-slate-400">
-                                        @if($assignment->deadline->isFuture())
-                                            {{ __('lms.common.due_label') }} {{ $assignment->deadline->format('d M Y H:i') }}
-                                        @else
-                                            <span class="text-red-600 font-medium">{{ __('lms.common.ended_label') }} {{ $assignment->deadline->format('d M Y H:i') }}</span>
-                                        @endif
-                                    </p>
+                        @forelse($assignments as $assignment)
+                            @php
+                                $submission = $assignment->submissions->where('participant_id', auth()->id())->first();
+                                if ($submission && $submission->isGraded()) {
+                                    $statusBadge = __('lms.common.graded');
+                                } elseif ($submission) {
+                                    $statusBadge = __('lms.common.submitted');
+                                } else {
+                                    $statusBadge = __('lms.common.not_submitted');
+                                }
+                            @endphp
+                            <x-lms-panel class="lms-timeline-item lms-timeline-item--assignment">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex gap-3 min-w-0">
+                                        <div class="lms-avatar-badge"><x-lms-icon name="document" /></div>
+                                        <div class="min-w-0">
+                                            <p class="font-semibold text-slate-800">{{ $assignment->creator?->name ?? __('lms.common.instructor_fallback') }}</p>
+                                            <p class="text-xs text-slate-400">
+                                                @if($assignment->deadline->isFuture())
+                                                    {{ __('lms.common.due_label') }} {{ $assignment->deadline->format('d M Y H:i') }}
+                                                @else
+                                                    <span class="text-red-600 font-medium">{{ __('lms.common.ended_label') }} {{ $assignment->deadline->format('d M Y H:i') }}</span>
+                                                @endif
+                                            </p>
+                                            <h4 class="font-bold text-slate-800 mt-2">{{ $assignment->title }}</h4>
+                                            <p class="text-slate-600 text-sm mt-1">{{ $assignment->description }}</p>
+                                            @if($assignment->attachment)
+                                                <a href="{{ route('secure.assignments.attachment', [$class, $assignment]) }}" target="_blank" class="text-xs text-brand-600 mt-2 inline-block hover:underline">{{ __('lms.common.download') }} {{ __('lms.common.attachment') }}</a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-2 shrink-0">
+                                        <span class="lms-badge {{ $submission && $submission->isGraded() ? 'lms-badge--success' : ($submission ? 'lms-badge--warning' : 'lms-badge--danger') }}">{{ $statusBadge }}</span>
+                                        <a href="{{ route('peserta.assignments.show', [$class, $assignment]) }}" class="lms-action-btn lms-action-btn--view">{{ __('lms.view') }}</a>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex gap-2 items-center">
-                                <span class="px-2 py-1 rounded-full text-xs font-medium {{ $statusColor }}">{{ $statusBadge }}</span>
-                                <a href="{{ route('peserta.assignments.show', [$class, $assignment]) }}" class="lms-action-btn lms-action-btn--view">{{ __('lms.view') }}</a>
-                            </div>
-                        </div>
-                        <h4 class="font-bold text-slate-800 mt-3">{{ $assignment->title }}</h4>
-                        <p class="text-slate-600 text-sm mt-1">{{ $assignment->description }}</p>
-                        @if($assignment->attachment)
-                            <a href="{{ route('secure.assignments.attachment', [$class, $assignment]) }}" target="_blank" class="text-xs text-blue-600 mt-2 inline-block hover:underline">📎 {{ __('lms.common.download') }} {{ __('lms.common.attachment') }}</a>
+                            </x-lms-panel>
+                        @empty
+                            <x-lms-panel class="lms-timeline-item text-center text-slate-400">{{ __('lms.common.no_assignments') }}</x-lms-panel>
+                        @endforelse
+
+                        @if(isset($attendances) && $attendances->count() > 0)
+                            <x-lms-panel class="lms-timeline-item lms-timeline-item--attendance">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex gap-3">
+                                        <div class="lms-avatar-badge"><x-lms-icon name="calendar" /></div>
+                                        <div>
+                                            <p class="font-semibold text-slate-800">{{ __('lms.common.attendance_summary') }}</p>
+                                            <p class="text-xs text-slate-400">{{ __('lms.common.attendance_records') }}</p>
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('peserta.attendances.index', $class) }}" class="lms-action-btn lms-action-btn--approve shrink-0">{{ __('lms.common.view_all_btn') }}</a>
+                                </div>
+                                <div class="lms-attendance-mini-grid mt-4">
+                                    <div class="lms-attendance-mini-stat bg-green-50/80"><p class="text-xl font-bold text-green-700 tabular-nums">{{ $attendances->where('status', 'present')->count() }}</p><p class="text-xs text-green-600">{{ __('lms.report.present') }}</p></div>
+                                    <div class="lms-attendance-mini-stat bg-amber-50/80"><p class="text-xl font-bold text-amber-700 tabular-nums">{{ $attendances->where('status', 'permission')->count() }}</p><p class="text-xs text-amber-600">{{ __('lms.report.permission') }}</p></div>
+                                    <div class="lms-attendance-mini-stat bg-orange-50/80"><p class="text-xl font-bold text-orange-700 tabular-nums">{{ $attendances->where('status', 'sick')->count() }}</p><p class="text-xs text-orange-600">{{ __('lms.report.sick') }}</p></div>
+                                    <div class="lms-attendance-mini-stat bg-red-50/80"><p class="text-xl font-bold text-red-700 tabular-nums">{{ $attendances->where('status', 'absent')->count() }}</p><p class="text-xs text-red-600">{{ __('lms.report.absent') }}</p></div>
+                                </div>
+                                @php
+                                    $totalMeetings = $attendances->count();
+                                    $presentCount = $attendances->where('status', 'present')->count();
+                                    $attRate = $totalMeetings > 0 ? round(($presentCount / $totalMeetings) * 100) : 0;
+                                @endphp
+                                <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700/60">
+                                    <x-lms-progress tone="success" :label="__('lms.dashboard.attendance_rate')" :value="$attRate" :max="100" :meta="$attRate.'%'" />
+                                </div>
+                            </x-lms-panel>
                         @endif
                     </div>
-                    @empty
-                    <div class="timeline-item bg-white rounded-xl p-6 text-center text-slate-400">{{ __('lms.common.no_assignments') }}</div>
-                    @endforelse
-
-                    @if(isset($attendances) && $attendances->count() > 0)
-                    <div class="timeline-item lms-timeline-item--attendance bg-white rounded-xl p-5 shadow-md border border-slate-200 border-l-4 border-l-green-500">
-                        <div class="flex items-start justify-between">
-                            <div class="flex gap-3">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-teal-400 flex items-center justify-center text-white text-lg">📅</div>
-                                <div>
-                                    <p class="font-semibold text-slate-800">{{ __('lms.common.attendance_summary') }}</p>
-                                    <p class="text-xs text-slate-400">{{ __('lms.common.attendance_records') }}</p>
-                                </div>
-                            </div>
-                            <a href="{{ route('peserta.attendances.index', $class) }}" class="lms-action-btn lms-action-btn--approve">{{ __('lms.common.view_all_btn') }}</a>
-                        </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-                            <div class="text-center p-2 bg-green-50 rounded-lg border border-green-200 hover:-translate-y-1 transition"><p class="text-2xl font-bold text-green-700">{{ $attendances->where('status', 'present')->count() }}</p><p class="text-xs text-green-600">{{ __('lms.report.present') }}</p></div>
-                            <div class="text-center p-2 bg-yellow-50 rounded-lg border border-yellow-200 hover:-translate-y-1 transition"><p class="text-2xl font-bold text-yellow-700">{{ $attendances->where('status', 'permission')->count() }}</p><p class="text-xs text-yellow-600">{{ __('lms.report.permission') }}</p></div>
-                            <div class="text-center p-2 bg-orange-50 rounded-lg border border-orange-200 hover:-translate-y-1 transition"><p class="text-2xl font-bold text-orange-700">{{ $attendances->where('status', 'sick')->count() }}</p><p class="text-xs text-orange-600">{{ __('lms.report.sick') }}</p></div>
-                            <div class="text-center p-2 bg-red-50 rounded-lg border border-red-200 hover:-translate-y-1 transition"><p class="text-2xl font-bold text-red-700">{{ $attendances->where('status', 'absent')->count() }}</p><p class="text-xs text-red-600">{{ __('lms.report.absent') }}</p></div>
-                        </div>
-                        @php
-                            $totalMeetings = $attendances->count();
-                            $presentCount = $attendances->where('status', 'present')->count();
-                            $attRate = $totalMeetings > 0 ? round(($presentCount / $totalMeetings) * 100) : 0;
-                        @endphp
-                        <div class="mt-4 pt-3 border-t border-slate-200">
-                            <x-lms-progress
-                                tone="success"
-                                :label="__('lms.dashboard.attendance_rate')"
-                                :value="$attRate"
-                                :max="100"
-                                :meta="$attRate.'%'"
-                            />
-                        </div>
-                    </div>
-                    @endif
-                </div>
+                </x-lms-section>
             </div>
         </div>
-    </div>
+    </x-lms-page-shell>
 </x-app-layout>

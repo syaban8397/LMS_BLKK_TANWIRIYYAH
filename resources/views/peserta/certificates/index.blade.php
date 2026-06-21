@@ -1,6 +1,6 @@
 <x-app-layout>
-    <div class="lms-module-shell space-y-5">
-        <x-lms-page-header
+    <x-lms-page-shell>
+    <x-lms-page-header
             :title="__('lms.certificate_page.my_cert')"
             :subtitle="__('lms.certificate_page.my_list_desc')"
             :back-url="route('peserta.dashboard')"
@@ -39,5 +39,5 @@
                 <x-lms-table-empty :colspan="5" :message="__('lms.certificate_page.no_certs_hint')" />
             @endforelse
         </x-lms-data-table>
-    </div>
+    </x-lms-page-shell>
 </x-app-layout>

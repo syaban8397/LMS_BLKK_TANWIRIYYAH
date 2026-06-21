@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 
 class SystemSetting extends Model
 {
+    private const CACHE_KEY = 'system_settings.current';
+
     protected $fillable = [
         'app_display_name',
         'default_theme',
@@ -21,12 +24,38 @@ class SystemSetting extends Model
         'mail_from_name',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(fn () => static::clearCache());
+        static::deleted(fn () => static::clearCache());
+    }
+
+    public static function clearCache(): void
+    {
+        Cache::forget(static::CACHE_KEY);
+    }
+
     public static function current(): self
     {
-        return static::firstOrCreate([], [
+        $cachedId = Cache::get(static::CACHE_KEY);
+
+        if (is_int($cachedId) || (is_string($cachedId) && ctype_digit($cachedId))) {
+            $settings = static::query()->find((int) $cachedId);
+            if ($settings instanceof self) {
+                return $settings;
+            }
+        }
+
+        static::clearCache();
+
+        $settings = static::firstOrCreate([], [
             'default_theme' => 'light',
             'default_locale' => 'id',
         ]);
+
+        Cache::forever(static::CACHE_KEY, $settings->getKey());
+
+        return $settings;
     }
 
     public static function applyMailConfig(): void

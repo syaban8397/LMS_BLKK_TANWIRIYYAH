@@ -1,5 +1,5 @@
 ﻿<x-app-layout>
-<div class="peserta-assignment-show-wrapper lms-module-shell space-y-6">
+    <x-lms-page-shell>
         <x-lms-page-header
             :title="$assignment->title"
             :subtitle="$class->title"
@@ -13,182 +13,152 @@
             ]"
         />
 
-        <x-lms-session-flash />
-
-        {{-- Assignment Details Card --}}
-        <div class="detail-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
-            <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">
-                <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    {{ __('lms.assignment.details') }}
-                </h3>
-            </div>
-            <div class="p-5 space-y-4">
-                <div class="info-section flex flex-wrap justify-between items-start gap-3">
-                    <div class="flex flex-wrap gap-4 text-xs text-slate-500">
-                        <span>👤 {{ $assignment->creator->name }}</span>
-                        <span>📅 {{ __('lms.assignment.posted_on', ['date' => $assignment->created_at->format('d M Y')]) }}</span>
-                        <span>⏰ {{ __('lms.assignment.deadline_on', ['date' => $assignment->deadline->format('d M Y H:i')]) }}</span>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        @if($assignment->deadline->isFuture())
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ __('lms.assignment.active') }}</span>
-                        @else
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">{{ __('lms.assignment.closed') }}</span>
-                            @if($assignment->late_submission_allowed)
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">⚠️ {{ __('lms.assignment.late_allowed_badge') }}</span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">⛔ {{ __('lms.assignment.no_late_badge') }}</span>
-                            @endif
-                        @endif
-                    </div>
-                </div>
-
-                <div class="info-section pt-2 border-t border-slate-100">
-                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-2">{{ __('lms.common.description') }}</p>
-                    <p class="text-slate-700 text-sm whitespace-pre-line">{{ $assignment->description }}</p>
-                </div>
-
-                @if($assignment->attachment)
-                    <div class="info-section pt-2 border-t border-slate-100">
-                        <p class="text-xs text-slate-500 font-semibold mb-2">📎 {{ __('lms.common.attachment') }}</p>
-                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">📄</span>
-                                <span class="text-sm text-slate-700">{{ basename($assignment->attachment) }}</span>
-                            </div>
-                            <a href="{{ route('secure.assignments.attachment', [$class, $assignment]) }}" target="_blank" class="lms-action-btn lms-action-btn--view inline-flex items-center gap-1">
-                                {{ __('lms.common.download') }}
-                            </a>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        {{-- Submission Section (3D Card dengan warna sesuai status) --}}
         @php
             $submission = $assignment->submissions->where('participant_id', auth()->id())->first();
             $canSubmit = $assignment->allowsSubmission();
         @endphp
 
-        @if($canSubmit)
-            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 {{ $assignment->deadline->isFuture() ? 'border-l-blue-500' : 'border-l-orange-500' }}">
-                <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r {{ $assignment->deadline->isFuture() ? 'from-blue-50' : 'from-orange-50' }} to-white">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                        <span>📤</span> {{ __('lms.assignment.submit_work') }}
-                        @if($assignment->deadline->isPast() && $assignment->late_submission_allowed)
-                            <span class="text-xs text-orange-600 font-medium bg-orange-100 px-2 py-0.5 rounded-full">{{ __('lms.assignment.late_allowed_badge') }}</span>
+        <x-lms-section :title="__('lms.assignment.details')" icon="document" compact>
+            <x-lms-panel>
+                <div class="flex flex-wrap justify-between items-start gap-3 mb-4">
+                    <div class="flex flex-wrap gap-x-4 gap-y-2">
+                        <x-lms-meta-chip icon="users">{{ $assignment->creator->name }}</x-lms-meta-chip>
+                        <x-lms-meta-chip icon="calendar">{{ __('lms.assignment.posted_on', ['date' => $assignment->created_at->format('d M Y')]) }}</x-lms-meta-chip>
+                        <x-lms-meta-chip icon="clock">{{ __('lms.assignment.deadline_on', ['date' => $assignment->deadline->format('d M Y H:i')]) }}</x-lms-meta-chip>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        @if($assignment->deadline->isFuture())
+                            <span class="lms-badge lms-badge--success">{{ __('lms.assignment.active') }}</span>
+                        @else
+                            <span class="lms-badge lms-badge--danger">{{ __('lms.assignment.closed') }}</span>
+                            @if($assignment->late_submission_allowed)
+                                <span class="lms-badge lms-badge--warning">{{ __('lms.assignment.late_allowed_badge') }}</span>
+                            @else
+                                <span class="lms-badge lms-badge--danger">{{ __('lms.assignment.no_late_badge') }}</span>
+                            @endif
                         @endif
-                    </h3>
+                    </div>
                 </div>
-                <div class="p-5 space-y-4">
+
+                <div class="lms-detail-list border-t border-slate-100 pt-4">
+                    <div class="lms-detail-row">
+                        <span class="lms-detail-row__label">{{ __('lms.common.description') }}</span>
+                        <span class="lms-detail-row__value whitespace-pre-line">{{ $assignment->description }}</span>
+                    </div>
+                </div>
+
+                @if($assignment->attachment)
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">{{ __('lms.common.attachment') }}</p>
+                        <div class="lms-attachment-row">
+                            <div class="lms-attachment-row__main">
+                                <x-lms-file-icon type="{{ pathinfo($assignment->attachment, PATHINFO_EXTENSION) }}" />
+                                <span class="text-sm text-slate-700 truncate">{{ basename($assignment->attachment) }}</span>
+                            </div>
+                            <a href="{{ route('secure.assignments.attachment', [$class, $assignment]) }}" target="_blank" class="lms-action-btn lms-action-btn--view shrink-0">
+                                {{ __('lms.common.download') }}
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            </x-lms-panel>
+        </x-lms-section>
+
+        @if($canSubmit)
+            <x-lms-section :title="__('lms.assignment.submit_work')" icon="upload" compact>
+                <x-lms-panel>
+                    @if($assignment->deadline->isPast() && $assignment->late_submission_allowed)
+                        <div class="mb-4">
+                            <span class="lms-badge lms-badge--warning">{{ __('lms.assignment.late_allowed_badge') }}</span>
+                        </div>
+                    @endif
+
                     @if($submission)
                         @if($submission->isGraded())
-                            <div class="bg-green-50 rounded-xl p-4 border border-green-200">
-                                <div class="flex items-start gap-2">
-                                    <span class="text-green-600 text-lg">✅</span>
-                                    <div>
-                                        <p class="text-green-800 font-medium">{{ __('lms.assignment.graded_message') }}</p>
-                                        @if($submission->feedback)
-                                            <p class="text-sm text-green-700 mt-2">{{ __('lms.assignment.feedback_label') }} {{ $submission->feedback }}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
+                            <x-lms-notice tone="success" :title="__('lms.assignment.graded_message')">
+                                @if($submission->feedback)
+                                    {{ __('lms.assignment.feedback_label') }} {{ $submission->feedback }}
+                                @endif
+                            </x-lms-notice>
                         @else
-                            <div class="{{ $submission->status == 'late' ? 'bg-orange-50 border-orange-200' : 'bg-yellow-50 border-yellow-200' }} rounded-xl p-4 border">
-                                <div class="flex items-start gap-2">
-                                    <span class="{{ $submission->status == 'late' ? 'text-orange-600' : 'text-yellow-600' }} text-lg">📋</span>
-                                    <div>
-                                        <p class="{{ $submission->status == 'late' ? 'text-orange-800' : 'text-yellow-800' }} font-medium">
-                                            {{ __('lms.assignment.submitted_on', ['date' => $submission->submitted_at->format('d M Y H:i')]) }}
-                                            @if($submission->status == 'late')
-                                                <span class="ml-2 text-xs bg-orange-200 px-1.5 py-0.5 rounded-full">{{ __('lms.grade.late') }}</span>
-                                            @endif
-                                        </p>
-                                        @if($assignment->deadline->isFuture())
-                                            <p class="text-yellow-700 text-sm">{{ __('lms.assignment.edit_until_deadline') }}</p>
-                                        @elseif($assignment->late_submission_allowed)
-                                            <p class="text-orange-700 text-sm">{{ __('lms.assignment.edit_after_deadline_late') }}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <a href="{{ route('peserta.submissions.edit', [$class, $assignment, $submission]) }}" class="lms-btn-warning inline-flex items-center gap-1">
-                                    ✏️ {{ __('lms.assignment.edit_submission') }}
+                            <x-lms-notice tone="warning" icon="clipboard" :title="__('lms.assignment.submitted_on', ['date' => $submission->submitted_at->format('d M Y H:i')])">
+                                @if($submission->status == 'late')
+                                    <span class="lms-badge lms-badge--warning">{{ __('lms.grade.late') }}</span>
+                                @endif
+                                @if($assignment->deadline->isFuture())
+                                    <p class="mt-1">{{ __('lms.assignment.edit_until_deadline') }}</p>
+                                @elseif($assignment->late_submission_allowed)
+                                    <p class="mt-1">{{ __('lms.assignment.edit_after_deadline_late') }}</p>
+                                @endif
+                            </x-lms-notice>
+                            <div class="mt-4">
+                                <a href="{{ route('peserta.submissions.edit', [$class, $assignment, $submission]) }}" class="lms-btn-secondary inline-flex items-center gap-2">
+                                    <x-lms-icon name="edit" class="w-4 h-4" />
+                                    {{ __('lms.assignment.edit_submission') }}
                                 </a>
                             </div>
                         @endif
                     @else
-                        @if($assignment->deadline->isFuture())
-                            <p class="text-blue-800 text-sm">{{ __('lms.assignment.submit_before_deadline') }}</p>
-                        @else
-                            <p class="text-orange-800 text-sm">{{ __('lms.assignment.submit_late_allowed') }}</p>
-                        @endif
-                        <a href="{{ route('peserta.submissions.create', [$class, $assignment]) }}" class="lms-btn-primary inline-flex items-center gap-1">
-                            {{ __('lms.assignment.submit_btn') }}
-                        </a>
+                        <x-lms-notice tone="info" :title="$assignment->deadline->isFuture() ? __('lms.assignment.submit_before_deadline') : __('lms.assignment.submit_late_allowed')" />
+                        <div class="mt-4">
+                            <a href="{{ route('peserta.submissions.create', [$class, $assignment]) }}" class="lms-btn-primary inline-flex items-center gap-2">
+                                <x-lms-icon name="upload" class="w-4 h-4" />
+                                {{ __('lms.assignment.submit_btn') }}
+                            </a>
+                        </div>
                     @endif
-                </div>
-            </div>
+                </x-lms-panel>
+            </x-lms-section>
         @else
-            {{-- Deadline passed and no late submission allowed --}}
-            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden border-l-4 border-l-red-500">
-                <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-red-50 to-white">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                        <span>⛔</span> {{ __('lms.assignment.submission_closed') }}
-                    </h3>
-                </div>
-                <div class="p-5 text-center">
-                    <div class="text-5xl mb-3">⛔</div>
-                    <h4 class="text-lg font-bold text-red-800 mb-2">{{ __('lms.assignment.submission_not_available') }}</h4>
-                    <p class="text-red-700">{{ __('lms.assignment.deadline_passed_no_late') }}</p>
-                    @if($assignment->deadline)
-                        <p class="text-sm text-red-600 mt-3">{{ __('lms.assignment.deadline_was', ['date' => $assignment->deadline->format('d M Y H:i')]) }}</p>
-                    @endif
-                </div>
-            </div>
+            <x-lms-section :title="__('lms.assignment.submission_closed')" icon="ban" compact>
+                <x-lms-panel>
+                    <div class="lms-empty-state-inline">
+                        <span class="lms-empty-state-inline__icon"><x-lms-icon name="ban" class="w-6 h-6" /></span>
+                        <h4 class="text-base font-bold text-red-800 mb-1">{{ __('lms.assignment.submission_not_available') }}</h4>
+                        <p class="text-sm text-red-700">{{ __('lms.assignment.deadline_passed_no_late') }}</p>
+                        @if($assignment->deadline)
+                            <p class="text-xs text-red-600 mt-2">{{ __('lms.assignment.deadline_was', ['date' => $assignment->deadline->format('d M Y H:i')]) }}</p>
+                        @endif
+                    </div>
+                </x-lms-panel>
+            </x-lms-section>
         @endif
 
-        {{-- Show submitted content if exists (file/url/notes) --}}
-        @if($submission && ($submission->file_path || $submission->url))
-            <div class="submission-card bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
-                <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-gray-50 to-white">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                        <span>📎</span> {{ __('lms.assignment.your_submission') }}
-                        @if($submission->status == 'late')
-                            <span class="text-xs text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">{{ __('lms.grade.late') }}</span>
+        @if($submission && ($submission->file_path || $submission->url || $submission->notes))
+            <x-lms-section :title="__('lms.assignment.your_submission')" icon="document" compact>
+                <x-slot:headerActions>
+                    @if($submission->status == 'late')
+                        <span class="lms-badge lms-badge--warning">{{ __('lms.grade.late') }}</span>
+                    @endif
+                </x-slot:headerActions>
+                <x-lms-panel>
+                    <div class="space-y-3">
+                        @if($submission->file_path)
+                            <div class="lms-attachment-row">
+                                <span class="text-sm text-slate-700">{{ __('lms.assignment.uploaded_file') }}</span>
+                                <a href="{{ route('secure.submissions.file', [$class, $assignment, $submission]) }}" target="_blank" class="lms-action-btn lms-action-btn--view">{{ __('lms.common.download') }}</a>
+                            </div>
                         @endif
-                    </h3>
-                </div>
-                <div class="p-5 space-y-3">
-                    @if($submission->file_path)
-                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                            <span class="text-sm text-slate-700">{{ __('lms.assignment.uploaded_file') }}</span>
-                            <a href="{{ route('secure.submissions.file', [$class, $assignment, $submission]) }}" target="_blank" class="text-blue-600 text-sm hover:underline">{{ __('lms.common.download') }}</a>
-                        </div>
-                    @endif
-                    @if($submission->url)
-                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                            <span class="text-sm text-slate-700">{{ __('lms.assignment.link_label') }}</span>
-                            <a href="{{ $submission->url }}" target="_blank" class="text-blue-600 text-sm hover:underline break-all">{{ $submission->url }}</a>
-                        </div>
-                    @endif
-                    @if($submission->notes)
-                        <div class="p-3 bg-slate-50 rounded-lg">
-                            <p class="text-sm text-slate-700"><strong>{{ __('lms.assignment.notes_label') }}</strong> {{ $submission->notes }}</p>
-                        </div>
-                    @endif
-                    @if($submission->isGraded() && $submission->feedback)
-                        <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                            <p class="text-sm text-green-800"><strong>{{ __('lms.assignment.instructor_feedback') }}</strong></p>
-                            <p class="text-sm text-green-700 mt-1">{{ $submission->feedback }}</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
+                        @if($submission->url)
+                            <div class="lms-attachment-row">
+                                <span class="text-sm text-slate-700">{{ __('lms.assignment.link_label') }}</span>
+                                <a href="{{ $submission->url }}" target="_blank" class="text-sm text-brand-600 hover:underline break-all">{{ $submission->url }}</a>
+                            </div>
+                        @endif
+                        @if($submission->notes)
+                            <div class="lms-detail-row border-0 pt-0">
+                                <span class="lms-detail-row__label">{{ __('lms.assignment.notes_label') }}</span>
+                                <span class="lms-detail-row__value">{{ $submission->notes }}</span>
+                            </div>
+                        @endif
+                        @if($submission->isGraded() && $submission->feedback)
+                            <x-lms-notice tone="success" :title="__('lms.assignment.instructor_feedback')">
+                                {{ $submission->feedback }}
+                            </x-lms-notice>
+                        @endif
+                    </div>
+                </x-lms-panel>
+            </x-lms-section>
         @endif
-    </div>
+    </x-lms-page-shell>
 </x-app-layout>

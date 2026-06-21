@@ -1,6 +1,6 @@
 <x-app-layout>
-    <div class="submissions-wrapper lms-module-shell space-y-6">
-        <x-lms-page-header
+    <x-lms-page-shell class="submissions-wrapper">
+    <x-lms-page-header
             :title="__('lms.grade.submissions_title', ['title' => $assignment->title])"
             :subtitle="$class->title"
             :back-url="route('instruktur.classes.stream', $class)"
@@ -14,6 +14,8 @@
 
         <x-lms-session-flash />
 
+        <x-lms-section :title="__('lms.dashboard.overview')" icon="chart" compact>
+            <x-lms-panel flush pad="false">
         <x-lms-stat-grid>
             <x-lms-stat-card
                 :label="__('lms.common.total')"
@@ -40,8 +42,10 @@
                 tone="indigo"
             />
         </x-lms-stat-grid>
+            </x-lms-panel>
+        </x-lms-section>
 
-        <x-lms-card class="table-card p-0 overflow-hidden" :title="__('lms.grade.submissions')" :meta="__('lms.grade.index_hint')">
+        <x-lms-section :title="__('lms.grade.submissions')" :description="__('lms.grade.index_hint')" icon="clipboard" compact>
             <x-lms-data-table :paginator="$submissions" :skeleton-cols="5">
                 <x-slot:head>
                     <tr>
@@ -82,6 +86,6 @@
                     />
                 @endforelse
             </x-lms-data-table>
-        </x-lms-card>
-    </div>
+        </x-lms-section>
+    </x-lms-page-shell>
 </x-app-layout>

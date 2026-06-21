@@ -1,26 +1,22 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('lms.auth.confirm_password_message') }}
-    </div>
+    <x-lms-auth-shell
+        :title="__('lms.auth.confirm_password')"
+        :subtitle="__('lms.auth.confirm_password_message')"
+    >
+        <form method="POST" action="{{ route('password.confirm') }}">
+            @csrf
 
-    <form method="POST" action="{{ route('password.confirm') }}">
-        @csrf
+            <div class="mb-5">
+                <label for="password" class="block text-slate-700 text-sm font-semibold mb-2">{{ __('lms.auth.password') }}</label>
+                <input id="password" type="password" name="password" required autocomplete="current-password" class="input-luxury">
+                @error('password')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
-        <div>
-            <x-input-label for="password" :value="__('lms.auth.password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
+            <button type="submit" class="btn-auth-primary">
                 {{ __('lms.auth.confirm') }}
-            </x-primary-button>
-        </div>
-    </form>
+            </button>
+        </form>
+    </x-lms-auth-shell>
 </x-guest-layout>

@@ -54,83 +54,55 @@ class CertificatePdfTemplateTest extends TestCase
 
 
 
-        $fonts = $ref->getMethod('certificateFonts');
+        $programLines = $ref->getMethod('page1ProgramLines');
+        $programLines->setAccessible(true);
+        $programLineData = $programLines->invoke($service, $context['program'], $context['class']);
 
-        $fonts->setAccessible(true);
+        $dynamic = $ref->getMethod('buildPage1DynamicLayers');
+        $dynamic->setAccessible(true);
+        $page1Dynamic = $dynamic->invoke(
+            $service,
+            $certificate,
+            'C.DM (CERTIFIED DIGITAL MARKETING)',
+            3,
+            $programLineData
+        );
 
-        $fontData = $fonts->invoke($service);
-
-
+        $page2 = $ref->getMethod('buildPage2DynamicLayers');
+        $page2->setAccessible(true);
+        $page2Dynamic = $page2->invoke($service, collect([$material]));
 
         $html = view('certificates.pdf', [
-
             'certificate' => $certificate,
-
             'class' => $context['class'],
-
             'program' => $context['program'],
-
             'participant' => $context['participant'],
-
             'materials' => collect([$material]),
-
             'degree' => 'C.DM (CERTIFIED DIGITAL MARKETING)',
-
             'validityYears' => 3,
-
             'trainingYear' => $context['class']->end_date->format('Y'),
-
             'qrDataUri' => 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>'),
-
             'logos' => $logoData,
-
-            'fonts' => $fontData,
-
+            'page1Masks' => $page1Dynamic['masks'],
+            'page1Layers' => $page1Dynamic['layers'],
+            'page2Layers' => $page2Dynamic['layers'],
+            'programLines' => $programLineData,
+            'hasProgramLine2' => isset($programLineData[1]),
             'organization' => config('certificate.organization'),
-
             'organizationEn' => config('certificate.organization_en'),
-
             'directorName' => config('certificate.director_name'),
-
             'directorTitleLine1' => config('certificate.director_title_line1'),
-
             'directorTitleLine2' => config('certificate.director_title_line2'),
-
         ])->render();
 
-
-
         $this->assertStringContainsString('p1-bg', $html);
-
-        $this->assertStringContainsString("@font-face", $html);
-
-        $this->assertStringContainsString('Montserrat', $html);
-
         $this->assertStringContainsString('field-mask', $html);
-
-        $this->assertStringContainsString(e(strtoupper($context['participant']->name)), $html);
-
-        $this->assertStringContainsString('Telah Berpartisipasi Pada Pelatihan Digital Marketing dan Evaluasi', $html);
-
-        $this->assertStringContainsString('Skema Digital Marketing Tahun', $html);
-
-        $this->assertStringContainsString('C.DM (CERTIFIED DIGITAL MARKETING)', $html);
-
-        $this->assertStringContainsString($certificate->certificate_number, $html);
-
-        $this->assertStringContainsString('Issued Date:', $html);
-
-        $this->assertStringContainsString($material->title, $html);
-
-        $this->assertStringContainsString('J.63OPR00.001.2', $html);
-
-        $this->assertStringContainsString('MATERI PELATIHAN', $html);
-
-        $this->assertStringContainsString('KODE UNIT', $html);
-
+        $this->assertStringContainsString('p1-layer', $html);
+        $this->assertStringContainsString('p2-layer', $html);
+        $this->assertStringContainsString('data:image/png;base64,', $html);
         $this->assertNotEmpty($logoData['page1_reference_bg'] ?? null);
-
-        $this->assertNotEmpty($fontData['bold'] ?? null);
+        $this->assertNotEmpty($page1Dynamic['layers']);
+        $this->assertNotEmpty($page2Dynamic['layers']);
 
     }
 

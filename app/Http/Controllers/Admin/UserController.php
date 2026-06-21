@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreUserRequest;
+use App\Http\Requests\Admin\UpdateUserApprovalStatusRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\User;
 use App\Support\SecureStorage;
-use App\Support\UploadRules;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -34,10 +36,16 @@ class UserController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $userStatsRow = User::query()
+            ->selectRaw('SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active')
+            ->selectRaw("SUM(CASE WHEN approval_status = 'pending' THEN 1 ELSE 0 END) as pending")
+            ->selectRaw("SUM(CASE WHEN role = 'instruktur' THEN 1 ELSE 0 END) as instructors")
+            ->first();
+
         $userStats = [
-            'active' => User::where('is_active', 1)->count(),
-            'pending' => User::where('approval_status', 'pending')->count(),
-            'instructors' => User::where('role', 'instruktur')->count(),
+            'active' => (int) ($userStatsRow->active ?? 0),
+            'pending' => (int) ($userStatsRow->pending ?? 0),
+            'instructors' => (int) ($userStatsRow->instructors ?? 0),
         ];
 
         return view(
@@ -51,24 +59,9 @@ class UserController extends Controller
         return view('admin.users.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        $request->validate([
-            'role' => 'required|in:admin,instruktur,peserta',
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8',
-            'nik' => 'nullable|string|max:30',
-            'phone' => 'nullable|string|max:20',
-            'gender' => 'nullable|in:L,P',
-            'birth_place' => 'nullable|string|max:100',
-            'birth_date' => 'nullable|date',
-            'address' => 'nullable|string',
-            'bio' => 'nullable|string',
-            'approval_status' => 'nullable|in:pending,approved,rejected',
-            'is_active' => 'nullable|boolean',
-            'photo' => UploadRules::profilePhoto(2048),
-        ]);
+        $validated = $request->validated();
 
         $photo = null;
 
@@ -77,21 +70,21 @@ class UserController extends Controller
         }
 
         $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'nik' => $request->nik,
-            'phone' => $request->phone,
-            'gender' => $request->gender,
-            'birth_place' => $request->birth_place,
-            'birth_date' => $request->birth_date,
-            'address' => $request->address,
-            'bio' => $request->bio,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'nik' => $validated['nik'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'birth_place' => $validated['birth_place'] ?? null,
+            'birth_date' => $validated['birth_date'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'bio' => $validated['bio'] ?? null,
             'photo' => $photo,
-            'approval_status' => $request->approval_status ?? 'approved',
+            'approval_status' => $validated['approval_status'] ?? 'approved',
             'is_active' => $request->boolean('is_active', true),
         ]);
-        $user->role = $request->role;
+        $user->role = $validated['role'];
         $user->save();
 
         return redirect()
@@ -115,36 +108,21 @@ class UserController extends Controller
         );
     }
 
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        $request->validate([
-            'role' => 'required|in:admin,instruktur,peserta',
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'nik' => 'nullable|max:50',
-            'phone' => 'nullable|max:30',
-            'gender' => 'nullable|in:L,P',
-            'birth_place' => 'nullable|max:100',
-            'birth_date' => 'nullable|date',
-            'address' => 'nullable',
-            'bio' => 'nullable',
-            'photo' => UploadRules::profilePhoto(2048),
-            'approval_status' => 'required|in:pending,approved,rejected',
-            'is_active' => 'nullable|boolean',
-            'password' => 'nullable|min:8',
-        ]);
+        $validated = $request->validated();
 
         $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'nik' => $request->nik,
-            'phone' => $request->phone,
-            'gender' => $request->gender,
-            'birth_place' => $request->birth_place,
-            'birth_date' => $request->birth_date,
-            'address' => $request->address,
-            'bio' => $request->bio,
-            'approval_status' => $request->approval_status,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'nik' => $validated['nik'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'birth_place' => $validated['birth_place'] ?? null,
+            'birth_date' => $validated['birth_date'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'bio' => $validated['bio'] ?? null,
+            'approval_status' => $validated['approval_status'],
             'is_active' => $request->boolean('is_active'),
         ];
 
@@ -154,12 +132,12 @@ class UserController extends Controller
         }
 
         if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+            $data['password'] = Hash::make($validated['password']);
         }
 
         if (
             $user->role === 'admin'
-            && $request->role !== 'admin'
+            && $validated['role'] !== 'admin'
             && User::where('role', 'admin')->count() <= 1
         ) {
             return back()
@@ -168,7 +146,7 @@ class UserController extends Controller
         }
 
         $user->fill($data);
-        $user->role = $request->role;
+        $user->role = $validated['role'];
         $user->save();
 
         return redirect()
@@ -195,16 +173,10 @@ class UserController extends Controller
             ->with('success', __('lms.flash.user_deleted'));
     }
 
-    public function updateStatus(Request $request, User $user): RedirectResponse
+    public function updateStatus(UpdateUserApprovalStatusRequest $request, User $user): RedirectResponse
     {
-        $request->validate([
-            'approval_status' => [
-                'required',
-                'in:pending,approved,rejected',
-            ],
-        ]);
-
-        $status = $request->approval_status;
+        $validated = $request->validated();
+        $status = $validated['approval_status'];
 
         $user->update([
             'approval_status' => $status,

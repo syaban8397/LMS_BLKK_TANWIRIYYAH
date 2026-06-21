@@ -1,6 +1,6 @@
 <x-app-layout>
-    <div class="lms-module-shell space-y-5">
-        <x-lms-page-header
+    <x-lms-page-shell>
+    <x-lms-page-header
             :title="__('lms.certificate_page.my_class_cert')"
             :subtitle="__('lms.certificate_page.instructor_manage_desc')"
             :back-url="route('instruktur.dashboard')"
@@ -39,5 +39,5 @@
                 <x-lms-table-empty :colspan="4" :message="__('lms.certificate_page.no_classes_assigned')" />
             @endforelse
         </x-lms-data-table>
-    </div>
+    </x-lms-page-shell>
 </x-app-layout>

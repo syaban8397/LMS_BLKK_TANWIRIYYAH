@@ -204,6 +204,8 @@ return [
 
     'dashboard' => [
         'menu' => 'Dashboard',
+        'overview' => 'Ringkasan',
+        'progress' => 'Progres & Kinerja',
         'logged_in' => 'Anda sudah masuk.',
         'admin_title' => 'Dashboard Admin',
         'admin_subtitle' => 'Selamat datang kembali, :name. Berikut ringkasan aktivitas LMS.',

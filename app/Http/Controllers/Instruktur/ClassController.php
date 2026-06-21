@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
+use App\Http\Controllers\Concerns\EnsuresNestedResourceBelongsToClass;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\ClassParticipant;
@@ -12,24 +13,26 @@ use Illuminate\Http\Request;
 class ClassController extends Controller
 {
     use AuthorizesInstructorClass;
+    use EnsuresNestedResourceBelongsToClass;
 
     public function index()
     {
         $classes = ClassModel::where('instructor_id', auth()->id())
-            ->with(['program', 'participants'])
+            ->with(['program'])
+            ->withCount('participants')
             ->latest()
             ->paginate(10);
 
-        $totalClasses = ClassModel::where('instructor_id', auth()->id())->count();
+        $instructorId = auth()->id();
+        $classIds = ClassModel::where('instructor_id', $instructorId)->pluck('id');
 
-        $activeClasses = ClassModel::where('instructor_id', auth()->id())
+        $totalClasses = $classIds->count();
+
+        $activeClasses = ClassModel::where('instructor_id', $instructorId)
             ->where('status', 'active')
             ->count();
 
-        $totalStudents = ClassParticipant::whereIn(
-            'class_id',
-            ClassModel::where('instructor_id', auth()->id())->pluck('id')
-        )->count();
+        $totalStudents = ClassParticipant::whereIn('class_id', $classIds)->count();
 
         return view(
             'instruktur.classes.index',
@@ -83,19 +86,28 @@ class ClassController extends Controller
             ],
         ]);
 
-        foreach ($validated['participant_ids'] as $participantId) {
-            $exists = ClassParticipant::where('class_id', $class->id)
-                ->where('participant_id', $participantId)
-                ->exists();
+        $participantIds = array_map('intval', $validated['participant_ids']);
+        $existingIds = ClassParticipant::where('class_id', $class->id)
+            ->whereIn('participant_id', $participantIds)
+            ->pluck('participant_id')
+            ->all();
 
-            if (!$exists) {
-                ClassParticipant::create([
-                    'class_id' => $class->id,
-                    'participant_id' => $participantId,
-                    'enrolled_at' => now(),
-                    'status' => 'active',
-                ]);
-            }
+        $now = now();
+        $rows = collect($participantIds)
+            ->diff($existingIds)
+            ->map(fn (int $participantId) => [
+                'class_id' => $class->id,
+                'participant_id' => $participantId,
+                'enrolled_at' => $now,
+                'status' => 'active',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])
+            ->values()
+            ->all();
+
+        if ($rows !== []) {
+            ClassParticipant::insert($rows);
         }
 
         return redirect()
@@ -107,9 +119,7 @@ class ClassController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($participant->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($participant, $class);
 
         $participant->delete();
 
@@ -122,9 +132,7 @@ class ClassController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($participant->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($participant, $class);
 
         $validated = $request->validate([
             'status' => 'required|in:active,completed,dropped',

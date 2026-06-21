@@ -1,146 +1,87 @@
 <x-app-layout>
-    <div class="instructor-wrapper lms-page-shell space-y-6">
+    <x-lms-page-shell>
         <x-lms-page-header
             :title="__('lms.dashboard.instruktur_title')"
             :subtitle="__('lms.dashboard.instruktur_subtitle', ['name' => auth()->user()->name])"
-        >
-            <x-slot:actions>
-                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 lms-badge lms-badge--info">
-                    <x-lms-icon name="academic-cap" class="w-4 h-4" />
-                    {{ __('lms.dashboard.instruktur_panel') }}
-                </div>
-            </x-slot:actions>
-        </x-lms-page-header>
+            :badge="__('lms.dashboard.instruktur_panel')"
+        />
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="stat-card p-5">
-                <div class="flex justify-between items-start gap-3">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.my_classes') }}</p>
-                        <p class="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1 counter" data-value="{{ $classes ?? 0 }}">0</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><x-lms-icon name="building" class="w-5 h-5" /></div>
-                </div>
-                <div class="mt-3 text-xs text-slate-500">{{ __('lms.dashboard.my_classes_hint') }}</div>
-            </div>
-            <div class="stat-card p-5">
-                <div class="flex justify-between items-start gap-3">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.materials') }}</p>
-                        <p class="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1 counter" data-value="{{ $materials ?? 0 }}">0</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><x-lms-icon name="book" class="w-5 h-5" /></div>
-                </div>
-                <div class="mt-3 text-xs text-slate-500">{{ __('lms.dashboard.materials_hint') }}</div>
-            </div>
-            <div class="stat-card p-5">
-                <div class="flex justify-between items-start gap-3">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.assignments') }}</p>
-                        <p class="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1 counter" data-value="{{ $assignments ?? 0 }}">0</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><x-lms-icon name="document" class="w-5 h-5" /></div>
-                </div>
-                <div class="mt-3 text-xs text-slate-500">{{ __('lms.dashboard.assignments_hint') }}</div>
-            </div>
-            <div class="stat-card p-5">
-                <div class="flex justify-between items-start gap-3">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.students') }}</p>
-                        <p class="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1 counter" data-value="{{ $participants ?? 0 }}">0</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><x-lms-icon name="graduation-cap" class="w-5 h-5" /></div>
-                </div>
-                <div class="mt-3 text-xs text-slate-500">{{ __('lms.dashboard.students_enrolled') }}</div>
-            </div>
-        </div>
+        <x-lms-section :title="__('lms.dashboard.overview')" icon="chart" compact>
+            <x-lms-panel flush pad="false">
+                <x-lms-stat-grid class="lms-stat-grid--4">
+                    <x-lms-stat-card :label="__('lms.dashboard.my_classes')" :value="$classes ?? 0" icon="building" tone="blue" :animate="true" :hint="__('lms.dashboard.my_classes_hint')" />
+                    <x-lms-stat-card :label="__('lms.dashboard.materials')" :value="$materials ?? 0" icon="book" tone="green" :animate="true" :hint="__('lms.dashboard.materials_hint')" />
+                    <x-lms-stat-card :label="__('lms.dashboard.assignments')" :value="$assignments ?? 0" icon="document" tone="amber" :animate="true" :hint="__('lms.dashboard.assignments_hint')" />
+                    <x-lms-stat-card :label="__('lms.dashboard.students')" :value="$participants ?? 0" icon="graduation-cap" tone="indigo" :animate="true" :hint="__('lms.dashboard.students_enrolled')" />
+                </x-lms-stat-grid>
+            </x-lms-panel>
+        </x-lms-section>
 
-        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
-            <div class="progress-card p-5">
-                <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.dashboard.active_classes') }}</p>
-                <h3 class="text-3xl font-bold text-green-600 mt-1 counter" data-value="{{ $activeClasses ?? 0 }}">0</h3>
-                <div class="mt-2 text-xs text-slate-500">{{ __('lms.dashboard.active_classes_hint') }}</div>
-            </div>
-            <div class="progress-card p-5">
-                <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.dashboard.pending_grading') }}</p>
-                <h3 class="text-3xl font-bold text-yellow-500 mt-1 counter" data-value="{{ $pendingGrades ?? 0 }}">0</h3>
-                <div class="mt-2 text-xs text-slate-500">{{ __('lms.dashboard.pending_grading_hint') }}</div>
-            </div>
-            <div class="progress-card p-5">
-                <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.dashboard.attendance_sessions') }}</p>
-                <h3 class="text-3xl font-bold text-blue-600 mt-1 counter" data-value="{{ $attendanceSessions ?? 0 }}">0</h3>
-                <div class="mt-2 text-xs text-slate-500">{{ __('lms.dashboard.attendance_sessions_hint') }}</div>
-            </div>
-            <div class="progress-card p-5">
-                <p class="text-xs text-slate-400 uppercase tracking-wide">{{ __('lms.dashboard.announcements') }}</p>
-                <h3 class="text-3xl font-bold text-indigo-600 mt-1 counter" data-value="{{ $announcements ?? 0 }}">0</h3>
-                <div class="mt-2 text-xs text-slate-500">{{ __('lms.dashboard.announcements_hint') }}</div>
-            </div>
-        </div>
+        <x-lms-section :title="__('lms.dashboard.progress')" icon="clipboard" compact>
+            <x-lms-panel flush pad="false">
+                <x-lms-stat-grid class="lms-stat-grid--4">
+                    <x-lms-stat-card :label="__('lms.dashboard.active_classes')" :value="$activeClasses ?? 0" icon="check-circle" tone="green" :animate="true" :hint="__('lms.dashboard.active_classes_hint')" />
+                    <x-lms-stat-card :label="__('lms.dashboard.pending_grading')" :value="$pendingGrades ?? 0" icon="clock" tone="amber" :animate="true" :hint="__('lms.dashboard.pending_grading_hint')" />
+                    <x-lms-stat-card :label="__('lms.dashboard.attendance_sessions')" :value="$attendanceSessions ?? 0" icon="calendar" tone="blue" :animate="true" :hint="__('lms.dashboard.attendance_sessions_hint')" />
+                    <x-lms-stat-card :label="__('lms.dashboard.announcements')" :value="$announcements ?? 0" icon="megaphone" tone="indigo" :animate="true" :hint="__('lms.dashboard.announcements_hint')" />
+                </x-lms-stat-grid>
+            </x-lms-panel>
+        </x-lms-section>
 
-        <div class="quick-card p-5">
-            <div class="flex justify-between items-center mb-5">
-                <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2">
-                    <span>⚡</span> {{ __('lms.dashboard.quick_access') }}
-                </h2>
-                <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">{{ __('lms.dashboard.instructor_tools') }}</span>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn">
-                    🏫 {{ __('lms.dashboard.my_classes') }}
-                </a>
-                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn">
-                    📖 {{ __('lms.dashboard.materials') }}
-                </a>
-                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn">
-                    📝 {{ __('lms.dashboard.assignments') }}
-                </a>
-                <a href="{{ route('instruktur.classes.index') }}" class="quick-btn">
-                    📅 {{ __('lms.dashboard.attendance_sessions') }}
-                </a>
-            </div>
-        </div>
+        <x-lms-section :title="__('lms.dashboard.quick_access')" icon="bolt" compact>
+            <x-lms-panel>
+                <div class="lms-quick-grid">
+                    <a href="{{ route('instruktur.classes.index') }}" class="lms-quick-link">
+                        <span class="lms-quick-link__icon"><x-lms-icon name="building" /></span>
+                        <span>{{ __('lms.dashboard.my_classes') }}</span>
+                    </a>
+                    <a href="{{ route('instruktur.classes.index') }}" class="lms-quick-link">
+                        <span class="lms-quick-link__icon"><x-lms-icon name="book" /></span>
+                        <span>{{ __('lms.dashboard.materials') }}</span>
+                    </a>
+                    <a href="{{ route('instruktur.classes.index') }}" class="lms-quick-link">
+                        <span class="lms-quick-link__icon"><x-lms-icon name="document" /></span>
+                        <span>{{ __('lms.dashboard.assignments') }}</span>
+                    </a>
+                    <a href="{{ route('instruktur.classes.index') }}" class="lms-quick-link">
+                        <span class="lms-quick-link__icon"><x-lms-icon name="calendar" /></span>
+                        <span>{{ __('lms.dashboard.attendance_sessions') }}</span>
+                    </a>
+                </div>
+            </x-lms-panel>
+        </x-lms-section>
 
         @if(isset($recentClasses) && count($recentClasses) > 0)
-        <div class="quick-card bg-white rounded-xl p-5 shadow-md border border-slate-200" style="animation-delay: 0.45s;">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-base font-semibold text-slate-800 flex items-center gap-2">
-                    <span>📋</span> {{ __('lms.dashboard.recent_classes') }}
-                </h3>
-                <a href="{{ route('instruktur.classes.index') }}" class="text-xs text-blue-600 hover:underline">{{ __('lms.dashboard.view_all') }}</a>
-            </div>
-            <div class="space-y-3">
+        <x-lms-section :title="__('lms.dashboard.recent_classes')" icon="clipboard" compact>
+            <x-slot:headerActions>
+                <a href="{{ route('instruktur.classes.index') }}" class="text-xs font-medium text-brand-600 hover:text-brand-700 transition">{{ __('lms.dashboard.view_all') }}</a>
+            </x-slot:headerActions>
+            <x-lms-panel>
                 @foreach($recentClasses as $class)
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100 hover:shadow-md transition">
-                    <div>
-                        <p class="font-medium text-slate-800">{{ $class->title }}</p>
-                        <p class="text-xs text-slate-500">{{ $class->code }} • {{ $class->participants->count() }}/{{ $class->quota }} {{ __('lms.dashboard.students') }}</p>
+                    <div class="lms-list-item">
+                        <div class="min-w-0">
+                            <p class="lms-list-item__title">{{ $class->title }}</p>
+                            <p class="lms-list-item__meta">{{ $class->code }} • {{ $class->participants_count }}/{{ $class->quota }} {{ __('lms.dashboard.students') }}</p>
+                        </div>
+                        <x-lms-action-btn variant="view" :href="route('instruktur.classes.stream', $class)">{{ __('lms.dashboard.view_class') }}</x-lms-action-btn>
                     </div>
-                    <a href="{{ route('instruktur.classes.stream', $class) }}" class="lms-action-btn lms-action-btn--view">{{ __('lms.dashboard.view_class') }}</a>
-                </div>
                 @endforeach
-            </div>
-        </div>
+            </x-lms-panel>
+        </x-lms-section>
         @endif
-    </div>
+    </x-lms-page-shell>
 
     <script>
-        function animateCounter(el, value) {
-            let start = 0;
-            let end = parseInt(value);
-            let step = Math.ceil(end / 40);
-            let interval = setInterval(() => {
-                start += step;
-                if (start >= end) {
-                    start = end;
-                    clearInterval(interval);
-                }
-                el.innerText = start;
-            }, 20);
-        }
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.counter').forEach(el => {
-                animateCounter(el, el.dataset.value);
+                const end = parseInt(el.dataset.value) || 0;
+                let start = 0;
+                const step = Math.max(1, Math.ceil(end / 40));
+                const interval = setInterval(() => {
+                    start += step;
+                    if (start >= end) { start = end; clearInterval(interval); }
+                    el.firstChild.textContent = start;
+                }, 20);
             });
         });
     </script>

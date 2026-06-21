@@ -1,6 +1,6 @@
 {{-- resources/views/peserta/attendances/index.blade.php --}}
 <x-app-layout>
-    <div class="peserta-attendance-wrapper lms-module-shell space-y-6">
+    <x-lms-page-shell>
         <x-lms-page-header
             :title="$class->title . ' - ' . __('lms.common.attendance')"
             :subtitle="__('lms.attendance.index_subtitle')"
@@ -13,9 +13,7 @@
             ]"
         />
 
-        <x-lms-session-flash />
-
-        <x-lms-card class="attendance-card p-0" :title="__('lms.attendance.sessions')" :meta="__('lms.attendance.index_card_meta')">
+        <x-lms-section :title="__('lms.attendance.sessions')" :description="__('lms.attendance.index_card_meta')" icon="clipboard" compact>
             <x-lms-data-table :skeleton-cols="7">
                 <x-slot:head>
                     <tr>
@@ -43,17 +41,42 @@
                         <td class="px-5 py-4 text-slate-600 dark:text-slate-300">{{ \Carbon\Carbon::parse($attendance->attendance_date)->format('d F Y H:i') }}</td>
                         <td class="px-5 py-4 text-center">
                             @switch($attendance->status)
-                                @case('present') <span class="lms-badge lms-badge--success">✅ {{ __('lms.report.present') }}</span> @break
-                                @case('permission') <span class="lms-badge lms-badge--warning">📝 {{ __('lms.report.permission') }}</span> @break
-                                @case('sick') <span class="lms-badge lms-badge--warning">🤒 {{ __('lms.report.sick') }}</span> @break
-                                @default <span class="lms-badge lms-badge--danger">❌ {{ __('lms.report.absent') }}</span>
+                                @case('present')
+                                    <span class="lms-badge lms-badge--success inline-flex items-center gap-1">
+                                        <x-lms-icon name="check-circle" class="w-3 h-3" />
+                                        {{ __('lms.report.present') }}
+                                    </span>
+                                    @break
+                                @case('permission')
+                                    <span class="lms-badge lms-badge--warning inline-flex items-center gap-1">
+                                        <x-lms-icon name="edit" class="w-3 h-3" />
+                                        {{ __('lms.report.permission') }}
+                                    </span>
+                                    @break
+                                @case('sick')
+                                    <span class="lms-badge lms-badge--warning inline-flex items-center gap-1">
+                                        <x-lms-icon name="warning" class="w-3 h-3" />
+                                        {{ __('lms.report.sick') }}
+                                    </span>
+                                    @break
+                                @default
+                                    <span class="lms-badge lms-badge--danger inline-flex items-center gap-1">
+                                        <x-lms-icon name="ban" class="w-3 h-3" />
+                                        {{ __('lms.report.absent') }}
+                                    </span>
                             @endswitch
                         </td>
                         <td class="px-5 py-4 text-center">
                             @if($attendance->submission_type == 'self')
-                                <span class="lms-badge lms-badge--info">📱 {{ __('lms.attendance.self') }}</span>
+                                <span class="lms-badge lms-badge--info inline-flex items-center gap-1">
+                                    <x-lms-icon name="clipboard" class="w-3 h-3" />
+                                    {{ __('lms.attendance.self') }}
+                                </span>
                             @else
-                                <span class="lms-badge lms-badge--warning">✏️ {{ __('lms.attendance.by_instructor') }}</span>
+                                <span class="lms-badge lms-badge--warning inline-flex items-center gap-1">
+                                    <x-lms-icon name="edit" class="w-3 h-3" />
+                                    {{ __('lms.attendance.by_instructor') }}
+                                </span>
                             @endif
                         </td>
                         <td class="px-5 py-4 text-center text-slate-600 dark:text-slate-300">{{ $attendance->check_in_time ? \Carbon\Carbon::parse($attendance->check_in_time)->format('H:i:s') : '-' }}</td>
@@ -88,6 +111,6 @@
                     <x-lms-table-empty :colspan="7" :message="__('lms.attendance.no_sessions')" />
                 @endforelse
             </x-lms-data-table>
-        </x-lms-card>
-    </div>
+        </x-lms-section>
+    </x-lms-page-shell>
 </x-app-layout>

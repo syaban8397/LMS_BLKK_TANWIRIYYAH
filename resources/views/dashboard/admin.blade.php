@@ -1,84 +1,94 @@
 <x-app-layout>
-    <div class="dashboard-wrapper lms-page-shell space-y-8">
+    <x-lms-page-shell>
         <x-lms-page-header
             :title="__('lms.dashboard.admin_title')"
             :subtitle="__('lms.dashboard.admin_subtitle', ['name' => auth()->user()->name])"
         />
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="dashboard-card p-5">
-                <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.total_participants') }}</p>
-                <h3 class="text-2xl font-semibold text-slate-900 mt-1 counter" data-value="{{ $participants ?? 0 }}">0</h3>
-                @if(($pendingParticipants ?? 0) > 0)
-                    <p class="text-xs text-amber-600 mt-2">{{ $pendingParticipants }} {{ __('lms.dashboard.pending_approval') }}</p>
-                @endif
-            </div>
-            <div class="dashboard-card p-5">
-                <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.active_instructors') }}</p>
-                <h3 class="text-2xl font-semibold text-slate-900 mt-1 counter" data-value="{{ $instructors ?? 0 }}">0</h3>
-            </div>
-            <div class="dashboard-card p-5">
-                <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.running_classes') }}</p>
-                <h3 class="text-2xl font-semibold text-slate-900 mt-1 counter" data-value="{{ $classes ?? 0 }}">0</h3>
-            </div>
-            <div class="dashboard-card p-5">
-                <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">{{ __('lms.dashboard.certificates_issued') }}</p>
-                <h3 class="text-2xl font-semibold text-slate-900 mt-1 counter" data-value="{{ $certificates ?? 0 }}">0</h3>
-            </div>
-        </div>
+        <x-lms-section :title="__('lms.dashboard.overview')" icon="chart" compact>
+            <x-lms-panel flush pad="false">
+                <x-lms-stat-grid class="lms-stat-grid--4">
+                    <x-lms-stat-card
+                        :label="__('lms.dashboard.total_participants')"
+                        :value="$participants ?? 0"
+                        icon="users"
+                        tone="blue"
+                        :animate="true"
+                        :hint="($pendingParticipants ?? 0) > 0 ? $pendingParticipants.' '.__('lms.dashboard.pending_approval') : null"
+                    />
+                    <x-lms-stat-card
+                        :label="__('lms.dashboard.active_instructors')"
+                        :value="$instructors ?? 0"
+                        icon="academic-cap"
+                        tone="indigo"
+                        :animate="true"
+                    />
+                    <x-lms-stat-card
+                        :label="__('lms.dashboard.running_classes')"
+                        :value="$classes ?? 0"
+                        icon="building"
+                        tone="green"
+                        :animate="true"
+                    />
+                    <x-lms-stat-card
+                        :label="__('lms.dashboard.certificates_issued')"
+                        :value="$certificates ?? 0"
+                        icon="certificate"
+                        tone="amber"
+                        :animate="true"
+                    />
+                </x-lms-stat-grid>
+            </x-lms-panel>
+        </x-lms-section>
 
-        <div class="grid lg:grid-cols-3 gap-4">
-            <div class="analytics-card p-5 lg:col-span-2">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-semibold text-slate-900 text-sm flex items-center gap-2">
-                        <x-lms-icon name="chart" class="w-4 h-4 text-indigo-600" />
-                        {{ __('lms.dashboard.recent_activity') }}
-                    </h3>
-                    <span id="lastUpdate" class="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">{{ __('lms.loading') }}...</span>
-                </div>
-                <div class="space-y-4 text-sm">
-                    <div class="flex justify-between border-b border-slate-100 pb-2"><span class="text-slate-600">{{ __('lms.dashboard.materials') }}</span><span class="font-semibold">{{ $materials ?? 0 }}</span></div>
-                    <div class="flex justify-between border-b border-slate-100 pb-2"><span class="text-slate-600">{{ __('lms.dashboard.assignments') }}</span><span class="font-semibold">{{ $assignments ?? 0 }}</span></div>
-                    <div class="flex justify-between border-b border-slate-100 pb-2"><span class="text-slate-600">{{ __('lms.dashboard.attendance_sessions') }}</span><span class="font-semibold">{{ $attendanceSessions ?? 0 }}</span></div>
-                    <div class="flex justify-between border-b border-slate-100 pb-2"><span class="text-slate-600">{{ __('lms.dashboard.total_attendance') }}</span><span class="font-semibold">{{ $attendances ?? 0 }}</span></div>
-                    <div class="flex justify-between border-b border-slate-100 pb-2"><span class="text-slate-600">{{ __('lms.dashboard.grades_processed') }}</span><span class="font-semibold">{{ $grades ?? 0 }}</span></div>
-                    <div class="flex justify-between"><a href="{{ route('admin.announcements.index') }}" class="text-slate-600 hover:text-blue-600">{{ __('lms.dashboard.announcements') }}</a><span class="font-semibold">{{ $announcements ?? 0 }}</span></div>
-                </div>
-                <div class="mt-6 pt-4 border-t border-slate-100">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-slate-500">{{ __('lms.dashboard.avg_attendance') }}</span>
-                        <span class="font-medium text-slate-700">{{ $avgAttendance ?? 0 }}%</span>
+        <div class="lms-dashboard-grid lms-dashboard-grid--2-1">
+            <x-lms-section :title="__('lms.dashboard.recent_activity')" icon="clipboard" compact>
+                <x-lms-panel>
+                    <x-slot:headerActions>
+                        <span id="lastUpdate" class="lms-badge lms-badge--info text-[10px]">{{ __('lms.loading') }}...</span>
+                    </x-slot:headerActions>
+                    <div class="lms-activity-list">
+                        <div class="lms-activity-row"><span class="text-slate-600">{{ __('lms.dashboard.materials') }}</span><span class="font-semibold tabular-nums">{{ $materials ?? 0 }}</span></div>
+                        <div class="lms-activity-row"><span class="text-slate-600">{{ __('lms.dashboard.assignments') }}</span><span class="font-semibold tabular-nums">{{ $assignments ?? 0 }}</span></div>
+                        <div class="lms-activity-row"><span class="text-slate-600">{{ __('lms.dashboard.attendance_sessions') }}</span><span class="font-semibold tabular-nums">{{ $attendanceSessions ?? 0 }}</span></div>
+                        <div class="lms-activity-row"><span class="text-slate-600">{{ __('lms.dashboard.total_attendance') }}</span><span class="font-semibold tabular-nums">{{ $attendances ?? 0 }}</span></div>
+                        <div class="lms-activity-row"><span class="text-slate-600">{{ __('lms.dashboard.grades_processed') }}</span><span class="font-semibold tabular-nums">{{ $grades ?? 0 }}</span></div>
+                        <div class="lms-activity-row"><a href="{{ route('admin.announcements.index') }}" class="text-slate-600 hover:text-brand-600 transition">{{ __('lms.dashboard.announcements') }}</a><span class="font-semibold tabular-nums">{{ $announcements ?? 0 }}</span></div>
                     </div>
-                    <div class="w-full bg-slate-100 rounded-full h-2 mt-2">
-                        <div class="bg-blue-500 h-2 rounded-full" style="width: {{ min($avgAttendance ?? 0, 100) }}%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="analytics-card p-5">
-                <h3 class="font-semibold text-slate-900 text-sm mb-4 flex items-center gap-2">
-                    <x-lms-icon name="clipboard" class="w-4 h-4 text-indigo-600" />
-                    {{ __('lms.dashboard.program_distribution') }}
-                </h3>
-                @forelse($programDistribution ?? [] as $program)
-                    <div class="mb-4">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-slate-600 truncate pr-2">{{ $program['name'] }}</span>
-                            <span class="font-medium shrink-0">{{ $program['count'] }}</span>
+                    <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700/60">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-slate-500">{{ __('lms.dashboard.avg_attendance') }}</span>
+                            <span class="font-semibold tabular-nums text-slate-700 dark:text-slate-200">{{ $avgAttendance ?? 0 }}%</span>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-2">
-                            <div class="bg-blue-500 h-2 rounded-full" style="width: {{ ($program['count'] / max($maxProgramCount, 1)) * 100 }}%"></div>
+                        <div class="lms-progress-track">
+                            <div class="lms-progress-fill" style="width: {{ min($avgAttendance ?? 0, 100) }}%"></div>
                         </div>
                     </div>
-                @empty
-                    <p class="text-sm text-slate-400">{{ __('lms.no_data') }}</p>
-                @endforelse
-                <div class="mt-4 text-right">
-                    <a href="{{ route('admin.programs.index') }}" class="text-sm text-blue-600 hover:underline">{{ __('lms.dashboard.view_programs') }} →</a>
-                </div>
-            </div>
+                </x-lms-panel>
+            </x-lms-section>
+
+            <x-lms-section :title="__('lms.dashboard.program_distribution')" icon="programs" compact>
+                <x-slot:headerActions>
+                    <a href="{{ route('admin.programs.index') }}" class="text-xs font-medium text-brand-600 hover:text-brand-700 transition">{{ __('lms.dashboard.view_programs') }} →</a>
+                </x-slot:headerActions>
+                <x-lms-panel>
+                    @forelse($programDistribution ?? [] as $program)
+                        <div class="mb-4 last:mb-0">
+                            <div class="flex justify-between text-sm mb-1.5 gap-2">
+                                <span class="text-slate-600 truncate">{{ $program['name'] }}</span>
+                                <span class="font-semibold tabular-nums shrink-0">{{ $program['count'] }}</span>
+                            </div>
+                            <div class="lms-progress-track">
+                                <div class="lms-progress-fill" style="width: {{ ($program['count'] / max($maxProgramCount, 1)) * 100 }}%"></div>
+                            </div>
+                        </div>
+                    @empty
+                        <x-lms-empty-state icon="inbox" :title="__('lms.no_data')" class="border-0 shadow-none !py-6" />
+                    @endforelse
+                </x-lms-panel>
+            </x-lms-section>
         </div>
-    </div>
+    </x-lms-page-shell>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -89,7 +99,11 @@
                 const interval = setInterval(() => {
                     start += step;
                     if (start >= end) { start = end; clearInterval(interval); }
-                    el.innerText = start;
+                    if (el.firstChild && el.firstChild.nodeType === Node.TEXT_NODE) {
+                        el.firstChild.textContent = start;
+                    } else {
+                        el.textContent = start;
+                    }
                 }, 20);
             });
             setInterval(() => {

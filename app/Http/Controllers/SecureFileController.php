@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\AuthorizesActiveEnrollment;
 use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
+use App\Http\Controllers\Concerns\EnsuresNestedResourceBelongsToClass;
 use App\Models\Assignment;
 use App\Models\ClassModel;
 use App\Models\Material;
@@ -14,7 +16,9 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class SecureFileController extends Controller
 {
+    use AuthorizesActiveEnrollment;
     use AuthorizesInstructorClass;
+    use EnsuresNestedResourceBelongsToClass;
 
     public function userPhoto(User $user): BinaryFileResponse
     {
@@ -29,10 +33,7 @@ class SecureFileController extends Controller
 
     public function assignmentAttachment(ClassModel $class, Assignment $assignment): BinaryFileResponse
     {
-        if ($assignment->class_id !== $class->id) {
-            abort(404);
-        }
-
+        $this->ensureBelongsToClass($assignment, $class);
         $this->authorizeFileAccess($class);
 
         return $this->streamFile(
@@ -43,10 +44,7 @@ class SecureFileController extends Controller
 
     public function materialFile(ClassModel $class, Material $material): BinaryFileResponse
     {
-        if ($material->class_id !== $class->id) {
-            abort(404);
-        }
-
+        $this->ensureBelongsToClass($material, $class);
         $this->authorizeFileAccess($class);
 
         return $this->streamFile(
@@ -57,7 +55,9 @@ class SecureFileController extends Controller
 
     public function submissionFile(ClassModel $class, Assignment $assignment, Submission $submission): BinaryFileResponse
     {
-        if ($assignment->class_id !== $class->id || $submission->assignment_id !== $assignment->id) {
+        $this->ensureBelongsToClass($assignment, $class);
+
+        if ($submission->assignment_id !== $assignment->id) {
             abort(404);
         }
 
@@ -72,7 +72,7 @@ class SecureFileController extends Controller
         } elseif ($user->role === 'admin') {
             // allowed
         } elseif ($user->role === 'peserta') {
-            $this->authorizeActiveEnrollment($class);
+            $this->authorizeActiveStudent($class);
         } else {
             abort(403);
         }
@@ -98,24 +98,12 @@ class SecureFileController extends Controller
         }
 
         if ($user->role === 'peserta') {
-            $this->authorizeActiveEnrollment($class);
+            $this->authorizeActiveStudent($class);
 
             return;
         }
 
         abort(403);
-    }
-
-    protected function authorizeActiveEnrollment(ClassModel $class): void
-    {
-        $isEnrolled = $class->participants()
-            ->where('participant_id', auth()->id())
-            ->where('status', 'active')
-            ->exists();
-
-        if (!$isEnrolled) {
-            abort(403, __('lms.access.not_enrolled'));
-        }
     }
 
     protected function canViewUserPhoto(User $viewer, User $subject): bool

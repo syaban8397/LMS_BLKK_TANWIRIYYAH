@@ -1,5 +1,5 @@
 ﻿<x-app-layout>
-    <div class="lms-page-shell max-w-5xl mx-auto space-y-6">
+    <x-lms-page-shell class="max-w-5xl mx-auto">
         <x-lms-page-header :title="__('lms.profile')" :subtitle="__('lms.profile_page.subtitle')" />
 
         <x-lms-session-flash />
@@ -10,7 +10,7 @@
             @method('PATCH')
 
             <div class="grid lg:grid-cols-3 gap-5">
-                <div class="card-3d">
+                <x-lms-panel>
                     <x-lms-form-card :title="__('lms.common.profile_photo')" icon="camera">
                         <div class="flex flex-col items-center text-center">
                             <img id="photo-preview"
@@ -25,15 +25,15 @@
                                 <span class="lms-btn-secondary w-full inline-flex justify-center text-xs py-2">
                                     {{ __('lms.profile_page.upload_new_photo') }}
                                 </span>
-                                <input id="photo" name="photo" type="file" accept="image/*" class="sr-only" onchange="previewPhoto(event)">
+                                <input id="photo" name="photo" type="file" accept="image/*" class="hidden" onchange="previewPhoto(event)">
                             </label>
                             <p class="text-[11px] text-slate-400 mt-2">{{ __('lms.common.leave_blank') }}</p>
                             <x-input-error class="mt-2" :messages="$errors->get('photo')" />
                         </div>
                     </x-lms-form-card>
-                </div>
+                </x-lms-panel>
 
-                <div class="lg:col-span-2 card-3d">
+                <x-lms-panel class="lg:col-span-2">
                     <x-lms-form-card :title="__('lms.common.user_information')" icon="edit">
                         <p class="text-xs text-slate-500 mb-4">{{ __('lms.profile_page.subtitle') }}</p>
 
@@ -100,18 +100,22 @@
                             <x-ds.button type="submit" variant="primary">{{ __('lms.save') }}</x-ds.button>
                         </x-lms-form-actions>
                     </x-lms-form-card>
-                </div>
+                </x-lms-panel>
             </div>
         </form>
 
-        <div class="premium-card p-6 sm:p-8">
-            @include('profile.partials.update-password-form')
-        </div>
+        <x-lms-section :title="__('lms.profile_page.update_password')" compact>
+            <x-lms-panel>
+                @include('profile.partials.update-password-form')
+            </x-lms-panel>
+        </x-lms-section>
 
-        <div class="premium-card p-6 sm:p-8">
-            @include('profile.partials.delete-user-form')
-        </div>
-    </div>
+        <x-lms-section :title="__('lms.profile_page.delete_account')" compact>
+            <x-lms-panel>
+                @include('profile.partials.delete-user-form')
+            </x-lms-panel>
+        </x-lms-section>
+    </x-lms-page-shell>
 
     <script>
         function previewPhoto(event) {

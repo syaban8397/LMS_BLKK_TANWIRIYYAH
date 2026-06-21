@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Peserta;
 
 use App\Http\Controllers\Concerns\AuthorizesActiveEnrollment;
+use App\Http\Controllers\Concerns\EnsuresNestedResourceBelongsToClass;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModel;
 use App\Models\Assignment;
@@ -10,6 +11,7 @@ use App\Models\Assignment;
 class AssignmentController extends Controller
 {
     use AuthorizesActiveEnrollment;
+    use EnsuresNestedResourceBelongsToClass;
 
     public function index(ClassModel $class)
     {
@@ -29,7 +31,9 @@ class AssignmentController extends Controller
     {
         $this->authorizeActiveStudent($class);
 
-        if ($assignment->class_id !== $class->id || !$assignment->is_active) {
+        $this->ensureBelongsToClass($assignment, $class);
+
+        if (!$assignment->is_active) {
             abort(404);
         }
 

@@ -10,7 +10,8 @@
     @vite(['resources/css/app.css'])
 </head>
 <body class="lms-verify-body antialiased">
-    <div class="lms-verify-card text-center">
+<x-lms-public-shell centered>
+<div class="lms-verify-card text-center">
         <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-16 w-auto mx-auto mb-4">
         <div class="lms-public-card__icon lms-public-card__icon--danger">
             <x-lms-icon name="x-circle" />
@@ -23,5 +24,6 @@
             <a href="{{ url('/') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition">{{ __('lms.app_name') }}</a>
         </div>
     </div>
+</x-lms-public-shell>
 </body>
 </html>

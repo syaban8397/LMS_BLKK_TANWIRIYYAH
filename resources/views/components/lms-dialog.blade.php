@@ -14,7 +14,9 @@
         <div class="lms-dialog-backdrop" @click="closeAlert()"></div>
         <div class="lms-dialog-panel" role="alertdialog" aria-modal="true" @keydown.escape.window="closeAlert()">
             <div class="lms-dialog-body">
-                <div class="lms-dialog-icon lms-dialog-icon--info">ℹ️</div>
+                <div class="lms-dialog-icon lms-dialog-icon--info" aria-hidden="true">
+                    <x-lms-icon name="info" class="w-5 h-5" />
+                </div>
                 <div class="lms-dialog-content">
                     <h3 class="lms-dialog-title">{{ __('lms.common.dialog_info') }}</h3>
                     <p class="lms-dialog-message" x-text="message"></p>
@@ -39,7 +41,9 @@
         <div class="lms-dialog-backdrop" @click="confirmNo()"></div>
         <div class="lms-dialog-panel" role="alertdialog" aria-modal="true" @keydown.escape.window="confirmNo()">
             <div class="lms-dialog-body">
-                <div class="lms-dialog-icon lms-dialog-icon--warning">⚠️</div>
+                <div class="lms-dialog-icon lms-dialog-icon--warning" aria-hidden="true">
+                    <x-lms-icon name="warning" class="w-5 h-5" />
+                </div>
                 <div class="lms-dialog-content">
                     <h3 class="lms-dialog-title">{{ __('lms.common.dialog_confirm') }}</h3>
                     <p class="lms-dialog-message" x-text="message"></p>

@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterUserRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -19,46 +17,24 @@ class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(RegisterUserRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                'unique:users,email',
-            ],
-            'nik' => ['nullable', 'string', 'max:50', 'unique:users,nik'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'gender' => ['nullable', 'in:L,P'],
-            'birth_place' => ['nullable', 'string', 'max:100'],
-            'birth_date' => ['nullable', 'date'],
-            'address' => ['nullable', 'string'],
-            'password' => [
-                'required',
-                'confirmed',
-                Rules\Password::defaults(),
-            ],
-            'terms_accepted' => ['accepted'],
-        ]);
+        $validated = $request->validated();
 
         $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'nik' => $request->nik,
-            'phone' => $request->phone,
-            'gender' => $request->gender,
-            'birth_place' => $request->birth_place,
-            'birth_date' => $request->birth_date,
-            'address' => $request->address,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'nik' => $validated['nik'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'birth_place' => $validated['birth_place'] ?? null,
+            'birth_date' => $validated['birth_date'] ?? null,
+            'address' => $validated['address'] ?? null,
             'photo' => null,
             'bio' => null,
             'is_active' => false,
             'approval_status' => 'pending',
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($validated['password']),
         ]);
         $user->role = 'peserta';
         $user->save();

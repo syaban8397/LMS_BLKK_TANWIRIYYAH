@@ -1,57 +1,46 @@
 <x-guest-layout>
-    <div class="lms-guest-page">
-        <div class="lms-auth-card lms-auth-card--forgot p-8 md:p-10 relative">
-            <div class="absolute top-4 right-4 z-10">
-                <x-locale-switcher />
+    <x-lms-auth-shell
+        :title="__('lms.auth.forgot_page_title')"
+        :subtitle="__('lms.auth.forgot_page_desc')"
+    >
+        @if(session('error'))
+            <x-lms-flash type="error" class="mb-5">{{ session('error') }}</x-lms-flash>
+        @endif
+
+        <form method="POST" action="{{ route('password.verify') }}" id="forgotForm" novalidate>
+            @csrf
+
+            <div class="mb-5">
+                <label for="email" class="block text-slate-700 dark:text-slate-200 text-sm font-semibold mb-2">{{ __('lms.auth.email') }}</label>
+                <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
+                       class="input-luxury @error('email') border-red-400 @enderror"
+                       placeholder="{{ __('lms.auth.placeholder_email') }}">
+                @error('email')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
-            <div class="text-center mb-8">
-                <div class="lms-brand-logo-pad mx-auto mb-4">
-                    <img src="{{ asset('storage/images/Logo.png') }}" alt="{{ __('lms.app_name') }}" class="h-16 w-auto">
-                </div>
-                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100">{{ __('lms.auth.forgot_page_title') }}</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 leading-relaxed max-w-md mx-auto">{{ __('lms.auth.forgot_page_desc') }}</p>
+            <div class="mb-6">
+                <label for="nik" class="block text-slate-700 dark:text-slate-200 text-sm font-semibold mb-2">{{ __('lms.auth.nik') }}</label>
+                <input type="text" name="nik" id="nik" value="{{ old('nik') }}" required
+                       class="input-luxury @error('nik') border-red-400 @enderror"
+                       placeholder="{{ __('lms.auth.placeholder_nik') }}">
+                @error('nik')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
-            @if(session('error'))
-                <x-lms-flash type="error" class="mb-5">{{ session('error') }}</x-lms-flash>
-            @endif
+            <button type="submit" class="btn-auth-primary" id="forgotSubmit">
+                {{ __('lms.auth.forgot_verify_btn') }}
+            </button>
 
-            <form method="POST" action="{{ route('password.verify') }}" id="forgotForm" novalidate>
-                @csrf
-
-                <div class="mb-5">
-                    <label for="email" class="block text-slate-700 dark:text-slate-200 text-sm font-semibold mb-2">{{ __('lms.auth.email') }}</label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
-                           class="input-luxury @error('email') border-red-400 @enderror"
-                           placeholder="{{ __('lms.auth.placeholder_email') }}">
-                    @error('email')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="mb-6">
-                    <label for="nik" class="block text-slate-700 dark:text-slate-200 text-sm font-semibold mb-2">{{ __('lms.auth.nik') }}</label>
-                    <input type="text" name="nik" id="nik" value="{{ old('nik') }}" required
-                           class="input-luxury @error('nik') border-red-400 @enderror"
-                           placeholder="{{ __('lms.auth.placeholder_nik') }}">
-                    @error('nik')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <button type="submit" class="btn-auth-primary" id="forgotSubmit">
-                    {{ __('lms.auth.forgot_verify_btn') }}
-                </button>
-
-                <div class="text-center mt-6">
-                    <a href="{{ route('login') }}" class="lms-auth-link text-sm inline-flex items-center gap-1">
-                        <span aria-hidden="true">←</span> {{ __('lms.auth.back_to_login') }}
-                    </a>
-                </div>
-            </form>
-        </div>
-    </div>
+            <div class="text-center mt-6">
+                <a href="{{ route('login') }}" class="lms-auth-link text-sm inline-flex items-center gap-1">
+                    <span aria-hidden="true">←</span> {{ __('lms.auth.back_to_login') }}
+                </a>
+            </div>
+        </form>
+    </x-lms-auth-shell>
 
     @if(session('popup_error'))
         <div id="authPopup" class="lms-auth-modal" role="dialog" aria-modal="true">

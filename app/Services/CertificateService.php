@@ -11,6 +11,7 @@ use App\Models\FinalGrade;
 use App\Models\Material;
 use App\Models\Submission;
 use App\Models\User;
+use App\Support\CertificateTextRenderer;
 use App\Support\SecureStorage;
 use BaconQrCode\Common\ErrorCorrectionLevel;
 use BaconQrCode\Encoder\Encoder;
@@ -129,6 +130,17 @@ class CertificateService
 
     public function bulkUpdateStatus(ClassModel $class, array $statuses): int
     {
+        $totalMeetings = Attendance::where('class_id', $class->id)
+            ->select('meeting_number')
+            ->distinct()
+            ->count();
+
+        $attendanceCounts = Attendance::where('class_id', $class->id)
+            ->whereIn('status', ['present', 'permission', 'sick'])
+            ->selectRaw('participant_id, COUNT(*) as aggregate')
+            ->groupBy('participant_id')
+            ->pluck('aggregate', 'participant_id');
+
         $updated = 0;
 
         foreach ($statuses as $participantId => $status) {
@@ -140,7 +152,21 @@ class CertificateService
                 ->where('participant_id', $participantId)
                 ->firstOrFail();
 
-            $this->updateStatus($class, (int) $participantId, $status);
+            $attendanceCount = (int) ($attendanceCounts[$participantId] ?? 0);
+            $attendancePercentage = $totalMeetings > 0
+                ? round(($attendanceCount / $totalMeetings) * 100, 2)
+                : 0;
+
+            $finalGrade = FinalGrade::firstOrNew([
+                'class_id' => $class->id,
+                'participant_id' => (int) $participantId,
+            ]);
+
+            $finalGrade->attendance_score = $attendancePercentage;
+            $finalGrade->assignment_score = $finalGrade->assignment_score ?? 0;
+            $finalGrade->final_score = $finalGrade->final_score ?? $finalGrade->attendance_score;
+            $finalGrade->status = $status;
+            $finalGrade->save();
 
             $updated++;
         }
@@ -150,12 +176,19 @@ class CertificateService
 
     public function bulkIssue(ClassModel $class, array $participantIds): array
     {
+        $statsByParticipant = collect($this->getClassStats($class))
+            ->keyBy(fn (array $row) => $row['participant']->id);
+
         $issued = [];
         $errors = [];
 
         foreach ($participantIds as $participantId) {
             try {
-                $this->issue($class, (int) $participantId);
+                $this->issue(
+                    $class,
+                    (int) $participantId,
+                    $statsByParticipant->get((int) $participantId)
+                );
                 $issued[] = $participantId;
             } catch (\RuntimeException $e) {
                 $errors[] = $e->getMessage();
@@ -174,9 +207,9 @@ class CertificateService
         });
     }
 
-    public function issue(ClassModel $class, int $participantId): Certificate
+    public function issue(ClassModel $class, int $participantId, ?array $precomputedStats = null): Certificate
     {
-        return DB::transaction(function () use ($class, $participantId) {
+        return DB::transaction(function () use ($class, $participantId, $precomputedStats) {
             $class->load('program');
 
             $finalGrade = FinalGrade::where('class_id', $class->id)
@@ -187,8 +220,12 @@ class CertificateService
                 throw new \RuntimeException(__('lms.flash.participant_not_passed'));
             }
 
-            $stats = collect($this->getClassStats($class))
-                ->first(fn ($row) => $row['participant']->id === $participantId);
+            if ($precomputedStats !== null) {
+                $stats = $precomputedStats;
+            } else {
+                $stats = collect($this->getClassStats($class))
+                    ->first(fn ($row) => $row['participant']->id === $participantId);
+            }
 
             $certificate = Certificate::where('class_id', $class->id)
                 ->where('participant_id', $participantId)
@@ -459,7 +496,14 @@ class CertificateService
 
         $qrPath = $certificate->qr_code;
         $logos = $this->certificateLogos();
-        $fonts = $this->certificateFonts();
+        $programLines = $this->page1ProgramLines($program, $class);
+        $page1Dynamic = $this->buildPage1DynamicLayers(
+            $certificate,
+            $degree,
+            $validityYears,
+            $programLines
+        );
+        $page2Dynamic = $this->buildPage2DynamicLayers($materials);
 
         $pdf = Pdf::loadView('certificates.pdf', [
             'certificate' => $certificate,
@@ -472,7 +516,11 @@ class CertificateService
             'trainingYear' => $class->end_date->format('Y'),
             'qrDataUri' => $this->qrDataUri($qrPath),
             'logos' => $logos,
-            'fonts' => $fonts,
+            'page1Masks' => $page1Dynamic['masks'],
+            'page1Layers' => $page1Dynamic['layers'],
+            'page2Layers' => $page2Dynamic['layers'],
+            'programLines' => $programLines,
+            'hasProgramLine2' => isset($programLines[1]),
             'organization' => config('certificate.organization', 'YMT Creator Base BLKK Tanwiriyyah - Kementerian Ketenagakerjaan RI'),
             'organizationEn' => config('certificate.organization_en', 'BLKK Tanwiriyyah - Ministry of Manpower'),
             'directorName' => config('certificate.director_name', 'Zaid Ahmad, S.Kom.'),
@@ -481,9 +529,9 @@ class CertificateService
         ])
             ->setPaper('a4', 'landscape')
             ->setOption('dpi', 200)
-            ->setOption('defaultFont', 'Montserrat')
+            ->setOption('defaultFont', 'montserrat')
             ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isFontSubsettingEnabled', true);
+            ->setOption('isFontSubsettingEnabled', false);
 
         $path = 'certificates/pdf/' . $certificate->certificate_number . '.pdf';
         $this->putRequired($path, $pdf->output());
@@ -518,5 +566,276 @@ class CertificateService
         $name = preg_replace('/\s+/', ' ', $name);
 
         return ($name !== '' ? $name : 'SERTIFIKAT') . '.pdf';
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function page1ProgramLines(\App\Models\Program $program, ClassModel $class): array
+    {
+        $programName = $program->name;
+        $trainingYear = $class->end_date->format('Y');
+
+        if (preg_match('/^(.+?)\s+(Skema\s+.+)$/iu', $programName, $skemaMatch)) {
+            return [
+                'Telah Berpartisipasi Pada Pelatihan ' . trim($skemaMatch[1]),
+                trim($skemaMatch[2]) . ' Tahun ' . $trainingYear,
+            ];
+        }
+
+        return [
+            'Telah Berpartisipasi Pada Pelatihan ' . $programName . ' Tahun ' . $trainingYear,
+        ];
+    }
+
+    /**
+     * @param  list<string>  $programLines
+     * @return array{masks: list<array{l: float, t: float, w: float, h: float}>, layers: list<array{top: float, left: float, width: float, base64: string}>}
+     */
+    protected function buildPage1DynamicLayers(
+        Certificate $certificate,
+        string $degree,
+        int $validityYears,
+        array $programLines
+    ): array {
+        $validityWordId = match ((int) $validityYears) {
+            1 => 'Satu', 2 => 'Dua', 3 => 'Tiga', 4 => 'Empat', 5 => 'Lima',
+            default => (string) $validityYears,
+        };
+        $validityWordEn = match ((int) $validityYears) {
+            1 => 'one', 2 => 'two', 3 => 'three', 4 => 'four', 5 => 'five',
+            default => (string) $validityYears,
+        };
+
+        $masks = [
+            ['l' => 103.0, 't' => 45.0, 'w' => 162.0, 'h' => 16.5],
+            ['l' => 78.0, 't' => 77.0, 'w' => 200.0, 'h' => 22.0],
+            ['l' => 118.0, 't' => 119.0, 'w' => 136.0, 'h' => 14.0],
+            ['l' => 122.0, 't' => 132.0, 'w' => 126.0, 'h' => 20.0],
+            ['l' => 235.0, 't' => 185.0, 'w' => 58.0, 'h' => 18.0],
+            ['l' => 169.0, 't' => 162.0, 'w' => 24.5, 'h' => 24.5],
+        ];
+
+        $render = static fn (array $options): string => CertificateTextRenderer::render($options);
+
+        $layers = [
+            [
+                'top' => 47.9,
+                'left' => 106.2,
+                'width' => 152.0,
+                'base64' => $render([
+                    'text' => strtoupper($certificate->participant->name),
+                    'fontFile' => CertificateTextRenderer::fontPath('black'),
+                    'fontSizePt' => 25,
+                    'color' => '#000000',
+                    'widthMm' => 152.0,
+                    'align' => 'center',
+                ]),
+            ],
+            [
+                'top' => 79.6,
+                'left' => 83.5,
+                'width' => 196.0,
+                'base64' => $render([
+                    'text' => $programLines[0],
+                    'fontFile' => CertificateTextRenderer::fontPath('bold'),
+                    'fontSizePt' => 15,
+                    'color' => '#002d5b',
+                    'widthMm' => 196.0,
+                    'align' => 'left',
+                ]),
+            ],
+            [
+                'top' => 122.3,
+                'left' => 121.6,
+                'width' => 130.0,
+                'base64' => $render([
+                    'text' => $degree,
+                    'fontFile' => CertificateTextRenderer::fontPath('black'),
+                    'fontSizePt' => 17,
+                    'color' => '#b91c1c',
+                    'widthMm' => 130.0,
+                    'align' => 'left',
+                ]),
+            ],
+            [
+                'top' => 134.5,
+                'left' => 125.4,
+                'width' => 122.0,
+                'base64' => $render([
+                    'text' => "Sertifikat ini berlaku untuk : {$validityYears} ({$validityWordId}) Tahun",
+                    'fontFile' => CertificateTextRenderer::fontPath('bold'),
+                    'fontSizePt' => 15,
+                    'color' => '#002d5b',
+                    'widthMm' => 122.0,
+                    'align' => 'left',
+                ]),
+            ],
+            [
+                'top' => 142.3,
+                'left' => 135.3,
+                'width' => 102.0,
+                'base64' => $render([
+                    'text' => "This Certificate is valid for {$validityYears} ({$validityWordEn}) years",
+                    'fontFile' => CertificateTextRenderer::fontPath('italic'),
+                    'fontSizePt' => 13,
+                    'color' => '#757575',
+                    'widthMm' => 102.0,
+                    'align' => 'left',
+                ]),
+            ],
+            [
+                'top' => 191.8,
+                'left' => 238.0,
+                'width' => 49.0,
+                'base64' => $render([
+                    'text' => $certificate->certificate_number,
+                    'fontFile' => CertificateTextRenderer::fontPath('bold'),
+                    'fontSizePt' => 10,
+                    'color' => '#002d5b',
+                    'widthMm' => 49.0,
+                    'align' => 'left',
+                ]),
+            ],
+            [
+                'top' => 196.5,
+                'left' => 241.9,
+                'width' => 44.5,
+                'base64' => $render([
+                    'text' => 'Issued Date: ' . $certificate->issued_at->format('Y-m-d'),
+                    'fontFile' => CertificateTextRenderer::fontPath('bold'),
+                    'fontSizePt' => 10,
+                    'color' => '#002d5b',
+                    'widthMm' => 44.5,
+                    'align' => 'left',
+                ]),
+            ],
+        ];
+
+        if (isset($programLines[1])) {
+            $layers[] = [
+                'top' => 87.0,
+                'left' => 125.5,
+                'width' => 106.5,
+                'base64' => $render([
+                    'text' => $programLines[1],
+                    'fontFile' => CertificateTextRenderer::fontPath('bold'),
+                    'fontSizePt' => 15,
+                    'color' => '#002d5b',
+                    'widthMm' => 106.5,
+                    'align' => 'left',
+                ]),
+            ];
+        }
+
+        return [
+            'masks' => $masks,
+            'layers' => $layers,
+        ];
+    }
+
+    /**
+     * @return array{layers: list<array{top: float, left: float, width: float, base64: string}>}
+     */
+    protected function buildPage2DynamicLayers($materials): array
+    {
+        $maxRows = 11;
+        $rowTextY = [41.56, 55.74, 70.19, 84.34, 97.84, 111.34, 125.08, 138.58, 152.31, 165.81, 179.31];
+        $render = static fn (array $options): string => CertificateTextRenderer::render($options);
+
+        $layers = [
+            [
+                'top' => 27.80,
+                'left' => 10.60,
+                'width' => 15.80,
+                'base64' => $render([
+                    'text' => 'NO',
+                    'fontFile' => CertificateTextRenderer::fontPath('bold'),
+                    'fontSizePt' => 13,
+                    'color' => '#000000',
+                    'widthMm' => 15.80,
+                    'align' => 'center',
+                ]),
+            ],
+            [
+                'top' => 27.80,
+                'left' => 26.40,
+                'width' => 205.75,
+                'base64' => $render([
+                    'text' => 'MATERI PELATIHAN',
+                    'fontFile' => CertificateTextRenderer::fontPath('bold'),
+                    'fontSizePt' => 13,
+                    'color' => '#000000',
+                    'widthMm' => 205.75,
+                    'align' => 'center',
+                ]),
+            ],
+            [
+                'top' => 28.48,
+                'left' => 232.15,
+                'width' => 54.36,
+                'base64' => $render([
+                    'text' => 'KODE UNIT',
+                    'fontFile' => CertificateTextRenderer::fontPath('bold'),
+                    'fontSizePt' => 11,
+                    'color' => '#000000',
+                    'widthMm' => 54.36,
+                    'align' => 'center',
+                ]),
+            ],
+        ];
+
+        $indexed = $materials->values();
+
+        for ($i = 0; $i < $maxRows; $i++) {
+            $rowNum = $i + 1;
+            $y = $rowTextY[$i];
+
+            $layers[] = [
+                'top' => $y,
+                'left' => 10.60,
+                'width' => 15.80,
+                'base64' => $render([
+                    'text' => (string) $rowNum,
+                    'fontFile' => CertificateTextRenderer::fontPath('regular'),
+                    'fontSizePt' => 13,
+                    'color' => '#000000',
+                    'widthMm' => 15.80,
+                    'align' => 'center',
+                ]),
+            ];
+
+            if ($indexed->has($i)) {
+                $material = $indexed[$i];
+                $layers[] = [
+                    'top' => $y + 0.08,
+                    'left' => 29.45,
+                    'width' => 200.0,
+                    'base64' => $render([
+                        'text' => $material->title,
+                        'fontFile' => CertificateTextRenderer::fontPath('regular'),
+                        'fontSizePt' => 12,
+                        'color' => '#000000',
+                        'widthMm' => 200.0,
+                        'align' => 'left',
+                    ]),
+                ];
+                $layers[] = [
+                    'top' => $y,
+                    'left' => 232.15,
+                    'width' => 54.36,
+                    'base64' => $render([
+                        'text' => $material->material_code ?: '-',
+                        'fontFile' => CertificateTextRenderer::fontPath('regular'),
+                        'fontSizePt' => 13,
+                        'color' => '#000000',
+                        'widthMm' => 54.36,
+                        'align' => 'center',
+                    ]),
+                ];
+            }
+        }
+
+        return ['layers' => $layers];
     }
 }

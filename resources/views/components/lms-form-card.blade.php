@@ -1,6 +1,6 @@
-@props(['title' => null, 'icon' => null])
+@props(['title' => null, 'icon' => null, 'description' => null])
 
-<div {{ $attributes->merge(['class' => 'lms-form-card']) }}>
+<div {{ $attributes->merge(['class' => 'lms-form-card card-3d']) }}>
     @if($title)
         <div class="lms-form-card__header">
             @if($icon)
@@ -8,7 +8,12 @@
                     <x-lms-icon :name="$icon" class="w-4 h-4" />
                 </span>
             @endif
-            <h3>{{ $title }}</h3>
+            <div>
+                <h3 class="lms-form-card__title">{{ $title }}</h3>
+                @if($description)
+                    <p class="lms-form-card__description">{{ $description }}</p>
+                @endif
+            </div>
         </div>
     @endif
     <div class="lms-form-card__body">{{ $slot }}</div>

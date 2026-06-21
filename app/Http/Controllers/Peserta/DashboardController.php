@@ -23,10 +23,9 @@ class DashboardController extends Controller
             ->with('class')
             ->get();
 
-        $primaryClass = ClassParticipant::where('participant_id', $user->id)
+        $primaryClass = $participations
             ->where('status', 'active')
-            ->with('class')
-            ->latest()
+            ->sortByDesc('created_at')
             ->first()?->class;
 
         $classes = $participations->count();
@@ -38,16 +37,17 @@ class DashboardController extends Controller
         $completedClasses = $participations->where('status', 'completed')->count();
 
         $submittedAssignmentIds = Submission::where('participant_id', $user->id)
-            ->pluck('assignment_id')
-            ->toArray();
+            ->pluck('assignment_id');
         $pendingAssignments = Assignment::whereIn('class_id', $classIds)
             ->whereNotIn('id', $submittedAssignmentIds)
             ->count();
 
-        $totalAttendances = Attendance::where('participant_id', $user->id)->count();
-        $presentAttendances = Attendance::where('participant_id', $user->id)
-            ->whereIn('status', ['present', 'permission', 'sick'])
-            ->count();
+        $attendanceStats = Attendance::where('participant_id', $user->id)
+            ->selectRaw("COUNT(*) as total")
+            ->selectRaw("SUM(CASE WHEN status IN ('present','permission','sick') THEN 1 ELSE 0 END) as positive")
+            ->first();
+        $totalAttendances = (int) ($attendanceStats->total ?? 0);
+        $presentAttendances = (int) ($attendanceStats->positive ?? 0);
         $attendancePercentage = $totalAttendances > 0
             ? round(($presentAttendances / $totalAttendances) * 100)
             : 0;

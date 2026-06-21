@@ -1,5 +1,5 @@
 ﻿<x-app-layout>
-    <div class="attendance-wrapper lms-module-shell space-y-6">
+    <x-lms-page-shell>
         <x-lms-page-header
             :title="__('lms.attendance.sessions')"
             :subtitle="$class->title . ' • ' . __('lms.attendance.manage_per_meeting')"
@@ -12,23 +12,24 @@
             ]"
         >
             <x-slot:actions>
-                <a href="{{ route('instruktur.attendances.create', $class) }}" class="lms-btn-primary">+ {{ __('lms.attendance.new_session') }}</a>
-                <a href="{{ route('instruktur.attendances.report', $class) }}" class="lms-btn-primary !bg-green-600 hover:!bg-green-700">📊 {{ __('lms.attendance.report') }}</a>
+                <a href="{{ route('instruktur.attendances.create', $class) }}" class="lms-btn-primary inline-flex items-center gap-1">
+                    <x-lms-icon name="plus" class="w-4 h-4" />
+                    {{ __('lms.attendance.new_session') }}
+                </a>
+                <a href="{{ route('instruktur.attendances.report', $class) }}" class="lms-btn-secondary">{{ __('lms.attendance.report') }}</a>
             </x-slot:actions>
         </x-lms-page-header>
 
-        <x-lms-session-flash />
-
-        <x-lms-card class="table-card p-0" :title="__('lms.attendance.sessions')" :meta="__('lms.attendance.index_table_meta')">
+        <x-lms-section :title="__('lms.attendance.sessions')" :description="__('lms.attendance.index_table_meta')" icon="clipboard" compact>
             <x-lms-data-table :skeleton-cols="8">
                 <x-slot:head>
                     <tr>
                         <th class="lms-data-table__th lms-data-table__th--left">{{ __('lms.common.meeting') }}</th>
                         <th class="lms-data-table__th lms-data-table__th--left">{{ __('lms.attendance.date') }}</th>
-                        <th class="lms-data-table__th lms-data-table__th--center">✅ {{ __('lms.report.present') }}</th>
-                        <th class="lms-data-table__th lms-data-table__th--center">📝 {{ __('lms.report.permission') }}</th>
-                        <th class="lms-data-table__th lms-data-table__th--center">🤒 {{ __('lms.report.sick') }}</th>
-                        <th class="lms-data-table__th lms-data-table__th--center">❌ {{ __('lms.report.absent') }}</th>
+                        <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.report.present') }}</th>
+                        <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.report.permission') }}</th>
+                        <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.report.sick') }}</th>
+                        <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.report.absent') }}</th>
                         <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.common.total') }}</th>
                         <th class="lms-data-table__th lms-data-table__th--center">{{ __('lms.common.actions') }}</th>
                     </tr>
@@ -36,22 +37,20 @@
 
                 @forelse($meetings as $meeting)
                     @php
-                        $stats = \App\Models\Attendance::where('class_id', $class->id)
-                            ->where('meeting_number', $meeting->meeting_number)
-                            ->get();
-                        $present    = $stats->where('status','present')->count();
-                        $permission = $stats->where('status','permission')->count();
-                        $sick       = $stats->where('status','sick')->count();
-                        $absent     = $stats->where('status','absent')->count();
+                        $stats = $meetingStats->get($meeting->meeting_number, collect());
+                        $present    = (int) ($stats->firstWhere('status', 'present')?->aggregate ?? 0);
+                        $permission = (int) ($stats->firstWhere('status', 'permission')?->aggregate ?? 0);
+                        $sick       = (int) ($stats->firstWhere('status', 'sick')?->aggregate ?? 0);
+                        $absent     = (int) ($stats->firstWhere('status', 'absent')?->aggregate ?? 0);
                         $total      = $present + $permission + $sick + $absent;
                     @endphp
                     <tr class="attendance-row transition">
                         <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-100">{{ __('lms.common.meeting') }} {{ $meeting->meeting_number }}</td>
                         <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ \Carbon\Carbon::parse($meeting->attendance_date)->format('d F Y H:i') }}</td>
-                        <td class="px-6 py-4 text-center text-green-600 dark:text-green-400 font-semibold">{{ $present }}</td>
-                        <td class="px-6 py-4 text-center text-yellow-600 dark:text-yellow-400 font-semibold">{{ $permission }}</td>
-                        <td class="px-6 py-4 text-center text-orange-600 dark:text-orange-400 font-semibold">{{ $sick }}</td>
-                        <td class="px-6 py-4 text-center text-red-600 dark:text-red-400 font-semibold">{{ $absent }}</td>
+                        <td class="px-6 py-4 text-center lms-status-col lms-status-col--present">{{ $present }}</td>
+                        <td class="px-6 py-4 text-center lms-status-col lms-status-col--permission">{{ $permission }}</td>
+                        <td class="px-6 py-4 text-center lms-status-col lms-status-col--sick">{{ $sick }}</td>
+                        <td class="px-6 py-4 text-center lms-status-col lms-status-col--absent">{{ $absent }}</td>
                         <td class="px-6 py-4 text-center text-slate-600 dark:text-slate-300">{{ $total }}</td>
                         <td class="px-6 py-4 text-center">
                             <x-lms-row-actions>
@@ -65,13 +64,13 @@
                         </td>
                     </tr>
                 @empty
-                    <x-lms-table-empty :colspan="8" :message="__('lms.attendance.no_sessions')" icon="📅">
+                    <x-lms-table-empty :colspan="8" :message="__('lms.attendance.no_sessions')" icon="calendar">
                         <x-slot:actions>
                             <a href="{{ route('instruktur.attendances.create', $class) }}" class="text-blue-600 dark:text-blue-400 hover:underline mt-2 inline-block">{{ __('lms.attendance.create_first') }}</a>
                         </x-slot:actions>
                     </x-lms-table-empty>
                 @endforelse
             </x-lms-data-table>
-        </x-lms-card>
-    </div>
+        </x-lms-section>
+    </x-lms-page-shell>
 </x-app-layout>

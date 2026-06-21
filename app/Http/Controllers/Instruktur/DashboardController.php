@@ -38,8 +38,12 @@ class DashboardController extends Controller
                 ->select('class_id', 'meeting_number')
                 ->distinct()
                 ->count(),
-            'pendingGrades' => Submission::whereIn('assignment_id', Assignment::whereIn('class_id', $classIds)->pluck('id'))
-                ->where('status', 'submitted')
+            'pendingGrades' => Submission::query()
+                ->where('submissions.status', 'submitted')
+                ->whereIn(
+                    'submissions.assignment_id',
+                    Assignment::query()->select('id')->whereIn('class_id', $classIds)
+                )
                 ->count(),
             'recentClasses' => $recentClasses,
         ]);

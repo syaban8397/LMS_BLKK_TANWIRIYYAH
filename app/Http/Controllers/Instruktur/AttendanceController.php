@@ -27,8 +27,14 @@ class AttendanceController extends Controller
             ->distinct()
             ->orderBy('meeting_number', 'desc')
             ->get();
-        
-        return view('instruktur.attendances.index', compact('class', 'meetings'));
+
+        $meetingStats = Attendance::where('class_id', $class->id)
+            ->selectRaw('meeting_number, status, COUNT(*) as aggregate')
+            ->groupBy('meeting_number', 'status')
+            ->get()
+            ->groupBy('meeting_number');
+
+        return view('instruktur.attendances.index', compact('class', 'meetings', 'meetingStats'));
     }
     
     // Form buat sesi absensi baru
@@ -80,18 +86,21 @@ class AttendanceController extends Controller
         
         DB::beginTransaction();
         try {
-            foreach ($students as $student) {
-                Attendance::create([
-                    'class_id'            => $class->id,
-                    'participant_id'      => $student->participant_id,
-                    'meeting_number'      => $validated['meeting_number'],
-                    'attendance_date'     => $attendanceDate,
-                    'attendance_deadline' => $deadline,
-                    'status'              => 'absent',
-                    'submission_type'     => 'self',
-                    'created_by'          => auth()->id(),
-                ]);
-            }
+            $now = now();
+            $rows = $students->map(fn ($student) => [
+                'class_id'            => $class->id,
+                'participant_id'      => $student->participant_id,
+                'meeting_number'      => $validated['meeting_number'],
+                'attendance_date'     => $attendanceDate,
+                'attendance_deadline' => $deadline,
+                'status'              => 'absent',
+                'submission_type'     => 'self',
+                'created_by'          => auth()->id(),
+                'created_at'          => $now,
+                'updated_at'          => $now,
+            ])->all();
+
+            Attendance::insert($rows);
             
             DB::commit();
             return redirect()->route('instruktur.attendances.show', [$class, $validated['meeting_number']])
@@ -202,12 +211,14 @@ class AttendanceController extends Controller
         
         DB::beginTransaction();
         try {
+            $attendances = Attendance::where('class_id', $class->id)
+                ->where('meeting_number', $meetingNumber)
+                ->get()
+                ->keyBy('participant_id');
+
             foreach ($validated['attendances'] as $attendanceData) {
-                $attendance = Attendance::where('class_id', $class->id)
-                    ->where('participant_id', $attendanceData['participant_id'])
-                    ->where('meeting_number', $meetingNumber)
-                    ->first();
-                
+                $attendance = $attendances->get($attendanceData['participant_id']);
+
                 if ($attendance) {
                     $attendance->update([
                         'status'          => $attendanceData['status'],

@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Exports\ClassCertificateExport;
+use App\Models\Certificate;
 use App\Models\ClassModel;
 use App\Models\ClassParticipant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 trait ManagesClassCertificates
 {
+    use EnsuresNestedResourceBelongsToClass;
     protected function validatedCertificateStatuses(Request $request): array
     {
         $validated = $request->validate([
@@ -62,5 +67,38 @@ trait ManagesClassCertificates
     protected function certificateExportFilename(ClassModel $class): string
     {
         return 'laporan-sertifikat-' . $class->code . '-' . now()->format('Ymd') . '.xlsx';
+    }
+
+    protected function destroyClassCertificate(
+        ClassModel $class,
+        Certificate $certificate,
+        string $showRoute
+    ): RedirectResponse {
+        $this->ensureBelongsToClass($certificate, $class);
+
+        if (!$certificate->pdf_file) {
+            return redirect()
+                ->route($showRoute, $class)
+                ->with('error', __('lms.flash.certificate_not_issued'));
+        }
+
+        $certificate->load('participant');
+        $participantName = $certificate->participant?->name ?? __('lms.certificate_page.participant');
+        $this->certificateService->delete($certificate);
+
+        return redirect()
+            ->route($showRoute, $class)
+            ->with('success', __('lms.flash.certificate_deleted', ['name' => $participantName]));
+    }
+
+    protected function exportClassCertificatesExcel(ClassModel $class): BinaryFileResponse
+    {
+        $class->load(['program', 'instructor']);
+        $students = $this->certificateService->getClassStats($class);
+
+        return Excel::download(
+            new ClassCertificateExport($class, $students),
+            $this->certificateExportFilename($class)
+        );
     }
 }

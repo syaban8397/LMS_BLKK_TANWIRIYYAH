@@ -1,4 +1,4 @@
-@props(['icon' => '📭', 'title', 'description' => null])
+@props(['icon' => 'inbox', 'title', 'description' => null])
 
 <x-ds.empty-state :icon="$icon" :title="$title" :description="$description" {{ $attributes }}>
     {{ $slot }}

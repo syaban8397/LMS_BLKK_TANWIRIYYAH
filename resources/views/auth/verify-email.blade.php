@@ -1,31 +1,26 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('lms.auth.verify_email_message') }}
-    </div>
+    <x-lms-auth-shell
+        :title="__('lms.auth.verify_account')"
+        :subtitle="__('lms.auth.verify_email_message')"
+    >
+        @if (session('status') == 'verification-link-sent')
+            <x-lms-flash type="success" class="mb-5">{{ __('lms.auth.verification_link_sent') }}</x-lms-flash>
+        @endif
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('lms.auth.verification_link_sent') }}
-        </div>
-    @endif
-
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
-
-            <div>
-                <x-primary-button>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <form method="POST" action="{{ route('verification.send') }}">
+                @csrf
+                <button type="submit" class="btn-auth-primary sm:w-auto">
                     {{ __('lms.auth.resend_verification') }}
-                </x-primary-button>
-            </div>
-        </form>
+                </button>
+            </form>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                {{ __('lms.auth.log_out') }}
-            </button>
-        </form>
-    </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="lms-auth-link text-sm font-medium">
+                    {{ __('lms.auth.log_out') }}
+                </button>
+            </form>
+        </div>
+    </x-lms-auth-shell>
 </x-guest-layout>

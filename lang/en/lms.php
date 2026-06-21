@@ -204,6 +204,8 @@ return [
 
     'dashboard' => [
         'menu' => 'Dashboard',
+        'overview' => 'Overview',
+        'progress' => 'Progress & Performance',
         'logged_in' => 'You are logged in.',
         'admin_title' => 'Admin Dashboard',
         'admin_subtitle' => 'Welcome back, :name. Here is your LMS activity summary.',

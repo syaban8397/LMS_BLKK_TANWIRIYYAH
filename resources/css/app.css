@@ -6,6 +6,11 @@
 @import './theme-modes.css';
 @import './ui-polish.css';
 @import './enterprise-ui.css';
+@import './professional-ui.css';
+@import './kemnaker-premium.css';
+@import './lms-compact-layout.css';
+@import './kemnaker-enterprise-v3.css';
+@import './kemnaker-enterprise-v4.css';
 
 @tailwind base;
 @tailwind components;
@@ -151,7 +156,6 @@
 
     .lms-content-stage {
         position: relative;
-        min-height: calc(100vh - 4rem);
     }
 
     .btn-3d, .quick-btn, .btn-action, .btn-primary, .btn-outline {

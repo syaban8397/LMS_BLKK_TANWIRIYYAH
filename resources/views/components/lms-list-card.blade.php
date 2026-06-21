@@ -2,7 +2,7 @@
     'title',
     'meta' => null,
     'paginator' => null,
-    'emptyIcon' => '📭',
+    'emptyIcon' => 'inbox',
     'emptyTitle' => null,
     'emptyDescription' => null,
 ])

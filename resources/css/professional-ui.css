@@ -1,0 +1,445 @@
+/**
+ * Professional UI refinement — authenticated app, auth, legal, errors
+ * Does not affect welcome/landing (separate CSS bundle)
+ */
+
+@layer components {
+    /* ── Auth split layout ── */
+    body.lms-guest-body:has(.lms-auth-shell) {
+        background: #f4f6f9;
+    }
+
+    body.lms-guest-body:has(.lms-auth-shell) .lms-guest-footer {
+        display: none;
+    }
+
+    body.lms-guest-body:has(.lms-auth-shell) main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .lms-auth-shell {
+        flex: 1;
+        display: grid;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+        .lms-auth-shell {
+            grid-template-columns: minmax(18rem, 42%) 1fr;
+        }
+    }
+
+    .lms-auth-shell__brand {
+        display: none;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(165deg, #061525 0%, #0c2340 45%, #004071 100%);
+        color: #f8fafc;
+        padding: 2.5rem 2rem;
+    }
+
+    @media (min-width: 1024px) {
+        .lms-auth-shell__brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .lms-auth-shell__brand::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.08), transparent 45%),
+            radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.15), transparent 40%);
+        pointer-events: none;
+    }
+
+    .lms-auth-shell__brand-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 22rem;
+    }
+
+    .lms-auth-shell__logo {
+        height: 3.5rem;
+        width: auto;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+    }
+
+    .lms-auth-shell__app-name {
+        margin-top: 1.5rem;
+        font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+        font-size: 1.375rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.3;
+    }
+
+    .lms-auth-shell__tagline {
+        margin-top: 0.5rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(226, 232, 240, 0.85);
+    }
+
+    .lms-auth-shell__desc {
+        margin-top: 1.25rem;
+        font-size: 0.9375rem;
+        line-height: 1.65;
+        color: rgba(226, 232, 240, 0.78);
+    }
+
+    .lms-auth-shell__main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    @media (min-width: 640px) {
+        .lms-auth-shell__main {
+            padding: 2.5rem 1.5rem;
+        }
+    }
+
+    body.lms-guest-body:has(.lms-auth-shell) .lms-auth-card {
+        max-width: 28rem;
+        margin: 0 auto;
+        animation: none;
+        opacity: 1;
+    }
+
+    body.lms-guest-body:has(.lms-auth-shell--wide) .lms-auth-card {
+        max-width: 42rem;
+    }
+
+    .lms-auth-card__title {
+        font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+        font-size: 1.625rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        color: #0f172a;
+    }
+
+    .lms-auth-card__subtitle {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.55;
+        color: #64748b;
+    }
+
+    .lms-auth-card__intro--left {
+        text-align: left;
+        margin-bottom: 1.5rem;
+    }
+
+    /* ── Authenticated app rhythm ── */
+    html[data-authenticated-app="1"] .lms-module-shell,
+    html[data-authenticated-app="1"] .lms-page-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    @media (min-width: 1024px) {
+        html[data-authenticated-app="1"] .lms-module-shell,
+        html[data-authenticated-app="1"] .lms-page-shell {
+            gap: 1.5rem;
+        }
+    }
+
+    html[data-authenticated-app="1"] .lms-page-header {
+        padding: 0.25rem 0 0.75rem;
+        border-bottom: 1px solid var(--eg-border, rgba(148, 163, 184, 0.25));
+        margin-bottom: 0.25rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-header__title {
+        font-size: 1.25rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        color: var(--eg-text-muted, #64748b);
+    }
+
+    html[data-authenticated-app="1"] .lms-breadcrumb__link {
+        font-weight: 500;
+        transition: color 0.15s ease;
+    }
+
+    html[data-authenticated-app="1"] .lms-breadcrumb__link:hover {
+        color: var(--eg-navy-mid, #004071);
+    }
+
+    html[data-authenticated-app="1"] .lms-breadcrumb__current {
+        font-weight: 600;
+        color: var(--eg-text, #0f172a);
+    }
+
+    html[data-authenticated-app="1"] .lms-breadcrumb__sep {
+        opacity: 0.45;
+        user-select: none;
+    }
+
+    /* Filter bar */
+    html[data-authenticated-app="1"] .lms-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-radius: var(--eg-radius-lg, 0.875rem);
+        border: 1px solid var(--eg-border, rgba(148, 163, 184, 0.35));
+        background: var(--eg-surface, #fff);
+        box-shadow: var(--eg-shadow-xs, 0 1px 2px rgba(12, 35, 64, 0.04));
+    }
+
+    html[data-authenticated-app="1"] .lms-filter-bar__fields {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 0.875rem;
+        flex: 1;
+        min-width: min(100%, 14rem);
+    }
+
+    html[data-authenticated-app="1"] .lms-filter-bar__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    html[data-authenticated-app="1"] .lms-filter-field label {
+        display: block;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--eg-text-muted, #64748b);
+        margin-bottom: 0.375rem;
+    }
+
+    /* Tables — calmer, no lift on table cards */
+    html[data-authenticated-app="1"] .table-card:hover,
+    html[data-authenticated-app="1"] .lms-data-table:hover {
+        transform: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__th {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--eg-text-muted, #64748b);
+        white-space: nowrap;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table tbody td {
+        font-size: 0.8125rem;
+        vertical-align: middle;
+    }
+
+    html[data-authenticated-app="1"] .lms-row-actions {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.375rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__footer {
+        padding: 0.75rem 1rem;
+        border-top: 1px solid var(--eg-border, rgba(148, 163, 184, 0.25));
+        background: rgba(248, 250, 252, 0.65);
+    }
+
+    html[data-authenticated-app="1"].dark .lms-data-table__footer {
+        background: rgba(15, 23, 42, 0.35);
+    }
+
+    /* Section headings in cards */
+    html[data-authenticated-app="1"] .lms-section-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--eg-text, #0f172a);
+        margin-bottom: 1rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-section-heading .lms-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        color: var(--eg-navy-mid, #004071);
+        opacity: 0.85;
+    }
+
+    /* Stream / sidebar cards */
+    html[data-authenticated-app="1"] .sidebar-card,
+    html[data-authenticated-app="1"] .form-card {
+        border-radius: var(--eg-radius-lg, 0.875rem);
+    }
+
+    html[data-authenticated-app="1"] .sidebar-card:hover,
+    html[data-authenticated-app="1"] .form-card:hover {
+        transform: none;
+        box-shadow: var(--eg-shadow-sm);
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-action {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.875rem 1rem;
+        border-radius: var(--eg-radius-md, 0.75rem);
+        border: 1px solid var(--eg-border, rgba(148, 163, 184, 0.25));
+        background: var(--eg-surface, #fff);
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--eg-text, #334155);
+        transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-action__title {
+        font-weight: 600;
+        font-size: 0.8125rem;
+        color: var(--eg-text, #0f172a);
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-action__desc {
+        margin-top: 0.125rem;
+        font-size: 0.75rem;
+        font-weight: 400;
+        color: var(--eg-text-muted, #64748b);
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-action:hover {
+        background: rgba(248, 250, 252, 0.95);
+        color: var(--eg-navy-mid, #004071);
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-action__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        background: rgba(0, 64, 113, 0.08);
+        color: var(--eg-navy-mid, #004071);
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-action__icon .lms-icon {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-avatar-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 9999px;
+        background: linear-gradient(135deg, #004071, #4338ca);
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-avatar-badge .lms-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+
+    /* Quick links dashboard */
+    html[data-authenticated-app="1"] .lms-quick-link {
+        border-radius: var(--eg-radius-md, 0.75rem);
+        min-height: 5rem;
+        font-size: 0.8125rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-quick-link__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.625rem;
+        background: rgba(0, 64, 113, 0.08);
+        font-size: 0 !important;
+    }
+
+    html[data-authenticated-app="1"] .lms-quick-link__icon .lms-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        color: var(--eg-navy-mid, #004071);
+    }
+
+    /* Status columns in tables */
+    html[data-authenticated-app="1"] .lms-status-col {
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    html[data-authenticated-app="1"] .lms-status-col--present { color: #059669; }
+    html[data-authenticated-app="1"] .lms-status-col--permission { color: #d97706; }
+    html[data-authenticated-app="1"] .lms-status-col--sick { color: #ea580c; }
+    html[data-authenticated-app="1"] .lms-status-col--absent { color: #dc2626; }
+
+    /* DS card header */
+    html[data-authenticated-app="1"] .ds-card__header {
+        min-height: 3rem;
+    }
+
+    html[data-authenticated-app="1"] .ds-card__header h3 {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    /* Form groups in module pages */
+    html[data-authenticated-app="1"] .form-card .space-y-4 > div,
+    html[data-authenticated-app="1"] .lms-form-grid > div {
+        animation: none;
+        opacity: 1;
+    }
+
+    /* Public / legal pages */
+    body.lms-guest-body .lms-public-card {
+        line-height: 1.65;
+    }
+
+    body.lms-guest-body .lms-public-card h2 {
+        font-size: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    body.lms-guest-body .lms-guest-footer {
+        font-size: 0.8125rem;
+    }
+
+    /* Pagination */
+    html[data-authenticated-app="1"] .pagination {
+        gap: 0.25rem;
+    }
+
+    html[data-authenticated-app="1"] .pagination a,
+    html[data-authenticated-app="1"] .pagination span {
+        border-radius: 0.375rem;
+        font-size: 0.8125rem;
+    }
+}

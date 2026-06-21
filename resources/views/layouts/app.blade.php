@@ -74,11 +74,6 @@
                         aria-label="{{ __('lms.layout.toggle_sidebar') }}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
-                <div class="lms-appbar-logo">
-                    <img src="{{ asset('storage/images/Logo.png') }}"
-                         alt="{{ __('lms.app_name') }}"
-                         class="lms-appbar-logo__img">
-                </div>
                 <div class="lms-appbar__brand min-w-0">
                     <h1 class="lms-appbar__title truncate">{{ $lmsAppDisplayName ?? __('lms.app_name') }}</h1>
                     <p class="lms-appbar__tagline lms-appbar__tagline truncate">{{ __('lms.tagline') }}</p>
@@ -130,7 +125,7 @@
     <x-lms-page-loader />
 
     <div class="lms-content-stage">
-        <main class="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto page-content-3d">
+        <main class="lms-content-container page-content-3d w-full">
             @isset($header)
                 <div class="mb-6">{{ $header }}</div>
             @endisset

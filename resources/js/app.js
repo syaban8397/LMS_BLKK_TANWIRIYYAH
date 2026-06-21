@@ -267,6 +267,24 @@ window.LmsLoader = {
     },
 
     bindForms() {
+        const resetFormSubmitting = (form) => {
+            form.removeAttribute('data-lms-submitting');
+            form.querySelectorAll('button[disabled], input[type="submit"][disabled]').forEach((btn) => {
+                if (btn.dataset.lmsAllowResubmit !== undefined) {
+                    return;
+                }
+                btn.disabled = false;
+                btn.removeAttribute('aria-disabled');
+            });
+        };
+
+        document.addEventListener('invalid', (e) => {
+            const form = e.target instanceof HTMLElement ? e.target.closest('form') : null;
+            if (form instanceof HTMLFormElement && form.dataset.lmsSubmitting === '1') {
+                resetFormSubmitting(form);
+            }
+        }, true);
+
         document.addEventListener('submit', (e) => {
             const form = e.target;
             if (!(form instanceof HTMLFormElement)) {
@@ -275,11 +293,38 @@ window.LmsLoader = {
             if (e.defaultPrevented) {
                 return;
             }
-            if (!this.shouldShowOnFormSubmit(form, e.submitter)) {
+
+            if (form.dataset.lmsSubmitting === '1') {
+                e.preventDefault();
+                return;
+            }
+
+            if (!form.checkValidity()) {
+                return;
+            }
+
+            const submitter = e.submitter;
+            form.dataset.lmsSubmitting = '1';
+
+            form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach((btn) => {
+                if (btn.dataset.lmsAllowResubmit !== undefined) {
+                    return;
+                }
+                btn.disabled = true;
+                btn.setAttribute('aria-disabled', 'true');
+            });
+
+            if (!this.shouldShowOnFormSubmit(form, submitter)) {
                 return;
             }
             this.show();
         }, false);
+
+        window.addEventListener('pageshow', () => {
+            document.querySelectorAll('form[data-lms-submitting="1"]').forEach((form) => {
+                resetFormSubmitting(form);
+            });
+        });
     },
 };
 

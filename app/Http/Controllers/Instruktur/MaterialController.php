@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
+use App\Http\Controllers\Concerns\EnsuresNestedResourceBelongsToClass;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Instruktur\MaterialRequest;
 use App\Models\ClassModel;
 use App\Models\Material;
 use App\Support\SecureStorage;
-use App\Support\UploadRules;
-use Illuminate\Http\Request;
 
 class MaterialController extends Controller
 {
     use AuthorizesInstructorClass;
+    use EnsuresNestedResourceBelongsToClass;
 
     public function index(ClassModel $class)
     {
@@ -39,18 +40,11 @@ class MaterialController extends Controller
         );
     }
 
-    public function store(Request $request, ClassModel $class)
+    public function store(MaterialRequest $request, ClassModel $class)
     {
         $this->authorizeInstructor($class);
 
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'material_code' => 'nullable|max:50',
-            'description' => 'nullable|string',
-            'meeting_number' => 'required|integer|min:1',
-            'file' => UploadRules::documentAttachment(),
-            'youtube_url' => 'nullable|url|max:255',
-        ]);
+        $validated = $request->validated();
 
         if (!$request->hasFile('file') && empty($validated['youtube_url'])) {
             return redirect()
@@ -89,9 +83,7 @@ class MaterialController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($material->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($material, $class);
 
         $material->load('creator');
 
@@ -105,9 +97,7 @@ class MaterialController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($material->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($material, $class);
 
         return view(
             'instruktur.materials.edit',
@@ -115,22 +105,13 @@ class MaterialController extends Controller
         );
     }
 
-    public function update(Request $request, ClassModel $class, Material $material)
+    public function update(MaterialRequest $request, ClassModel $class, Material $material)
     {
         $this->authorizeInstructor($class);
 
-        if ($material->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($material, $class);
 
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'material_code' => 'nullable|max:50',
-            'description' => 'nullable|string',
-            'meeting_number' => 'required|integer|min:1',
-            'file' => UploadRules::documentAttachment(),
-            'youtube_url' => 'nullable|url|max:255',
-        ]);
+        $validated = $request->validated();
 
         $filePath = $material->file_path;
         $fileType = $material->file_type;
@@ -162,9 +143,7 @@ class MaterialController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($material->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($material, $class);
 
         SecureStorage::delete($material->file_path);
         $material->delete();

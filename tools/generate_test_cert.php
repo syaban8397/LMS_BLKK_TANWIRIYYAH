@@ -11,16 +11,19 @@ use App\Models\Program;
 use App\Models\User;
 use App\Services\CertificateService;
 use Barryvdh\DomPDF\Facade\Pdf;
-use ReflectionClass;
 
 $service = app(CertificateService::class);
 $ref = new ReflectionClass($service);
-$logos = $ref->getMethod('certificateLogos');
-$logos->setAccessible(true);
-$logoData = $logos->invoke($service);
-$fonts = $ref->getMethod('certificateFonts');
-$fonts->setAccessible(true);
-$fontData = $fonts->invoke($service);
+$logosMethod = $ref->getMethod('certificateLogos');
+$logosMethod->setAccessible(true);
+$programLinesMethod = $ref->getMethod('page1ProgramLines');
+$programLinesMethod->setAccessible(true);
+        $dynamicMethod = $ref->getMethod('buildPage1DynamicLayers');
+        $dynamicMethod->setAccessible(true);
+        $page2Method = $ref->getMethod('buildPage2DynamicLayers');
+        $page2Method->setAccessible(true);
+$qrMethod = $ref->getMethod('renderQrPng');
+$qrMethod->setAccessible(true);
 
 $cases = [
     'peserta1' => [
@@ -29,6 +32,13 @@ $cases = [
         'degree' => 'C.DS (CERTIFIED DESAIN GRAFIS)',
         'year' => '2027',
         'out' => __DIR__ . '/../storage/app/test-cert-peserta1.pdf',
+    ],
+    'raihan' => [
+        'participant' => 'RAIHAN TAUVIQUL HADY IFDAL',
+        'program' => 'Digital Marketing dan Evaluasi Skema Digital Marketing',
+        'degree' => 'C.DM (CERTIFIED DIGITAL MARKETING)',
+        'year' => '2026',
+        'out' => __DIR__ . '/../storage/app/test-cert-raihan.pdf',
     ],
 ];
 
@@ -48,8 +58,9 @@ foreach ($cases as $case) {
         new Material(['title' => 'Test', 'material_code' => 'J.63OPR00.001.2', 'meeting_number' => 1]),
     ]);
 
-    $qrMethod = $ref->getMethod('renderQrPng');
-    $qrMethod->setAccessible(true);
+    $programLines = $programLinesMethod->invoke($service, $program, $class);
+    $page1Dynamic = $dynamicMethod->invoke($service, $certificate, $case['degree'], 3, $programLines);
+    $page2Dynamic = $page2Method->invoke($service, $materials);
     $qrPng = $qrMethod->invoke($service, 'https://example.com/verify');
 
     $html = view('certificates.pdf', [
@@ -62,8 +73,12 @@ foreach ($cases as $case) {
         'validityYears' => 3,
         'trainingYear' => $case['year'],
         'qrDataUri' => 'data:image/png;base64,' . base64_encode($qrPng),
-        'logos' => $logoData,
-        'fonts' => $fontData,
+        'logos' => $logosMethod->invoke($service),
+        'page1Masks' => $page1Dynamic['masks'],
+        'page1Layers' => $page1Dynamic['layers'],
+        'page2Layers' => $page2Dynamic['layers'],
+        'programLines' => $programLines,
+        'hasProgramLine2' => isset($programLines[1]),
         'organization' => config('certificate.organization'),
         'organizationEn' => config('certificate.organization_en'),
         'directorName' => config('certificate.director_name'),
@@ -74,9 +89,9 @@ foreach ($cases as $case) {
     $pdf = Pdf::loadHTML($html)
         ->setPaper('a4', 'landscape')
         ->setOption('dpi', 200)
-        ->setOption('defaultFont', 'Montserrat')
+        ->setOption('defaultFont', 'montserrat')
         ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isFontSubsettingEnabled', true);
+        ->setOption('isFontSubsettingEnabled', false);
 
     file_put_contents($case['out'], $pdf->output());
     echo "Written: {$case['out']}\n";

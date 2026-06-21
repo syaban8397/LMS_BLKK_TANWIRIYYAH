@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
+use App\Http\Controllers\Concerns\EnsuresNestedResourceBelongsToClass;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Instruktur\AssignmentRequest;
 use App\Models\ClassModel;
 use App\Models\Assignment;
 use App\Support\SecureStorage;
-use App\Support\UploadRules;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AssignmentController extends Controller
 {
     use AuthorizesInstructorClass;
+    use EnsuresNestedResourceBelongsToClass;
 
     public function create(ClassModel $class)
     {
@@ -24,19 +26,13 @@ class AssignmentController extends Controller
         );
     }
 
-    public function store(Request $request, ClassModel $class)
+    public function store(AssignmentRequest $request, ClassModel $class)
     {
         $this->authorizeInstructor($class);
 
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'attachment' => UploadRules::documentAttachment(),
-            'deadline' => 'required|date_format:Y-m-d\TH:i',
-            'late_submission_allowed' => 'sometimes|boolean',
-        ]);
+        $validated = $request->validated();
 
-        $deadline = \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $validated['deadline'])->format('Y-m-d H:i:s');
+        $deadline = Carbon::createFromFormat('Y-m-d\TH:i', $validated['deadline'])->format('Y-m-d H:i:s');
 
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
@@ -62,9 +58,7 @@ class AssignmentController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($assignment->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($assignment, $class);
 
         return view(
             'instruktur.assignments.edit',
@@ -72,21 +66,13 @@ class AssignmentController extends Controller
         );
     }
 
-    public function update(Request $request, ClassModel $class, Assignment $assignment)
+    public function update(AssignmentRequest $request, ClassModel $class, Assignment $assignment)
     {
         $this->authorizeInstructor($class);
 
-        if ($assignment->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($assignment, $class);
 
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'attachment' => UploadRules::documentAttachment(),
-            'deadline' => 'required|date_format:Y-m-d\TH:i',
-            'late_submission_allowed' => 'sometimes|boolean',
-        ]);
+        $validated = $request->validated();
 
         $attachmentPath = $assignment->attachment;
         if ($request->hasFile('attachment')) {
@@ -98,7 +84,7 @@ class AssignmentController extends Controller
             'title' => $validated['title'],
             'description' => $validated['description'],
             'attachment' => $attachmentPath,
-            'deadline' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $validated['deadline'])->format('Y-m-d H:i:s'),
+            'deadline' => Carbon::createFromFormat('Y-m-d\TH:i', $validated['deadline'])->format('Y-m-d H:i:s'),
             'late_submission_allowed' => $request->boolean('late_submission_allowed'),
         ]);
 
@@ -111,9 +97,7 @@ class AssignmentController extends Controller
     {
         $this->authorizeInstructor($class);
 
-        if ($assignment->class_id !== $class->id) {
-            abort(404);
-        }
+        $this->ensureBelongsToClass($assignment, $class);
 
         SecureStorage::delete($assignment->attachment);
         $assignment->delete();

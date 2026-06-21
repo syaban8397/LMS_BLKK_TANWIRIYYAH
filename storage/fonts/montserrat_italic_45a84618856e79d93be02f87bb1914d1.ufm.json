@@ -1,0 +1,52 @@
+{
+    "codeToName": {
+        "32": "uni0020",
+        "65": "uni0041",
+        "67": "uni0043",
+        "69": "uni0045",
+        "70": "uni0046",
+        "71": "uni0047",
+        "73": "uni0049",
+        "78": "uni004e",
+        "79": "uni004f",
+        "82": "uni0052",
+        "84": "uni0054"
+    },
+    "isUnicode": true,
+    "EncodingScheme": "FontSpecific",
+    "FontName": "Montserrat",
+    "FullName": "Montserrat Italic",
+    "Version": "Version 7.200",
+    "PostScriptName": "Montserrat-Italic",
+    "Weight": "Medium",
+    "ItalicAngle": "-11.3",
+    "IsFixedPitch": "false",
+    "UnderlineThickness": "50",
+    "UnderlinePosition": "-75",
+    "FontHeightOffset": "0",
+    "Ascender": "968",
+    "Descender": "-251",
+    "FontBBox": [
+        "-807",
+        "-262",
+        "1600",
+        "1043"
+    ],
+    "StartCharMetrics": "194",
+    "C": {
+        "32": 262,
+        "65": 717,
+        "67": 719,
+        "69": 669,
+        "70": 633,
+        "71": 773,
+        "73": 302,
+        "78": 813,
+        "79": 839,
+        "82": 723,
+        "84": 574
+    },
+    "CIDtoGID_Compressed": true,
+    "CIDtoGID": "eJztzTENgFAMBNBLwAgOsAEKvhZ21KACZzQMrAxd30suN1zSJk1T90DmylJZs2WvHt9y5Hz7qtztPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMCPBzD+A68=",
+    "_version_": 6
+}

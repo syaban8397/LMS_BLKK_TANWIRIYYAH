@@ -16,6 +16,15 @@ class FinalGrade extends Model
         'status',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'assignment_score' => 'float',
+            'attendance_score' => 'float',
+            'final_score' => 'float',
+        ];
+    }
+
     public function class()
     {
         return $this->belongsTo(ClassModel::class);

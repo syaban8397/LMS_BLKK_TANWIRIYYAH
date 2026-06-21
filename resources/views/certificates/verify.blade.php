@@ -10,7 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="lms-verify-body antialiased">
-
+<x-lms-public-shell centered>
 <x-lms-page-loader />
 
     <div class="lms-verify-card">
@@ -49,5 +49,6 @@
             <a href="{{ url('/') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">{{ __('lms.app_name') }}</a>
         </div>
     </div>
+</x-lms-public-shell>
 </body>
 </html>

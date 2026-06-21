@@ -3,21 +3,23 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Concerns\AuthorizesInstructorClass;
+use App\Http\Controllers\Concerns\EnsuresNestedResourceBelongsToClass;
 use App\Http\Controllers\Controller;
-use App\Models\ClassModel;
 use App\Models\Assignment;
-use App\Models\Submission;
+use App\Models\ClassModel;
 use App\Models\FinalGrade;
-use Illuminate\Http\Request;
+use App\Models\Submission;
+use App\Http\Requests\Instruktur\StoreGradeRequest;
 
 class GradeController extends Controller
 {
     use AuthorizesInstructorClass;
+    use EnsuresNestedResourceBelongsToClass;
 
     public function index(ClassModel $class, Assignment $assignment)
     {
         $this->authorizeInstructor($class);
-        if ($assignment->class_id !== $class->id) abort(404);
+        $this->ensureBelongsToClass($assignment, $class);
 
         $submissions = Submission::where('assignment_id', $assignment->id)
             ->with('participant')
@@ -37,20 +39,18 @@ class GradeController extends Controller
     public function show(ClassModel $class, Assignment $assignment, Submission $submission)
     {
         $this->authorizeInstructor($class);
-        if ($assignment->class_id !== $class->id || $submission->assignment_id !== $assignment->id) abort(404);
+        $this->ensureSubmissionBelongsToAssignment($assignment, $class, $submission);
         $submission->load('participant');
+
         return view('instruktur.grades.show', compact('class', 'assignment', 'submission'));
     }
 
-    public function storeGrade(Request $request, ClassModel $class, Assignment $assignment, Submission $submission)
+    public function storeGrade(StoreGradeRequest $request, ClassModel $class, Assignment $assignment, Submission $submission)
     {
         $this->authorizeInstructor($class);
-        if ($assignment->class_id !== $class->id || $submission->assignment_id !== $assignment->id) abort(404);
+        $this->ensureSubmissionBelongsToAssignment($assignment, $class, $submission);
 
-        $validated = $request->validate([
-            'score' => 'required|numeric|min:0|max:100',
-            'feedback' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $submission->update([
             'score' => $validated['score'],
@@ -64,14 +64,28 @@ class GradeController extends Controller
             ->with('success', __('lms.flash.grade_saved'));
     }
 
+    protected function ensureSubmissionBelongsToAssignment(
+        Assignment $assignment,
+        ClassModel $class,
+        Submission $submission
+    ): void {
+        $this->ensureBelongsToClass($assignment, $class);
+
+        if ($submission->assignment_id !== $assignment->id) {
+            abort(404);
+        }
+    }
+
     protected function updateFinalGrade(ClassModel $class, $participantId)
     {
-        $submissions = Submission::whereHas('assignment', fn($q) => $q->where('class_id', $class->id))
+        $submissions = Submission::whereHas('assignment', fn ($q) => $q->where('class_id', $class->id))
             ->where('participant_id', $participantId)
             ->where('status', 'graded')
             ->get();
 
-        if ($submissions->isEmpty()) return;
+        if ($submissions->isEmpty()) {
+            return;
+        }
 
         $average = $submissions->avg('score');
 

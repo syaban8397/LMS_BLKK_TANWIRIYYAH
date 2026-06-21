@@ -1,6 +1,6 @@
 <x-app-layout>
-<div class="create-assignment-wrapper lms-module-shell space-y-6">
-        <x-lms-page-header
+    <x-lms-page-shell class="create-assignment-wrapper">
+<x-lms-page-header
             :title="__('lms.assignment.create')"
             :subtitle="__('lms.assignment.create_subtitle', ['title' => $class->title])"
             :back-url="route('instruktur.classes.stream', $class)"
@@ -15,6 +15,8 @@
         <x-lms-session-flash />
         <x-lms-validation-errors />
 
+        <x-lms-section compact>
+            <div class="lms-form-layout lms-form-layout--wide\">
         <x-lms-form-card>
             <form action="{{ route('instruktur.assignments.store', $class) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
@@ -96,7 +98,8 @@
                 </x-lms-form-actions>
             </form>
         </x-lms-form-card>
-    </div>
+            </div>
+        </x-lms-section>
 
     <script>
         document.getElementById('attachment_input').addEventListener('change', function(e) {
@@ -111,4 +114,5 @@
             }
         });
     </script>
+    </x-lms-page-shell>
 </x-app-layout>

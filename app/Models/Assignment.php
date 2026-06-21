@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Support\UploadRules;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class Assignment extends Model
 {
@@ -23,6 +24,18 @@ class Assignment extends Model
         return [
             'deadline' => 'datetime',
             'late_submission_allowed' => 'boolean',
+            'is_active' => 'boolean',
+        ];
+    }
+
+    public static function validationRules(): array
+    {
+        return [
+            'title' => 'required|max:255',
+            'description' => 'required',
+            'attachment' => UploadRules::documentAttachment(),
+            'deadline' => 'required|date_format:Y-m-d\TH:i',
+            'late_submission_allowed' => 'sometimes|boolean',
         ];
     }
 
@@ -36,7 +49,6 @@ class Assignment extends Model
         return $this->hasMany(Submission::class);
     }
 
-    // TAMBAHKAN RELASI INI
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
