@@ -1,0 +1,138 @@
+/**
+ * Natural scroll — cards/tables grow with content; internal scroll only when needed.
+ * Overrides earlier max-height rules. Landing page untouched.
+ */
+
+@layer components {
+    /* ── Page shell: scroll the content stage, not tiny boxes inside cards ── */
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-data-table),
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-report-panel),
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-dashboard-page) {
+        overflow-y: auto;
+        overflow-x: clip;
+        overscroll-behavior: contain;
+    }
+
+    /* ── Tables: natural height; horizontal scroll only if wide ── */
+    html[data-authenticated-app="1"] .lms-data-table {
+        flex: 0 1 auto;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__body-wrap,
+    html[data-authenticated-app="1"] .lms-report-table-wrap,
+    html[data-authenticated-app="1"] .lms-data-table-wrap,
+    html[data-authenticated-app="1"] .ds-table-wrap {
+        max-height: none !important;
+        overflow-y: visible;
+        overflow-x: auto;
+        flex: 0 1 auto;
+        min-height: auto;
+    }
+
+    /* Long lists inside index tables: optional internal scroll when explicitly marked */
+    html[data-authenticated-app="1"] .lms-data-table--viewport-scroll {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table--viewport-scroll .lms-data-table__body-wrap {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto !important;
+        max-height: none;
+    }
+
+    /* ── Panels: no forced inner scroll ── */
+    html[data-authenticated-app="1"] .lms-panel--scroll,
+    html[data-authenticated-app="1"] .lms-panel--scroll .lms-panel__body,
+    html[data-authenticated-app="1"] .lms-scroll-panel,
+    html[data-authenticated-app="1"] .lms-scroll-panel--tall {
+        max-height: none !important;
+        overflow-y: visible;
+        overflow-x: clip;
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-main .lms-panel--scroll .lms-panel__body,
+    html[data-authenticated-app="1"] .lms-stream-main .lms-scroll-panel {
+        max-height: none !important;
+    }
+
+    /* ── Dashboard: natural flow, balanced grid ── */
+    html[data-authenticated-app="1"] .lms-dashboard-page {
+        flex: 0 1 auto;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row {
+        flex: 0 1 auto;
+        min-height: auto;
+        align-items: stretch;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row .lms-section {
+        min-height: auto;
+        height: 100%;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row .lms-panel {
+        flex: 1 1 auto;
+        min-height: auto;
+        height: 100%;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row--1-1 {
+        flex: 0 1 auto;
+    }
+
+    /* ── Main content area scrolls as one unit (not browser body) ── */
+    html[data-authenticated-app="1"] main.lms-content-container.page-content-3d {
+        overflow-y: auto;
+        overflow-x: clip;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-shell {
+        overflow: visible;
+        flex: 0 1 auto;
+        min-height: auto;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-shell:not(:has(.lms-dashboard-page)):not(:has(.lms-data-table)):not(:has(.lms-report-panel)) {
+        overflow-y: visible;
+    }
+
+    /* ── SaaS polish: softer hero, less visual noise ── */
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-dashboard-page) .lms-page-header {
+        background: var(--color-surface);
+        border: 1px solid var(--lms-border-soft, rgba(226, 232, 240, 0.92));
+        box-shadow: none;
+    }
+
+    html[data-authenticated-app="1"] .sidebar-nav-link {
+        margin-bottom: 0.125rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-content-stage:has(.lms-dashboard-page) .lms-app-footer {
+        display: block;
+    }
+
+    /* Thin scrollbar only when content area actually scrolls */
+    html[data-authenticated-app="1"] main.lms-content-container.page-content-3d::-webkit-scrollbar,
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-dashboard-page)::-webkit-scrollbar,
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-data-table)::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    html[data-authenticated-app="1"] main.lms-content-container.page-content-3d::-webkit-scrollbar-thumb,
+    html[data-authenticated-app="1"] .lms-page-shell::-webkit-scrollbar-thumb {
+        background: rgba(100, 116, 139, 0.3);
+        border-radius: 9999px;
+    }
+}

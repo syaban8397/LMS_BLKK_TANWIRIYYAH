@@ -29,6 +29,7 @@
                     </x-lms-form-card>
 
                     <x-lms-form-card :title="__('lms.settings.appearance')" icon="palette">
+                        <p class="text-xs text-slate-500 mb-4">{{ __('lms.settings.system_defaults_hint') }}</p>
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
                                 <x-input-label for="default_theme" :value="__('lms.settings.default_theme')" />

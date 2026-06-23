@@ -15,6 +15,7 @@ class Assignment extends Model
         'attachment',
         'deadline',
         'late_submission_allowed',
+        'submission_type',
         'is_active',
         'created_by',
     ];
@@ -28,7 +29,7 @@ class Assignment extends Model
         ];
     }
 
-    public static function validationRules(): array
+    public static function validationRules(?string $submissionType = null): array
     {
         return [
             'title' => 'required|max:255',
@@ -36,7 +37,18 @@ class Assignment extends Model
             'attachment' => UploadRules::documentAttachment(),
             'deadline' => 'required|date_format:Y-m-d\TH:i',
             'late_submission_allowed' => 'sometimes|boolean',
+            'submission_type' => 'required|in:file,link,file_and_link',
         ];
+    }
+
+    public function requiresFileSubmission(): bool
+    {
+        return in_array($this->submission_type, ['file', 'file_and_link'], true);
+    }
+
+    public function requiresLinkSubmission(): bool
+    {
+        return in_array($this->submission_type, ['link', 'file_and_link'], true);
     }
 
     public function class()

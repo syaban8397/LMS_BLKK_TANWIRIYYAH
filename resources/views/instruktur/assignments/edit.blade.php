@@ -96,27 +96,29 @@
                             </label>
                         </div>
 
+                        @include('instruktur.assignments.partials.submission-type', ['assignment' => $assignment])
+
                         <x-lms-notice tone="info" :title="__('lms.assignment.info_title')">
                             {{ __('lms.assignment.info_future_only') }}
                         </x-lms-notice>
-
-                        <div class="border-t border-slate-200 pt-4">
-                            <form action="{{ route('instruktur.assignments.destroy', [$class, $assignment]) }}" method="POST"
-                                  data-lms-confirm="{{ __('lms.assignment.delete_confirm') }}" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="lms-btn-danger inline-flex items-center gap-1">
-                                    <x-lms-icon name="trash" class="w-4 h-4" />
-                                    {{ __('lms.assignment.delete_btn') }}
-                                </button>
-                            </form>
-                        </div>
 
                         <x-lms-form-actions>
                             <x-ds.button tag="a" variant="secondary" :href="route('instruktur.classes.stream', $class)">{{ __('lms.cancel') }}</x-ds.button>
                             <x-ds.button type="submit" variant="primary">{{ __('lms.assignment.update_btn') }}</x-ds.button>
                         </x-lms-form-actions>
                     </form>
+
+                    <div class="border-t border-slate-200 pt-4 mt-6">
+                        <form action="{{ route('instruktur.assignments.destroy', [$class, $assignment]) }}" method="POST"
+                              data-lms-confirm="{{ __('lms.assignment.delete_confirm') }}" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="lms-btn-danger inline-flex items-center gap-1">
+                                <x-lms-icon name="trash" class="w-4 h-4" />
+                                {{ __('lms.assignment.delete_btn') }}
+                            </button>
+                        </form>
+                    </div>
                 </x-lms-form-card>
             </div>
         </x-lms-section>

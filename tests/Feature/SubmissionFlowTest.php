@@ -43,7 +43,7 @@ class SubmissionFlowTest extends TestCase
         );
 
         $response->assertRedirect();
-        $response->assertSessionHas('error');
+        $response->assertSessionHasErrors();
         $this->assertDatabaseCount('submissions', 0);
     }
 

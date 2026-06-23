@@ -190,6 +190,7 @@
         overflow-x: auto;
         overflow-y: visible;
         max-width: 100%;
+        overscroll-behavior: contain;
     }
 
     html[data-authenticated-app="1"] .lms-dialog-overlay {

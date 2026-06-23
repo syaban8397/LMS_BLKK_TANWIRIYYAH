@@ -10,6 +10,7 @@ use App\Models\ClassModel;
 use App\Models\Submission;
 use App\Support\SecureStorage;
 use App\Http\Requests\Peserta\SubmissionRequest;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 class SubmissionController extends Controller
 {
@@ -58,8 +59,24 @@ class SubmissionController extends Controller
 
         $validated = $request->validated();
 
-        if (empty($validated['url']) && !$request->hasFile('file')) {
-            return back()->with('error', __('lms.flash.submission_need_url_or_file'));
+        if ($assignment->submission_type === 'file' && ! $request->hasFile('file')) {
+            return back()->withErrors(['file' => __('lms.flash.submission_file_required')])->withInput();
+        }
+
+        if ($assignment->submission_type === 'link' && empty($validated['url'])) {
+            return back()->withErrors(['url' => __('lms.flash.submission_link_required')])->withInput();
+        }
+
+        if ($assignment->submission_type === 'file_and_link' && ! $request->hasFile('file') && empty($validated['url'])) {
+            return back()->withErrors(['content' => __('lms.flash.submission_need_url_or_file')])->withInput();
+        }
+
+        if ($assignment->submission_type === 'file' && ! empty($validated['url'])) {
+            return back()->withErrors(['url' => __('lms.flash.submission_link_not_allowed')])->withInput();
+        }
+
+        if ($assignment->submission_type === 'link' && $request->hasFile('file')) {
+            return back()->withErrors(['file' => __('lms.flash.submission_file_not_allowed')])->withInput();
         }
 
         $filePath = null;
@@ -134,12 +151,28 @@ class SubmissionController extends Controller
 
         $validated = $request->validated();
 
+        if ($assignment->submission_type === 'file' && ! $request->hasFile('file') && ! $submission->file_path) {
+            return back()->withErrors(['file' => __('lms.flash.submission_file_required')])->withInput();
+        }
+
+        if ($assignment->submission_type === 'link' && empty($validated['url'])) {
+            return back()->withErrors(['url' => __('lms.flash.submission_link_required')])->withInput();
+        }
+
+        if ($assignment->submission_type === 'file_and_link' && ! $request->hasFile('file') && empty($validated['url']) && ! $submission->file_path && ! $submission->url) {
+            return back()->withErrors(['content' => __('lms.flash.submission_need_url_or_file')])->withInput();
+        }
+
         if ($request->hasFile('file')) {
             SecureStorage::delete($submission->file_path);
             $submission->file_path = SecureStorage::storeUploadedFile($request->file('file'), 'submissions');
         }
 
-        $submission->url = $validated['url'] ?? $submission->url;
+        if ($assignment->submission_type === 'link' || $assignment->submission_type === 'file_and_link') {
+            $submission->url = $validated['url'] ?? $submission->url;
+        } else {
+            $submission->url = null;
+        }
         $submission->notes = $validated['notes'] ?? $submission->notes;
         $submission->submitted_at = now();
         $submission->status = $assignment->deadline->isPast() ? 'late' : 'submitted';

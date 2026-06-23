@@ -22,32 +22,7 @@
                     <form action="{{ route('peserta.submissions.store', [$class, $assignment]) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
-                        <div class="form-group">
-                            <label class="block text-sm font-semibold text-slate-700 mb-2 inline-flex items-center gap-1">
-                                <x-lms-icon name="upload" class="w-4 h-4" />
-                                {{ __('lms.assignment.upload_file') }}
-                            </label>
-                            <input type="file" name="file" class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all cursor-pointer">
-                            @error('file')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                            <p class="text-xs text-slate-400 mt-1">{{ __('lms.assignment.file_max_hint') }}</p>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="block text-sm font-semibold text-slate-700 mb-2 inline-flex items-center gap-1">
-                                <x-lms-icon name="link" class="w-4 h-4" />
-                                {{ __('lms.assignment.url_label') }}
-                            </label>
-                            <input type="url" name="url" placeholder="https://..." class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all">
-                            @error('url')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label class="block text-sm font-semibold text-slate-700 mb-2 inline-flex items-center gap-1">
-                                <x-lms-icon name="edit" class="w-4 h-4" />
-                                {{ __('lms.attendance.notes_optional') }}
-                            </label>
-                            <textarea name="notes" rows="4" placeholder="{{ __('lms.assignment.notes_ph') }}" class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all"></textarea>
-                        </div>
+                        @include('peserta.submissions.partials.form-fields', ['assignment' => $assignment, 'submission' => null])
 
                         <x-lms-notice tone="warning" :title="__('lms.assignment.deadline_info')">
                             <p class="text-xs">{{ __('lms.assignment.submit_before') }} <span class="font-bold">{{ $assignment->deadline->format('d M Y H:i') }}</span></p>

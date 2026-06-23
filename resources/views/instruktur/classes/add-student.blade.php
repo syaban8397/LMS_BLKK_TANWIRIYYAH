@@ -62,7 +62,7 @@
                         </td>
                     </tr>
                 @empty
-                    <x-lms-table-empty :colspan="7" :message="__('lms.common.no_participants_add_hint')" icon="👥" />
+                    <x-lms-table-empty :colspan="7" :message="__('lms.common.no_participants_add_hint')" icon="users" />
                 @endforelse
             </x-lms-data-table>
         </x-lms-section>
@@ -75,7 +75,7 @@
         >
             <x-lms-panel>
                 @if($availableStudents->count() == 0)
-                    <x-lms-empty-state icon="👥" :message="__('lms.common.no_available_extended')">
+                    <x-lms-empty-state icon="users" :title="__('lms.common.no_available_extended')">
                         <x-slot:actions>
                             <a href="{{ route('instruktur.classes.stream', $class) }}" class="lms-btn-secondary">{{ __('lms.common.back_to_class_btn') }}</a>
                         </x-slot:actions>

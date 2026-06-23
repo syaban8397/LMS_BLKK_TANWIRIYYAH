@@ -46,6 +46,25 @@ class DashboardController extends Controller
                 )
                 ->count(),
             'recentClasses' => $recentClasses,
+            'pendingSubmissionList' => Submission::query()
+                ->where('submissions.status', 'submitted')
+                ->whereIn(
+                    'submissions.assignment_id',
+                    Assignment::query()->select('id')->whereIn('class_id', $classIds)
+                )
+                ->with(['participant', 'assignment.class'])
+                ->latest('submitted_at')
+                ->limit(5)
+                ->get(),
+            'recentSubmissions' => Submission::query()
+                ->whereIn(
+                    'submissions.assignment_id',
+                    Assignment::query()->select('id')->whereIn('class_id', $classIds)
+                )
+                ->with(['participant', 'assignment'])
+                ->latest('submitted_at')
+                ->limit(5)
+                ->get(),
         ]);
     }
 }

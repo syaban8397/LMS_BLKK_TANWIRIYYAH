@@ -16,6 +16,8 @@ class ClassModel extends Model
         'description',
         'start_date',
         'end_date',
+        'start_time',
+        'duration_minutes',
         'quota',
         'status',
     ];
@@ -25,7 +27,32 @@ class ClassModel extends Model
         return [
             'start_date' => 'date',
             'end_date' => 'date',
+            'duration_minutes' => 'integer',
         ];
+    }
+
+    public function scopeForInstructor($query, int $instructorId)
+    {
+        return $query->where('instructor_id', $instructorId);
+    }
+
+    public function scopeForParticipant($query, int $participantId)
+    {
+        return $query->whereHas('participants', function ($q) use ($participantId) {
+            $q->where('participant_id', $participantId)->where('status', 'active');
+        });
+    }
+
+    public function attendanceWindowForDate(\Carbon\Carbon|string $date): array
+    {
+        $date = \Carbon\Carbon::parse($date)->startOfDay();
+        $time = $this->start_time ?? '08:00:00';
+        $duration = (int) ($this->duration_minutes ?? 60);
+
+        $opensAt = $date->copy()->setTimeFromTimeString($time);
+        $closesAt = $opensAt->copy()->addMinutes($duration);
+
+        return [$opensAt, $closesAt];
     }
 
     public function program()

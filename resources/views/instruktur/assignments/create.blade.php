@@ -79,6 +79,8 @@
                     </label>
                 </div>
 
+                @include('instruktur.assignments.partials.submission-type', ['assignment' => null])
+
                 {{-- Info Box --}}
                 <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
                     <div class="flex items-start gap-2">

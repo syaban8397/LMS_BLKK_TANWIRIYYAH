@@ -1,4 +1,4 @@
-Ã¯Â»Â¿<div class="lms-form-layout">
+<div class="lms-form-layout">
     <x-lms-form-card :description="__('lms.profile_page.update_password_desc_long')">
         <form method="post" action="{{ route('password.update') }}" class="space-y-5">
             @csrf

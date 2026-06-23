@@ -47,6 +47,7 @@ class AssignmentController extends Controller
             'attachment' => $attachmentPath,
             'deadline' => $deadline,
             'late_submission_allowed' => $request->boolean('late_submission_allowed'),
+            'submission_type' => $validated['submission_type'],
         ]);
 
         return redirect()
@@ -86,6 +87,7 @@ class AssignmentController extends Controller
             'attachment' => $attachmentPath,
             'deadline' => Carbon::createFromFormat('Y-m-d\TH:i', $validated['deadline'])->format('Y-m-d H:i:s'),
             'late_submission_allowed' => $request->boolean('late_submission_allowed'),
+            'submission_type' => $validated['submission_type'],
         ]);
 
         return redirect()

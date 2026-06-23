@@ -12,8 +12,8 @@
             ]"
         />
 
-        <div class="grid lg:grid-cols-4 gap-6">
-            <div class="lg:col-span-1 space-y-5">
+        <div class="lms-stream-layout">
+            <div class="lms-stream-sidebar space-y-5">
                 <x-lms-section :title="__('lms.common.class_info')" icon="clipboard" compact>
                     <x-lms-panel>
                         <div class="lms-detail-list">
@@ -58,7 +58,7 @@
                 </x-lms-section>
             </div>
 
-            <div class="lg:col-span-3 space-y-5">
+            <div class="lms-stream-main space-y-5">
                 <x-lms-section compact>
                     <x-lms-panel>
                         <div class="lms-quick-grid lms-quick-grid--3">

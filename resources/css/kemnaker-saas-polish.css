@@ -1,0 +1,225 @@
+/**
+ * SaaS polish — enterprise calm: no card lift, instant forms, balanced grids.
+ * Authenticated app only. Landing page untouched.
+ */
+
+@layer components {
+    /* ── Calm surfaces: no hover lift on data cards ── */
+    html[data-authenticated-app="1"] main .form-card:hover,
+    html[data-authenticated-app="1"] main .detail-card:hover,
+    html[data-authenticated-app="1"] main .table-card:hover,
+    html[data-authenticated-app="1"] main .assignments-card:hover,
+    html[data-authenticated-app="1"] main .info-card:hover,
+    html[data-authenticated-app="1"] main .submission-card:hover,
+    html[data-authenticated-app="1"] main .attendance-card:hover,
+    html[data-authenticated-app="1"] main .materials-card:hover,
+    html[data-authenticated-app="1"] main .report-card:hover,
+    html[data-authenticated-app="1"] main .summary-card:hover,
+    html[data-authenticated-app="1"] main .stats-card:hover,
+    html[data-authenticated-app="1"] main .grade-card:hover,
+    html[data-authenticated-app="1"] main .card-3d:hover,
+    html[data-authenticated-app="1"] main .lms-data-table:hover,
+    html[data-authenticated-app="1"] main .lms-panel:hover,
+    html[data-authenticated-app="1"] main .lms-stat-card:hover,
+    html[data-authenticated-app="1"] main .dashboard-card:hover,
+    html[data-authenticated-app="1"] main .stat-card:hover {
+        transform: none;
+        box-shadow: var(--lms-shadow-card, var(--shadow-card));
+    }
+
+    /* ── Forms: visible immediately (no stagger fade-in) ── */
+    html[data-authenticated-app="1"] main .form-group,
+    html[data-authenticated-app="1"] main .input-group {
+        animation: none;
+        opacity: 1;
+    }
+
+    html[data-authenticated-app="1"] main .student-list-container {
+        animation: none;
+        opacity: 1;
+    }
+
+    /* ── Inputs: subtle focus, no bounce ── */
+    html[data-authenticated-app="1"] main .input-3d:focus,
+    html[data-authenticated-app="1"] main .premium-input:focus,
+    html[data-authenticated-app="1"] main select:focus,
+    html[data-authenticated-app="1"] main input:not([type="checkbox"]):not([type="radio"]):focus,
+    html[data-authenticated-app="1"] main textarea:focus {
+        transform: none;
+    }
+
+    /* ── Dashboard: equal-height columns, natural panel height ── */
+    html[data-authenticated-app="1"] .lms-dashboard-page__row {
+        display: grid;
+        align-items: stretch;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row > .lms-section,
+    html[data-authenticated-app="1"] .lms-dashboard-page__row > * {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row .lms-panel {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row .lms-panel__body {
+        flex: 1 1 auto;
+    }
+
+    html[data-authenticated-app="1"] .lms-feed-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    /* ── Empty state: professional, compact ── */
+    html[data-authenticated-app="1"] .lms-empty-state,
+    html[data-authenticated-app="1"] .ds-empty {
+        padding: 2rem 1.25rem;
+        border-style: dashed;
+        border-color: var(--lms-border-soft, rgba(226, 232, 240, 0.92));
+        background: rgba(248, 250, 252, 0.5);
+    }
+
+    html.dark[data-authenticated-app="1"] .lms-empty-state,
+    html.dark[data-authenticated-app="1"] .ds-empty {
+        background: rgba(15, 23, 42, 0.35);
+    }
+
+    html[data-authenticated-app="1"] .lms-empty-state__icon,
+    html[data-authenticated-app="1"] .ds-empty__icon {
+        width: 2.75rem;
+        height: 2.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.625rem;
+        background: rgba(37, 99, 235, 0.08);
+        color: var(--lms-color-accent, #2563eb);
+        margin-bottom: 0.75rem;
+        opacity: 1;
+    }
+
+    html[data-authenticated-app="1"] .lms-empty-state__title,
+    html[data-authenticated-app="1"] .ds-empty__title {
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    /* ── Pagination ── */
+    html[data-authenticated-app="1"] .lms-data-table__footer {
+        padding: 0.625rem 1rem;
+        border-top: 1px solid var(--lms-border-soft, rgba(226, 232, 240, 0.92));
+        background: rgba(248, 250, 252, 0.55);
+    }
+
+    html.dark[data-authenticated-app="1"] .lms-data-table__footer {
+        background: rgba(15, 23, 42, 0.35);
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__footer nav[role="navigation"] {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__footer .pagination {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.25rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__footer .page-link,
+    html[data-authenticated-app="1"] .lms-data-table__footer span[aria-current="page"] > span,
+    html[data-authenticated-app="1"] .lms-data-table__footer a[rel="next"],
+    html[data-authenticated-app="1"] .lms-data-table__footer a[rel="prev"] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2rem;
+        min-height: 2rem;
+        padding: 0 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border: 1px solid var(--lms-border-soft, rgba(226, 232, 240, 0.92));
+        background: var(--color-surface);
+        color: var(--color-text-muted);
+        transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__footer a[rel="next"]:hover,
+    html[data-authenticated-app="1"] .lms-data-table__footer a[rel="prev"]:hover,
+    html[data-authenticated-app="1"] .lms-data-table__footer .page-link:hover {
+        background: rgba(37, 99, 235, 0.06);
+        border-color: rgba(37, 99, 235, 0.25);
+        color: var(--lms-color-accent, #2563eb);
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__footer span[aria-current="page"] > span {
+        background: var(--lms-color-primary, #004071);
+        border-color: var(--lms-color-primary, #004071);
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    /* ── Profile & detail avatars: subtle ring ── */
+    html[data-authenticated-app="1"] main img.rounded-2xl.object-cover {
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    }
+
+    html[data-authenticated-app="1"] main .ring-4.ring-brand-50 {
+        --tw-ring-opacity: 0.35;
+        --tw-ring-offset-width: 0px;
+    }
+
+    /* ── Page shell rhythm ── */
+    html[data-authenticated-app="1"] .lms-page-shell {
+        gap: 1.25rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-section + .lms-section {
+        margin-top: 0;
+    }
+
+    /* ── Sidebar: clearer active indicator ── */
+    html[data-authenticated-app="1"] .sidebar-nav-link--active {
+        background: rgba(37, 99, 235, 0.1);
+        color: var(--lms-color-primary, #004071);
+    }
+
+    html.dark[data-authenticated-app="1"] .sidebar-nav-link--active {
+        background: rgba(59, 130, 246, 0.15);
+        color: #93c5fd;
+    }
+
+    html[data-authenticated-app="1"] .sidebar-nav-link--active .sidebar-nav-icon {
+        color: inherit;
+    }
+
+    /* ── Primary buttons: keep subtle lift only on CTAs ── */
+    html[data-authenticated-app="1"] main .lms-btn-primary:hover,
+    html[data-authenticated-app="1"] main .lms-btn-secondary:hover {
+        transform: translateY(-1px);
+    }
+
+    html[data-authenticated-app="1"] main .action-btn:hover {
+        transform: none;
+        filter: none;
+    }
+
+    html[data-authenticated-app="1"] main .action-btn:hover {
+        opacity: 0.92;
+    }
+}

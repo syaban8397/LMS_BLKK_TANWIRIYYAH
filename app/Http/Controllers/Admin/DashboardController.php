@@ -12,6 +12,7 @@ use App\Models\ClassParticipant;
 use App\Models\FinalGrade;
 use App\Models\Material;
 use App\Models\Program;
+use App\Models\Submission;
 use App\Models\User;
 
 class DashboardController extends Controller
@@ -77,6 +78,16 @@ class DashboardController extends Controller
             'avgAttendance' => $avgAttendance,
             'programDistribution' => $programDistribution,
             'maxProgramCount' => $maxProgramCount,
+            'recentSubmissions' => Submission::query()
+                ->with(['participant', 'assignment.class'])
+                ->latest('submitted_at')
+                ->limit(5)
+                ->get(),
+            'recentCertificates' => Certificate::query()
+                ->with(['participant', 'class'])
+                ->latest('issued_at')
+                ->limit(5)
+                ->get(),
         ]);
     }
 }

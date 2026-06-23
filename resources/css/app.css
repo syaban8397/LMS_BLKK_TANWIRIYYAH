@@ -11,6 +11,12 @@
 @import './lms-compact-layout.css';
 @import './kemnaker-enterprise-v3.css';
 @import './kemnaker-enterprise-v4.css';
+@import './kemnaker-dashboard-ref.css';
+@import './kemnaker-unified-views.css';
+@import './kemnaker-module-polish.css';
+@import './kemnaker-lms-refinement.css';
+@import './kemnaker-natural-scroll.css';
+@import './kemnaker-saas-polish.css';
 
 @tailwind base;
 @tailwind components;

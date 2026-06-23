@@ -1,0 +1,318 @@
+/**
+ * Unified module views — scroll discipline & dashboard-consistent polish (all roles).
+ * Landing page (welcome) is untouched; applies only to authenticated app shell.
+ */
+
+@layer components {
+    /* ── Shell chain: no global / main scroll ── */
+    html[data-authenticated-app="1"] .lms-content-stage {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+
+    html[data-authenticated-app="1"] main.lms-content-container.page-content-3d {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    html[data-authenticated-app="1"] .lms-app-footer {
+        flex-shrink: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-module-shell,
+    html[data-authenticated-app="1"] .lms-page-shell {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        overflow: hidden;
+    }
+
+    /* Dashboard & table index: fit viewport; scroll inside panels/tables only */
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-dashboard-page),
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-data-table),
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-report-panel) {
+        overflow: hidden;
+    }
+
+    /* Forms & detail pages: scroll inside page shell when needed */
+    html[data-authenticated-app="1"] .lms-page-shell:not(:has(.lms-dashboard-page)):not(:has(.lms-data-table)):not(:has(.lms-report-panel)) {
+        overflow-y: auto;
+        overflow-x: clip;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-shell:not(:has(.lms-dashboard-page)):not(:has(.lms-data-table)):not(:has(.lms-report-panel))::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-shell:not(:has(.lms-dashboard-page)):not(:has(.lms-data-table)):not(:has(.lms-report-panel))::-webkit-scrollbar-thumb {
+        background: rgba(100, 116, 139, 0.35);
+        border-radius: 9999px;
+    }
+
+    /* ── Dashboard fills available height ── */
+    html[data-authenticated-app="1"] .lms-dashboard-page {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__stats {
+        flex-shrink: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row .lms-section {
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row .lms-panel {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    html[data-authenticated-app="1"] .lms-dashboard-page__row .lms-panel--scroll .lms-panel__body,
+    html[data-authenticated-app="1"] .lms-dashboard-page__row .lms-panel.lms-panel--scroll {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+    }
+
+    /* ── Stat card: reference layout (icon left) ── */
+    html[data-authenticated-app="1"] .lms-stat-card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-stat-card__icon {
+        flex-shrink: 0;
+        order: -1;
+    }
+
+    html[data-authenticated-app="1"] .lms-stat-card__content {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-stat-card:hover {
+        transform: none;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    /* ── Table pages: table body scrolls, header/filter stay visible ── */
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-data-table) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-data-table) > .lms-data-table,
+    html[data-authenticated-app="1"] .lms-page-shell:has(.lms-data-table) > .lms-section:has(.lms-data-table) {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__body-wrap {
+        flex: 0 1 auto;
+        min-height: auto;
+        overflow-x: auto;
+        overflow-y: visible;
+        overscroll-behavior: contain;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__body-wrap::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__body-wrap::-webkit-scrollbar-thumb {
+        background: rgba(100, 116, 139, 0.35);
+        border-radius: 9999px;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__head th,
+    html[data-authenticated-app="1"] .lms-data-table__body-wrap thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    /* ── Sections, panels, cards (consistent with dashboard) ── */
+    html[data-authenticated-app="1"] .lms-section {
+        gap: 0.625rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-panel,
+    html[data-authenticated-app="1"] .lms-form-card,
+    html[data-authenticated-app="1"] .form-card,
+    html[data-authenticated-app="1"] .detail-card,
+    html[data-authenticated-app="1"] .table-card,
+    html[data-authenticated-app="1"] .info-card {
+        border-radius: 0.75rem;
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    html[data-authenticated-app="1"] .lms-panel:hover,
+    html[data-authenticated-app="1"] .form-card:hover,
+    html[data-authenticated-app="1"] .detail-card:hover,
+    html[data-authenticated-app="1"] .table-card:hover {
+        transform: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-filter-bar {
+        border-radius: 0.625rem;
+        border: 1px solid rgba(226, 232, 240, 0.85);
+        background: rgba(248, 250, 252, 0.65);
+    }
+
+    html.dark[data-authenticated-app="1"] .lms-filter-bar {
+        background: rgba(15, 23, 42, 0.35);
+        border-color: rgba(71, 85, 105, 0.55);
+    }
+
+    /* ── Buttons: restrained, institutional ── */
+    html[data-authenticated-app="1"] .lms-btn-primary:hover,
+    html[data-authenticated-app="1"] .lms-btn-secondary:hover,
+    html[data-authenticated-app="1"] .lms-action-btn:hover {
+        transform: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-quick-link {
+        border-radius: 0.625rem;
+        font-size: 0.8125rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-quick-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.625rem;
+    }
+
+    @media (min-width: 640px) {
+        html[data-authenticated-app="1"] .lms-quick-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    /* ── Internal scroll utility (opt-in only) ── */
+    html[data-authenticated-app="1"] .lms-scroll-panel--constrained {
+        max-height: min(28rem, 50vh);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    /* ── Global module polish (all roles, non-dashboard) ── */
+    html[data-authenticated-app="1"] .lms-page-header {
+        flex-shrink: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-header__title {
+        font-size: 1.1875rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-header__subtitle {
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        max-width: 42rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-section__header {
+        align-items: center;
+    }
+
+    html[data-authenticated-app="1"] .lms-section-link {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-section-link:hover {
+        text-decoration: underline;
+    }
+
+    html[data-authenticated-app="1"] .lms-btn-primary,
+    html[data-authenticated-app="1"] .lms-btn-secondary {
+        min-height: 2.375rem;
+        padding: 0.4375rem 0.875rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-action-btn {
+        min-height: 1.875rem;
+        padding: 0.3125rem 0.625rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 0.4375rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-form-card,
+    html[data-authenticated-app="1"] .form-card {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    html[data-authenticated-app="1"] .lms-form-card__body,
+    html[data-authenticated-app="1"] .form-card > form,
+    html[data-authenticated-app="1"] .form-card > .p-6,
+    html[data-authenticated-app="1"] .form-card > .px-6 {
+        padding: 1.125rem 1.25rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-empty-state {
+        padding: 1.75rem 1.25rem;
+    }
+
+    html[data-authenticated-app="1"] .card-3d:hover,
+    html[data-authenticated-app="1"] .lms-data-table:hover {
+        transform: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__header {
+        padding: 0.875rem 1.125rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+    }
+
+    html[data-authenticated-app="1"] .lms-data-table__title {
+        font-size: 0.875rem;
+        font-weight: 700;
+    }
+
+    html[data-authenticated-app="1"] .lms-panel__body {
+        padding: 1rem 1.125rem;
+    }
+}

@@ -12,6 +12,9 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => 'lms-stat-card card-3d '.$toneClass]) }}>
+    <div class="lms-stat-card__icon">
+        <x-lms-icon :name="$icon" class="w-5 h-5" />
+    </div>
     <div class="lms-stat-card__content">
         <p class="lms-stat-card__label">{{ $label }}</p>
         <p class="lms-stat-card__value @if($animate) counter @endif" @if($animate) data-value="{{ $value }}" @endif>
@@ -27,8 +30,5 @@
         @if($hint)
             <p class="lms-stat-card__hint">{{ $hint }}</p>
         @endif
-    </div>
-    <div class="lms-stat-card__icon">
-        <x-lms-icon :name="$icon" class="w-5 h-5" />
     </div>
 </div>

@@ -20,8 +20,7 @@ class AttendanceFlowTest extends TestCase
             route('instruktur.attendances.store', $context['class']),
             [
                 'meeting_number' => 1,
-                'attendance_date' => now()->toDateString(),
-                'deadline_minutes' => 120,
+                'session_date' => now()->toDateString(),
             ]
         );
 

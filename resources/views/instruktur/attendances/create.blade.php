@@ -31,23 +31,18 @@
                     <p class="text-xs text-slate-400 mt-1">{{ __('lms.attendance.next_meeting_hint') }} <span class="font-semibold text-blue-600">{{ $nextMeeting }}</span></p>
                 </div>
 
-                {{-- Attendance Date & Time (dengan jam) --}}
+                {{-- Session Date --}}
                 <div class="form-group">
-                    <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.attendance.class_start') }} <span class="text-red-500">*</span></label>
-                    <input type="datetime-local" name="attendance_date" 
-                           value="{{ old('attendance_date', now()->format('Y-m-d\TH:i')) }}" 
+                    <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.attendance.session_date') }} <span class="text-red-500">*</span></label>
+                    <input type="date" name="session_date"
+                           value="{{ old('session_date', now()->format('Y-m-d')) }}"
                            required class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
-                    @error('attendance_date')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                </div>
-
-                {{-- Deadline Minutes --}}
-                <div class="form-group">
-                    <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.attendance.deadline_minutes') }} <span class="text-red-500">*</span></label>
-                    <input type="number" name="deadline_minutes" value="{{ old('deadline_minutes', 60) }}" min="0" required
-                           class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
-                    @error('deadline_minutes')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                    @error('session_date')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     <p class="text-xs text-slate-400 mt-1">
-                        {{ __('lms.attendance.deadline_submit_hint', ['minutes' => old('deadline_minutes', 60)]) }}
+                        {{ __('lms.attendance.class_schedule_hint', [
+                            'time' => \Illuminate\Support\Str::substr($class->start_time ?? '08:00:00', 0, 5),
+                            'duration' => $class->duration_minutes ?? 60,
+                        ]) }}
                     </p>
                 </div>
 

@@ -103,6 +103,26 @@
         </div>
     </div>
 
+    <!-- CLASS SCHEDULE -->
+    <div class="grid md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.common.class_start_time') }} <span class="text-red-500">*</span></label>
+            <input type="time" name="start_time" value="{{ old('start_time', isset($class) ? \Illuminate\Support\Str::substr($class->start_time ?? '08:00:00', 0, 5) : '08:00') }}"
+                   class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
+            @error('start_time')
+                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('lms.common.class_duration_minutes') }} <span class="text-red-500">*</span></label>
+            <input type="number" name="duration_minutes" value="{{ old('duration_minutes', $class->duration_minutes ?? 60) }}" min="1" max="480"
+                   class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2">
+            @error('duration_minutes')
+                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+    </div>
+
     <!-- QUOTA & STATUS -->
     <div class="grid md:grid-cols-2 gap-4">
         <div>

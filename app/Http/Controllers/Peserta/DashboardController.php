@@ -20,6 +20,7 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         $participations = ClassParticipant::where('participant_id', $user->id)
+            ->where('status', 'active')
             ->with('class')
             ->get();
 
@@ -68,6 +69,18 @@ class DashboardController extends Controller
 
         $announcementCount = Announcement::whereIn('class_id', $classIds)->count();
 
+        $recentSubmissions = Submission::where('participant_id', $user->id)
+            ->with(['assignment.class'])
+            ->latest('submitted_at')
+            ->limit(5)
+            ->get();
+
+        $recentCertificates = Certificate::where('participant_id', $user->id)
+            ->with('class')
+            ->latest('issued_at')
+            ->limit(5)
+            ->get();
+
         return view('dashboard.peserta', compact(
             'classes',
             'materials',
@@ -80,7 +93,9 @@ class DashboardController extends Controller
             'completedMaterials',
             'announcements',
             'announcementCount',
-            'primaryClass'
+            'primaryClass',
+            'recentSubmissions',
+            'recentCertificates'
         ));
     }
 }

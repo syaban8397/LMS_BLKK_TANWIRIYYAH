@@ -3,7 +3,8 @@
       class="h-full"
       data-authenticated-app="1"
       data-user-role="{{ auth()->user()->role ?? 'guest' }}"
-      data-user-id="{{ auth()->id() ?? '' }}">
+      data-user-id="{{ auth()->id() ?? '' }}"
+      data-default-theme="{{ $lmsDefaultTheme ?? 'light' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -38,13 +39,11 @@
     <script>
         (function () {
             try {
-                var role = @json(auth()->user()->role ?? 'guest');
-                var uid = @json(auth()->id() ?? '');
-                var base = 'lms-theme-' + role;
-                var key = uid ? base + '-' + uid : base;
-                var theme = localStorage.getItem(key) || localStorage.getItem(base) || @json($lmsDefaultTheme ?? 'light');
+                var theme = document.documentElement.getAttribute('data-default-theme') || 'light';
                 if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
                 }
                 document.documentElement.setAttribute('data-theme', theme);
             } catch (e) {}
@@ -81,8 +80,13 @@
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                <x-locale-switcher />
-                <x-theme-toggle />
+                <span class="lms-system-badge hidden sm:inline-flex" title="{{ __('lms.settings.system_defaults') }}">
+                    {{ strtoupper($lmsDefaultLocale ?? app()->getLocale()) }}
+                </span>
+                <span class="lms-system-badge hidden sm:inline-flex" title="{{ __('lms.settings.system_defaults') }}">
+                    <x-lms-icon :name="($lmsDefaultTheme ?? 'light') === 'dark' ? 'moon' : 'sun'" class="w-3.5 h-3.5" />
+                    {{ ($lmsDefaultTheme ?? 'light') === 'dark' ? __('lms.theme.dark') : __('lms.theme.light') }}
+                </span>
 
                 <div class="lms-appbar__clock hidden sm:block">
                     <div id="current-date" class="text-[10px] leading-tight"></div>

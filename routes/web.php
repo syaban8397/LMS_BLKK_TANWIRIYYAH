@@ -156,56 +156,60 @@ Route::middleware(['auth', 'role.check:instruktur', 'user.active'])
 
         // Classes
         Route::get('/classes', [InstruktorClassController::class, 'index'])->name('classes.index');
-        Route::get('/classes/{class}/stream', [InstruktorClassStreamController::class, 'stream'])->name('classes.stream');
-        Route::get('/classes/{class}/add-student', [InstruktorClassController::class, 'addStudentForm'])->name('classes.add-student');
-        Route::post('/classes/{class}/add-student', [InstruktorClassController::class, 'addStudent'])->name('classes.add-student.store');
-        Route::delete('/classes/{class}/participants/{participant}', [InstruktorClassController::class, 'removeStudent'])->name('classes.remove-student');
-        Route::patch('/classes/{class}/participants/{participant}/status', [InstruktorClassController::class, 'updateStudentStatus'])->name('classes.update-student-status');
 
-        // Materials
-        Route::get('/classes/{class}/materials', [InstruktorMaterialController::class, 'index'])->name('materials.index');
-        Route::get('/classes/{class}/materials/create', [InstruktorMaterialController::class, 'create'])->name('materials.create');
-        Route::post('/classes/{class}/materials', [InstruktorMaterialController::class, 'store'])->name('materials.store');
-        Route::get('/classes/{class}/materials/{material}', [InstruktorMaterialController::class, 'show'])->name('materials.show');
-        Route::get('/classes/{class}/materials/{material}/edit', [InstruktorMaterialController::class, 'edit'])->name('materials.edit');
-        Route::put('/classes/{class}/materials/{material}', [InstruktorMaterialController::class, 'update'])->name('materials.update');
-        Route::delete('/classes/{class}/materials/{material}', [InstruktorMaterialController::class, 'destroy'])->name('materials.destroy');
+        Route::middleware('instruktur.class')->group(function () {
+            Route::get('/classes/{class}/stream', [InstruktorClassStreamController::class, 'stream'])->name('classes.stream');
+            Route::get('/classes/{class}/add-student', [InstruktorClassController::class, 'addStudentForm'])->name('classes.add-student');
+            Route::post('/classes/{class}/add-student', [InstruktorClassController::class, 'addStudent'])->name('classes.add-student.store');
+            Route::delete('/classes/{class}/participants/{participant}', [InstruktorClassController::class, 'removeStudent'])->name('classes.remove-student');
+            Route::patch('/classes/{class}/participants/{participant}/status', [InstruktorClassController::class, 'updateStudentStatus'])->name('classes.update-student-status');
 
-        // Announcements
-        Route::post('/classes/{class}/announcements', [InstruktorAnnouncementController::class, 'store'])->name('announcements.store');
-        Route::get('/classes/{class}/announcements/{announcement}/edit', [InstruktorAnnouncementController::class, 'edit'])->name('announcements.edit');
-        Route::put('/classes/{class}/announcements/{announcement}', [InstruktorAnnouncementController::class, 'update'])->name('announcements.update');
-        Route::delete('/classes/{class}/announcements/{announcement}', [InstruktorAnnouncementController::class, 'destroy'])->name('announcements.destroy');
+            // Materials
+            Route::get('/classes/{class}/materials', [InstruktorMaterialController::class, 'index'])->name('materials.index');
+            Route::get('/classes/{class}/materials/create', [InstruktorMaterialController::class, 'create'])->name('materials.create');
+            Route::post('/classes/{class}/materials', [InstruktorMaterialController::class, 'store'])->name('materials.store');
+            Route::get('/classes/{class}/materials/{material}', [InstruktorMaterialController::class, 'show'])->name('materials.show');
+            Route::get('/classes/{class}/materials/{material}/edit', [InstruktorMaterialController::class, 'edit'])->name('materials.edit');
+            Route::put('/classes/{class}/materials/{material}', [InstruktorMaterialController::class, 'update'])->name('materials.update');
+            Route::delete('/classes/{class}/materials/{material}', [InstruktorMaterialController::class, 'destroy'])->name('materials.destroy');
 
-        // Assignments (CRUD)
-        Route::get('/classes/{class}/assignments/create', [InstruktorAssignmentController::class, 'create'])->name('assignments.create');
-        Route::post('/classes/{class}/assignments', [InstruktorAssignmentController::class, 'store'])->name('assignments.store');
-        Route::get('/classes/{class}/assignments/{assignment}/edit', [InstruktorAssignmentController::class, 'edit'])->name('assignments.edit');
-        Route::put('/classes/{class}/assignments/{assignment}', [InstruktorAssignmentController::class, 'update'])->name('assignments.update');
-        Route::delete('/classes/{class}/assignments/{assignment}', [InstruktorAssignmentController::class, 'destroy'])->name('assignments.destroy');
+            // Announcements
+            Route::post('/classes/{class}/announcements', [InstruktorAnnouncementController::class, 'store'])->name('announcements.store');
+            Route::get('/classes/{class}/announcements/{announcement}/edit', [InstruktorAnnouncementController::class, 'edit'])->name('announcements.edit');
+            Route::put('/classes/{class}/announcements/{announcement}', [InstruktorAnnouncementController::class, 'update'])->name('announcements.update');
+            Route::delete('/classes/{class}/announcements/{announcement}', [InstruktorAnnouncementController::class, 'destroy'])->name('announcements.destroy');
 
-        // Grading (nilai assignment)
-        Route::get('/classes/{class}/assignments/{assignment}/grades', [InstrukturGradeController::class, 'index'])->name('grades.index');
-        Route::get('/classes/{class}/assignments/{assignment}/grades/{submission}', [InstrukturGradeController::class, 'show'])->name('grades.show');
-        Route::post('/classes/{class}/assignments/{assignment}/grades/{submission}', [InstrukturGradeController::class, 'storeGrade'])->name('grades.store');
+            // Assignments (CRUD)
+            Route::get('/classes/{class}/assignments/create', [InstruktorAssignmentController::class, 'create'])->name('assignments.create');
+            Route::post('/classes/{class}/assignments', [InstruktorAssignmentController::class, 'store'])->name('assignments.store');
+            Route::get('/classes/{class}/assignments/{assignment}/edit', [InstruktorAssignmentController::class, 'edit'])->name('assignments.edit');
+            Route::put('/classes/{class}/assignments/{assignment}', [InstruktorAssignmentController::class, 'update'])->name('assignments.update');
+            Route::delete('/classes/{class}/assignments/{assignment}', [InstruktorAssignmentController::class, 'destroy'])->name('assignments.destroy');
 
-        // Attendance
-        Route::get('/classes/{class}/attendances', [InstrukturAttendanceController::class, 'index'])->name('attendances.index');
-        Route::get('/classes/{class}/attendances/create', [InstrukturAttendanceController::class, 'create'])->name('attendances.create');
-        Route::post('/classes/{class}/attendances', [InstrukturAttendanceController::class, 'store'])->name('attendances.store');
-        Route::get('/classes/{class}/attendances/{meetingNumber}', [InstrukturAttendanceController::class, 'show'])->name('attendances.show');
-        Route::get('/classes/{class}/attendances/{meetingNumber}/edit', [InstrukturAttendanceController::class, 'edit'])->name('attendances.edit');
-        Route::put('/classes/{class}/attendances/{meetingNumber}', [InstrukturAttendanceController::class, 'update'])->name('attendances.update');
-        Route::delete('/classes/{class}/attendances/{meetingNumber}', [InstrukturAttendanceController::class, 'destroy'])->name('attendances.destroy');
-        Route::get('/classes/{class}/attendances-report', [InstrukturAttendanceController::class, 'report'])->name('attendances.report');
+            // Grading (nilai assignment)
+            Route::get('/classes/{class}/assignments/{assignment}/grades', [InstrukturGradeController::class, 'index'])->name('grades.index');
+            Route::get('/classes/{class}/assignments/{assignment}/grades/{submission}', [InstrukturGradeController::class, 'show'])->name('grades.show');
+            Route::post('/classes/{class}/assignments/{assignment}/grades/{submission}', [InstrukturGradeController::class, 'storeGrade'])->name('grades.store');
+
+            // Attendance
+            Route::get('/classes/{class}/attendances', [InstrukturAttendanceController::class, 'index'])->name('attendances.index');
+            Route::get('/classes/{class}/attendances/create', [InstrukturAttendanceController::class, 'create'])->name('attendances.create');
+            Route::post('/classes/{class}/attendances', [InstrukturAttendanceController::class, 'store'])->name('attendances.store');
+            Route::get('/classes/{class}/attendances/{meetingNumber}', [InstrukturAttendanceController::class, 'show'])->name('attendances.show');
+            Route::get('/classes/{class}/attendances/{meetingNumber}/edit', [InstrukturAttendanceController::class, 'edit'])->name('attendances.edit');
+            Route::put('/classes/{class}/attendances/{meetingNumber}', [InstrukturAttendanceController::class, 'update'])->name('attendances.update');
+            Route::delete('/classes/{class}/attendances/{meetingNumber}', [InstrukturAttendanceController::class, 'destroy'])->name('attendances.destroy');
+            Route::get('/classes/{class}/attendances-report', [InstrukturAttendanceController::class, 'report'])->name('attendances.report');
+
+            Route::get('/classes/{class}/certificates', [InstrukturCertificateController::class, 'show'])->name('certificates.show');
+            Route::post('/classes/{class}/certificates/statuses', [InstrukturCertificateController::class, 'saveStatuses'])->name('certificates.save-statuses');
+            Route::post('/classes/{class}/certificates/bulk-issue', [InstrukturCertificateController::class, 'bulkIssue'])->name('certificates.bulk-issue');
+            Route::get('/classes/{class}/certificates/export', [InstrukturCertificateController::class, 'exportExcel'])->name('certificates.export');
+            Route::delete('/classes/{class}/certificates/{certificate}', [InstrukturCertificateController::class, 'destroy'])->name('certificates.destroy');
+        });
 
         Route::get('/certificates', [InstrukturCertificateController::class, 'index'])->name('certificates.index');
-        Route::get('/classes/{class}/certificates', [InstrukturCertificateController::class, 'show'])->name('certificates.show');
-        Route::post('/classes/{class}/certificates/statuses', [InstrukturCertificateController::class, 'saveStatuses'])->name('certificates.save-statuses');
-        Route::post('/classes/{class}/certificates/bulk-issue', [InstrukturCertificateController::class, 'bulkIssue'])->name('certificates.bulk-issue');
-        Route::get('/classes/{class}/certificates/export', [InstrukturCertificateController::class, 'exportExcel'])->name('certificates.export');
         Route::get('/certificates/{certificate}/download', [InstrukturCertificateController::class, 'download'])->name('certificates.download');
-        Route::delete('/classes/{class}/certificates/{certificate}', [InstrukturCertificateController::class, 'destroy'])->name('certificates.destroy');
     });
 
 /*
@@ -224,29 +228,32 @@ Route::middleware(['auth', 'role.check:peserta', 'user.active'])
 
         // Classes
         Route::get('/classes', [PesertaClassController::class, 'index'])->name('classes.index');
-        Route::get('/classes/{class}', [PesertaClassController::class, 'show'])->name('classes.show');
-        Route::get('/classes/{class}/stream', [PesertaClassStreamController::class, 'stream'])->name('classes.stream');
 
-        // Materials
-        Route::get('/classes/{class}/materials', [PesertaMaterialController::class, 'index'])->name('materials.index');
-        Route::get('/classes/{class}/materials/{material}', [PesertaMaterialController::class, 'show'])->name('materials.show');
-        Route::post('/classes/{class}/materials/{material}/complete', [PesertaMaterialController::class, 'complete'])->name('materials.complete');
+        Route::middleware('peserta.enrolled')->group(function () {
+            Route::get('/classes/{class}', [PesertaClassController::class, 'show'])->name('classes.show');
+            Route::get('/classes/{class}/stream', [PesertaClassStreamController::class, 'stream'])->name('classes.stream');
 
-        // Assignments (daftar assignment dan detail)
-        Route::get('/classes/{class}/assignments', [PesertaAssignmentController::class, 'index'])->name('assignments.index');
-        Route::get('/classes/{class}/assignments/{assignment}', [PesertaAssignmentController::class, 'show'])->name('assignments.show');
+            // Materials
+            Route::get('/classes/{class}/materials', [PesertaMaterialController::class, 'index'])->name('materials.index');
+            Route::get('/classes/{class}/materials/{material}', [PesertaMaterialController::class, 'show'])->name('materials.show');
+            Route::post('/classes/{class}/materials/{material}/complete', [PesertaMaterialController::class, 'complete'])->name('materials.complete');
 
-        // Submission (peserta mengumpulkan tugas)
-        Route::get('/classes/{class}/assignments/{assignment}/submit', [PesertaSubmissionController::class, 'create'])->name('submissions.create');
-        Route::post('/classes/{class}/assignments/{assignment}/submit', [PesertaSubmissionController::class, 'store'])->name('submissions.store');
-        Route::get('/classes/{class}/assignments/{assignment}/submissions/{submission}/edit', [PesertaSubmissionController::class, 'edit'])->name('submissions.edit');
-        Route::put('/classes/{class}/assignments/{assignment}/submissions/{submission}', [PesertaSubmissionController::class, 'update'])->name('submissions.update');
-        Route::delete('/classes/{class}/assignments/{assignment}/submissions/{submission}', [PesertaSubmissionController::class, 'destroy'])->name('submissions.destroy');
+            // Assignments (daftar assignment dan detail)
+            Route::get('/classes/{class}/assignments', [PesertaAssignmentController::class, 'index'])->name('assignments.index');
+            Route::get('/classes/{class}/assignments/{assignment}', [PesertaAssignmentController::class, 'show'])->name('assignments.show');
 
-        // Attendance
-        Route::get('/classes/{class}/attendances', [PesertaAttendanceController::class, 'index'])->name('attendances.index');
-        Route::get('/classes/{class}/attendances/{meetingNumber}', [PesertaAttendanceController::class, 'show'])->name('attendances.show');
-        Route::post('/classes/{class}/attendances/{meetingNumber}/submit', [PesertaAttendanceController::class, 'submit'])->name('attendances.submit');
+            // Submission (peserta mengumpulkan tugas)
+            Route::get('/classes/{class}/assignments/{assignment}/submit', [PesertaSubmissionController::class, 'create'])->name('submissions.create');
+            Route::post('/classes/{class}/assignments/{assignment}/submit', [PesertaSubmissionController::class, 'store'])->name('submissions.store');
+            Route::get('/classes/{class}/assignments/{assignment}/submissions/{submission}/edit', [PesertaSubmissionController::class, 'edit'])->name('submissions.edit');
+            Route::put('/classes/{class}/assignments/{assignment}/submissions/{submission}', [PesertaSubmissionController::class, 'update'])->name('submissions.update');
+            Route::delete('/classes/{class}/assignments/{assignment}/submissions/{submission}', [PesertaSubmissionController::class, 'destroy'])->name('submissions.destroy');
+
+            // Attendance
+            Route::get('/classes/{class}/attendances', [PesertaAttendanceController::class, 'index'])->name('attendances.index');
+            Route::get('/classes/{class}/attendances/{meetingNumber}', [PesertaAttendanceController::class, 'show'])->name('attendances.show');
+            Route::post('/classes/{class}/attendances/{meetingNumber}/submit', [PesertaAttendanceController::class, 'submit'])->name('attendances.submit');
+        });
 
         Route::get('/certificates', [PesertaCertificateController::class, 'index'])->name('certificates.index');
         Route::get('/certificates/{certificate}/download', [PesertaCertificateController::class, 'download'])->name('certificates.download');

@@ -16,6 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
     $middleware->alias([
         'role.check' => \App\Http\Middleware\RoleMiddleware::class,
         'user.active' => \App\Http\Middleware\EnsureUserIsActive::class,
+        'peserta.enrolled' => \App\Http\Middleware\EnsurePesertaEnrolledInClass::class,
+        'instruktur.class' => \App\Http\Middleware\EnsureInstructorAssignedToClass::class,
+    ]);
+
+    $middleware->web(prepend: [
+        \App\Http\Middleware\ShareSystemSettings::class,
     ]);
 
     $middleware->web(append: [

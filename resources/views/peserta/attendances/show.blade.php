@@ -66,7 +66,7 @@
                         <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-700 mb-3">
                             <x-lms-icon name="clock" class="w-6 h-6" />
                         </span>
-                        <h4 class="text-lg font-bold text-blue-800 mb-2">{{ __('lms.attendance.not_time_yet') }}</h4>
+                        <h4 class="text-lg font-bold text-blue-800 mb-2">{{ __('lms.attendance.not_open_yet') }}</h4>
                         <x-lms-notice tone="info">
                             <p>{{ __('lms.attendance.session_opens_at', ['datetime' => $attendance->attendance_date->format('d M Y H:i')]) }}</p>
                             <p class="text-sm mt-1">{{ __('lms.attendance.come_back_later') }}</p>
@@ -82,7 +82,7 @@
                         <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 text-red-700 mb-3">
                             <x-lms-icon name="clock" class="w-6 h-6" />
                         </span>
-                        <h4 class="text-lg font-bold text-red-800 mb-2">{{ __('lms.attendance.submission_deadline_passed') }}</h4>
+                        <h4 class="text-lg font-bold text-red-800 mb-2">{{ __('lms.attendance.window_closed') }}</h4>
                         <x-lms-notice tone="danger">
                             <p>{{ __('lms.attendance.cannot_submit_contact') }}</p>
                             @if($attendance->attendance_deadline)

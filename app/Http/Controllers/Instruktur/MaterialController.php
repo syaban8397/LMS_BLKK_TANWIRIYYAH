@@ -45,18 +45,12 @@ class MaterialController extends Controller
         $this->authorizeInstructor($class);
 
         $validated = $request->validated();
-
-        if (!$request->hasFile('file') && empty($validated['youtube_url'])) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors(['content' => __('lms.flash.material_need_content')]);
-        }
+        $mode = $validated['content_mode'];
 
         $filePath = null;
         $fileType = null;
 
-        if ($request->hasFile('file')) {
+        if (($mode === 'file' || $mode === 'both') && $request->hasFile('file')) {
             $file = $request->file('file');
             $filePath = SecureStorage::storeUploadedFile($file, 'materials');
             $fileType = $file->getClientOriginalExtension();
@@ -70,7 +64,7 @@ class MaterialController extends Controller
             'meeting_number' => $validated['meeting_number'],
             'file_path' => $filePath,
             'file_type' => $fileType,
-            'youtube_url' => $validated['youtube_url'],
+            'youtube_url' => in_array($mode, ['link', 'both'], true) ? ($validated['youtube_url'] ?? null) : null,
             'created_by' => auth()->id(),
         ]);
 
@@ -112,16 +106,21 @@ class MaterialController extends Controller
         $this->ensureBelongsToClass($material, $class);
 
         $validated = $request->validated();
+        $mode = $validated['content_mode'];
 
         $filePath = $material->file_path;
         $fileType = $material->file_type;
 
-        if ($request->hasFile('file')) {
+        if (($mode === 'file' || $mode === 'both') && $request->hasFile('file')) {
             SecureStorage::delete($material->file_path);
 
             $file = $request->file('file');
             $filePath = SecureStorage::storeUploadedFile($file, 'materials');
             $fileType = $file->getClientOriginalExtension();
+        } elseif ($mode === 'link') {
+            SecureStorage::delete($material->file_path);
+            $filePath = null;
+            $fileType = null;
         }
 
         $material->update([
@@ -131,7 +130,7 @@ class MaterialController extends Controller
             'meeting_number' => $validated['meeting_number'],
             'file_path' => $filePath,
             'file_type' => $fileType,
-            'youtube_url' => $validated['youtube_url'],
+            'youtube_url' => in_array($mode, ['link', 'both'], true) ? ($validated['youtube_url'] ?? null) : null,
         ]);
 
         return redirect()

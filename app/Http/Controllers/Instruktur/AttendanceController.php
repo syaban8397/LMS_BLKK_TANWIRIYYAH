@@ -59,8 +59,7 @@ class AttendanceController extends Controller
         
         $validated = $request->validate([
             'meeting_number'   => 'required|integer|min:1',
-            'attendance_date'  => 'required|date',
-            'deadline_minutes' => 'required|integer|min:0',
+            'session_date'     => 'required|date',
         ]);
         
         // Cek apakah sesi sudah ada
@@ -80,9 +79,7 @@ class AttendanceController extends Controller
             return redirect()->back()->with('error', __('lms.flash.no_active_students'));
         }
         
-        $attendanceDate = \Carbon\Carbon::parse($validated['attendance_date']);
-        // Cast ke int untuk menghindari TypeError
-        $deadline = $attendanceDate->copy()->addMinutes((int) $validated['deadline_minutes']);
+        [$attendanceDate, $deadline] = $class->attendanceWindowForDate($validated['session_date']);
         
         DB::beginTransaction();
         try {

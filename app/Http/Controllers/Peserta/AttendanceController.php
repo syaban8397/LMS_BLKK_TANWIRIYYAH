@@ -52,11 +52,11 @@ class AttendanceController extends Controller
         }
 
         if (now()->gt($attendance->attendance_deadline)) {
-            return redirect()->back()->with('error', __('lms.flash.attendance_deadline_passed'));
+            return redirect()->back()->with('error', __('lms.flash.attendance_window_closed'));
         }
 
         if (now()->lt($attendance->attendance_date)) {
-            return redirect()->back()->with('error', __('lms.flash.attendance_not_started'));
+            return redirect()->back()->with('error', __('lms.flash.attendance_window_not_open'));
         }
 
         $validated = $request->validated();

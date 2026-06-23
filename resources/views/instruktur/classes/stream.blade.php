@@ -10,8 +10,8 @@
             ]"
         />
 
-        <div class="grid lg:grid-cols-4 gap-6">
-            <div class="lg:col-span-1 space-y-5">
+        <div class="lms-stream-layout">
+            <div class="lms-stream-sidebar space-y-5">
                 <x-lms-section :title="__('lms.common.class_info')" icon="clipboard" compact>
                     <x-lms-panel>
                         <div class="space-y-3 text-sm">
@@ -58,7 +58,7 @@
                 </x-lms-section>
             </div>
 
-            <div class="lg:col-span-3 space-y-5">
+            <div class="lms-stream-main space-y-5">
                 <x-lms-section :title="__('lms.common.post_announcement')" icon="megaphone" compact>
                     <x-lms-panel>
                         <form action="{{ route('instruktur.announcements.store', $class) }}" method="POST" class="space-y-3">

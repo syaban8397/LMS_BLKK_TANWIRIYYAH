@@ -37,6 +37,8 @@ trait CreatesTrainingContext
             'description' => 'Kelas uji',
             'start_date' => now()->subWeek(),
             'end_date' => now()->addMonth(),
+            'start_time' => '08:00:00',
+            'duration_minutes' => 120,
             'quota' => 30,
             'status' => 'active',
         ]);
@@ -55,6 +57,7 @@ trait CreatesTrainingContext
             'description' => 'Kerjakan essay digital marketing',
             'deadline' => now()->addDays(3),
             'late_submission_allowed' => true,
+            'submission_type' => 'file_and_link',
             'is_active' => true,
         ]);
 

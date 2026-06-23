@@ -1,0 +1,413 @@
+/**
+ * Module polish — professional LMS UI across all authenticated views (not landing).
+ */
+
+@layer components {
+    /* ── Unified section + panel card (all module pages) ── */
+    html[data-authenticated-app="1"] .lms-page-shell .lms-section:has(.lms-section__body > .lms-panel) {
+        gap: 0;
+        min-height: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-shell .lms-section:has(.lms-section__body > .lms-panel) .lms-section__header {
+        align-items: center;
+        padding: 0.875rem 1.125rem;
+        background: var(--color-surface);
+        border: 1px solid rgba(226, 232, 240, 0.92);
+        border-bottom: none;
+        border-radius: 0.75rem 0.75rem 0 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-shell .lms-section:has(.lms-section__body > .lms-panel) .lms-section__body > .lms-panel {
+        border-top: none;
+        border-radius: 0 0 0.75rem 0.75rem;
+        box-shadow: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-shell .lms-section__icon {
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 0.5rem;
+        background: rgba(0, 64, 113, 0.07);
+        color: #004071;
+    }
+
+    html[data-authenticated-app="1"] .lms-page-shell .lms-section__title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+    }
+
+    /* ── Nested form card inside panel (profile, etc.) ── */
+    html[data-authenticated-app="1"] .lms-panel > .lms-form-card {
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        border-radius: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-panel > .lms-form-card .lms-form-card__header {
+        padding-left: 0;
+        padding-right: 0;
+        padding-top: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-panel > .lms-form-card .lms-form-card__body {
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: 0;
+    }
+
+    /* ── Form cards standalone ── */
+    html[data-authenticated-app="1"] .lms-form-card {
+        border-radius: 0.75rem;
+        border: 1px solid rgba(226, 232, 240, 0.92);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+    }
+
+    html[data-authenticated-app="1"] .lms-form-card__header {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.625rem;
+        padding: 0.875rem 1.125rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+        background: rgba(248, 250, 252, 0.55);
+    }
+
+    html.dark[data-authenticated-app="1"] .lms-form-card__header {
+        background: rgba(15, 23, 42, 0.35);
+    }
+
+    html[data-authenticated-app="1"] .lms-form-card__icon {
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 64, 113, 0.07);
+        color: #004071;
+        flex-shrink: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-form-card__title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--color-text);
+    }
+
+    html[data-authenticated-app="1"] .lms-form-card__description {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        margin-top: 0.125rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-form-card__body {
+        padding: 1rem 1.125rem 1.125rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-form-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-form-layout--wide {
+        max-width: 100%;
+    }
+
+    /* ── Disable distracting form entrance animations ── */
+    html[data-authenticated-app="1"] .form-group,
+    html[data-authenticated-app="1"] .input-group {
+        animation: none !important;
+        opacity: 1 !important;
+    }
+
+    /* ── Report pages ── */
+    html[data-authenticated-app="1"] .lms-report-shell {
+        gap: 1rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-panel {
+        border-radius: 0.75rem;
+        border: 1px solid rgba(226, 232, 240, 0.92);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-panel__toolbar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.125rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+        background: rgba(248, 250, 252, 0.55);
+    }
+
+    html.dark[data-authenticated-app="1"] .lms-report-panel__toolbar {
+        background: rgba(15, 23, 42, 0.35);
+    }
+
+    html[data-authenticated-app="1"] .lms-report-table-wrap {
+        overflow-x: auto;
+        overflow-y: visible;
+        overscroll-behavior: contain;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-table-wrap::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-table-wrap::-webkit-scrollbar-thumb {
+        background: rgba(100, 116, 139, 0.35);
+        border-radius: 9999px;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-table,
+    html[data-authenticated-app="1"] .lms-report-table-wrap > table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8125rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-table thead th,
+    html[data-authenticated-app="1"] .lms-report-table-wrap > table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        text-align: left;
+        font-size: 0.625rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+        padding: 0.625rem 0.875rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+        background: rgba(248, 250, 252, 0.95);
+        white-space: nowrap;
+    }
+
+    html.dark[data-authenticated-app="1"] .lms-report-table thead th,
+    html.dark[data-authenticated-app="1"] .lms-report-table-wrap > table thead th {
+        background: rgba(15, 23, 42, 0.92);
+    }
+
+    html[data-authenticated-app="1"] .lms-report-table tbody td,
+    html[data-authenticated-app="1"] .lms-report-table-wrap > table tbody td {
+        padding: 0.625rem 0.875rem;
+        border-bottom: 1px solid rgba(241, 245, 249, 0.95);
+        color: var(--color-text);
+        vertical-align: middle;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-table tbody tr:hover td,
+    html[data-authenticated-app="1"] .lms-report-table-wrap > table tbody tr:hover td {
+        background: rgba(248, 250, 252, 0.65);
+    }
+
+    html[data-authenticated-app="1"] .lms-report-table tbody tr:last-child td,
+    html[data-authenticated-app="1"] .lms-report-table-wrap > table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-panel__footer {
+        padding: 0.75rem 1.125rem;
+        border-top: 1px solid rgba(226, 232, 240, 0.85);
+        background: rgba(248, 250, 252, 0.45);
+        font-size: 0.8125rem;
+    }
+
+    /* ── Report index cards ── */
+    html[data-authenticated-app="1"] .lms-report-index-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    @media (min-width: 768px) {
+        html[data-authenticated-app="1"] .lms-report-index-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (min-width: 1280px) {
+        html[data-authenticated-app="1"] .lms-report-index-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    html[data-authenticated-app="1"] .lms-report-index-card {
+        display: block;
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-index-card .lms-panel {
+        height: 100%;
+        padding: 1rem 1.125rem;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-index-card:hover .lms-panel {
+        border-color: rgba(37, 99, 235, 0.35);
+        background: rgba(248, 250, 252, 0.85);
+    }
+
+    html[data-authenticated-app="1"] .lms-report-index-card__title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--color-text);
+    }
+
+    html[data-authenticated-app="1"] .lms-report-index-card:hover .lms-report-index-card__title {
+        color: #2563eb;
+    }
+
+    html[data-authenticated-app="1"] .lms-report-index-card__desc {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        margin-top: 0.25rem;
+        line-height: 1.45;
+    }
+
+    /* ── Detail lists (show/stream pages) ── */
+    html[data-authenticated-app="1"] .lms-detail-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 0.625rem 0;
+        border-bottom: 1px solid rgba(241, 245, 249, 0.95);
+        font-size: 0.8125rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-detail-row:last-child {
+        border-bottom: none;
+    }
+
+    html[data-authenticated-app="1"] .lms-detail-row__label {
+        color: var(--color-text-muted);
+        font-weight: 500;
+        flex-shrink: 0;
+    }
+
+    html[data-authenticated-app="1"] .lms-detail-row__value {
+        color: var(--color-text);
+        font-weight: 600;
+        text-align: right;
+    }
+
+    html[data-authenticated-app="1"] .lms-detail-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    /* ── Stat grid in module pages ── */
+    html[data-authenticated-app="1"] .lms-stat-grid {
+        display: grid;
+        gap: 0.625rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-stat-grid--3 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    @media (min-width: 640px) {
+        html[data-authenticated-app="1"] .lms-stat-grid--3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    html[data-authenticated-app="1"] .lms-panel .lms-stat-grid .lms-stat-card {
+        border-radius: 0;
+        border: none;
+        border-right: 1px solid rgba(226, 232, 240, 0.85);
+        box-shadow: none;
+        min-height: 4.75rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-panel .lms-stat-grid .lms-stat-card:last-child {
+        border-right: none;
+    }
+
+    /* ── Stream / content layout ── */
+    html[data-authenticated-app="1"] .lms-stream-layout {
+        display: grid;
+        gap: 0.75rem;
+        min-height: 0;
+    }
+
+    @media (min-width: 1024px) {
+        html[data-authenticated-app="1"] .lms-stream-layout {
+            grid-template-columns: 17rem minmax(0, 1fr);
+            align-items: start;
+        }
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-main {
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    html[data-authenticated-app="1"] .lms-stream-main .lms-panel--scroll .lms-panel__body,
+    html[data-authenticated-app="1"] .lms-stream-main .lms-scroll-panel {
+        max-height: none;
+        overflow-y: visible;
+    }
+
+    /* ── Global table polish in main ── */
+    html[data-authenticated-app="1"] main table:not(.lms-mini-table) thead th {
+        font-size: 0.625rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    /* ── Inputs: consistent institutional feel ── */
+    html[data-authenticated-app="1"] .input-3d,
+    html[data-authenticated-app="1"] main input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    html[data-authenticated-app="1"] main select,
+    html[data-authenticated-app="1"] main textarea {
+        min-height: 2.375rem;
+        border-radius: 0.5rem;
+        font-size: 0.8125rem;
+    }
+
+    html[data-authenticated-app="1"] main textarea {
+        min-height: 5rem;
+    }
+
+    html[data-authenticated-app="1"] main label,
+    html[data-authenticated-app="1"] .x-input-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+    }
+
+    /* ── Remove legacy card hover lift globally ── */
+    html[data-authenticated-app="1"] .card-3d:hover,
+    html[data-authenticated-app="1"] .form-card:hover,
+    html[data-authenticated-app="1"] .detail-card:hover,
+    html[data-authenticated-app="1"] .submission-card:hover,
+    html[data-authenticated-app="1"] .info-card:hover {
+        transform: none !important;
+    }
+}

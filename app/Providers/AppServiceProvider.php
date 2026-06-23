@@ -21,14 +21,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         if (Schema::hasTable('system_settings')) {
-            $settings = SystemSetting::current();
             SystemSetting::applyMailConfig();
-
-            view()->share('lmsDefaultTheme', $settings->default_theme ?: 'light');
-            view()->share('lmsAppDisplayName', $settings->appName());
-        } else {
-            view()->share('lmsDefaultTheme', 'light');
-            view()->share('lmsAppDisplayName', __('lms.app_name'));
         }
     }
 }

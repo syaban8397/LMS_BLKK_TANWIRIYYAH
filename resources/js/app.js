@@ -343,19 +343,13 @@ window.LmsTheme = {
     },
 
     get() {
-        const role = this.currentRole();
-        const uid = this.currentUserId();
-        return localStorage.getItem(this.storageKey(role, uid))
-            || localStorage.getItem(this.storageKey(role, ''))
+        return document.documentElement.getAttribute('data-default-theme')
+            || document.documentElement.getAttribute('data-theme')
             || 'light';
     },
 
     set(theme) {
-        const role = this.currentRole();
-        const uid = this.currentUserId();
         const value = theme === 'dark' ? 'dark' : 'light';
-        localStorage.setItem(this.storageKey(role, uid), value);
-        localStorage.setItem(this.storageKey(role, ''), value);
         this.apply(value);
     },
 

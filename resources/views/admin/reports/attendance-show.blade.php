@@ -10,57 +10,49 @@
                 ['label' => __('lms.report.attendance'), 'url' => route('admin.reports.attendance')],
                 ['label' => $class->title],
             ]"
-        >
-            <x-slot:actions>
-                @include('admin.reports._export-actions', [
-                    'excelRoute' => 'admin.reports.attendance.export',
-                    'pdfRoute' => 'admin.reports.attendance.export-pdf',
-                    'routeParams' => [$class],
-                ])
-            </x-slot:actions>
-        </x-lms-page-header>
+        />
 
-        <x-lms-section compact>
-            <x-lms-panel flush :pad="false">
-                <div class="lms-report-table-wrap overflow-x-auto">
-                    <table class="w-full text-sm min-w-[900px]">
-                        <thead class="bg-slate-50 text-slate-500 text-xs font-semibold">
-                            <tr>
-                                <th class="px-3 py-3 text-left">{{ __('lms.report.no') }}</th>
-                                @include('admin.reports._participant-minimal-head')
-                                <th class="px-3 py-3 text-center">{{ __('lms.report.present') }}</th>
-                                <th class="px-3 py-3 text-center">{{ __('lms.report.permission') }}</th>
-                                <th class="px-3 py-3 text-center">{{ __('lms.report.sick') }}</th>
-                                <th class="px-3 py-3 text-center">{{ __('lms.report.absent') }}</th>
-                                @foreach($meetings as $meeting)
-                                    <th class="px-3 py-3 text-center">P{{ $meeting->meeting_number }}</th>
-                                @endforeach
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            @forelse($attendanceMatrix as $index => $row)
-                                <tr class="hover:bg-slate-50">
-                                    <td class="px-3 py-3 text-slate-500">{{ $index + 1 }}</td>
-                                    @if($row['participant'] ?? null)
-                                        @include('admin.reports._participant-minimal-row', ['user' => $row['participant']])
-                                    @else
-                                        @for($i = 0; $i < 3; $i++)<td class="px-3 py-3">-</td>@endfor
-                                    @endif
-                                    <td class="px-3 py-3 text-center text-green-700">{{ $row['present_count'] }}</td>
-                                    <td class="px-3 py-3 text-center text-amber-700">{{ $row['permission_count'] }}</td>
-                                    <td class="px-3 py-3 text-center text-blue-700">{{ $row['sick_count'] }}</td>
-                                    <td class="px-3 py-3 text-center text-red-700">{{ $row['absent_count'] }}</td>
-                                    @foreach($meetings as $meeting)
-                                        <td class="px-3 py-3 text-center text-xs">{{ $row['attendances'][$meeting->meeting_number] ?? '-' }}</td>
-                                    @endforeach
-                                </tr>
-                            @empty
-                                <tr><td colspan="{{ 8 + $meetings->count() }}" class="py-10 text-center text-slate-400">{{ __('lms.no_data') }}</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </x-lms-panel>
-        </x-lms-section>
+        <x-lms-report-table-shell
+            excel-route="admin.reports.attendance.export"
+            pdf-route="admin.reports.attendance.export-pdf"
+            :route-params="[$class]"
+        >
+            <table class="lms-report-table min-w-[900px]">
+                <thead>
+                    <tr>
+                        <th>{{ __('lms.report.no') }}</th>
+                        @include('admin.reports._participant-minimal-head')
+                        <th class="text-center">{{ __('lms.report.present') }}</th>
+                        <th class="text-center">{{ __('lms.report.permission') }}</th>
+                        <th class="text-center">{{ __('lms.report.sick') }}</th>
+                        <th class="text-center">{{ __('lms.report.absent') }}</th>
+                        @foreach($meetings as $meeting)
+                            <th class="text-center">P{{ $meeting->meeting_number }}</th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($attendanceMatrix as $index => $row)
+                        <tr>
+                            <td class="text-slate-500 tabular-nums">{{ $index + 1 }}</td>
+                            @if($row['participant'] ?? null)
+                                @include('admin.reports._participant-minimal-row', ['user' => $row['participant']])
+                            @else
+                                @for($i = 0; $i < 3; $i++)<td>-</td>@endfor
+                            @endif
+                            <td class="text-center text-green-700 tabular-nums">{{ $row['present_count'] }}</td>
+                            <td class="text-center text-amber-700 tabular-nums">{{ $row['permission_count'] }}</td>
+                            <td class="text-center text-blue-700 tabular-nums">{{ $row['sick_count'] }}</td>
+                            <td class="text-center text-red-700 tabular-nums">{{ $row['absent_count'] }}</td>
+                            @foreach($meetings as $meeting)
+                                <td class="text-center text-xs">{{ $row['attendances'][$meeting->meeting_number] ?? '-' }}</td>
+                            @endforeach
+                        </tr>
+                    @empty
+                        <tr><td colspan="{{ 8 + $meetings->count() }}" class="py-10 text-center text-slate-400">{{ __('lms.no_data') }}</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </x-lms-report-table-shell>
     </x-lms-page-shell>
 </x-app-layout>
