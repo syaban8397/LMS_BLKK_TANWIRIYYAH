@@ -32,13 +32,31 @@
         @error('meeting_number')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
     </div>
 
+    @php
+        $defaultContentMode = old('content_mode');
+        if (!$defaultContentMode && isset($material)) {
+            $hasFile = (bool) $material->file_path;
+            $hasYoutube = (bool) $material->youtube_url;
+            $defaultContentMode = ($hasFile && $hasYoutube) ? 'both' : ($hasFile ? 'file' : ($hasYoutube ? 'link' : 'both'));
+        }
+        $defaultContentMode = $defaultContentMode ?? 'both';
+    @endphp
+
     {{-- CONTENT SECTION (FILE / YOUTUBE) --}}
     <div class="form-group border-t border-slate-200 pt-4 mt-2">
         <p class="text-sm font-semibold text-slate-700 mb-3">{{ __('lms.material.content') }}</p>
 
+        <div class="flex flex-wrap gap-2 mb-4">
+            @foreach(['file' => __('lms.content_mode.file'), 'link' => __('lms.content_mode.link'), 'both' => __('lms.content_mode.both')] as $mode => $label)
+                <label class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer text-sm transition {{ $defaultContentMode === $mode ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 hover:border-blue-300' }}">
+                    <input type="radio" name="content_mode" value="{{ $mode }}" class="text-blue-600 focus:ring-blue-500" data-lms-content-mode {{ $defaultContentMode === $mode ? 'checked' : '' }}>
+                    {{ $label }}
+                </label>
+            @endforeach
+        </div>
+
         <div class="space-y-5">
-            {{-- FILE UPLOAD --}}
-            <div class="file-group">
+            <div class="file-group" data-lms-content-panel="file">
                 <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('lms.material.upload_file') }}</label>
                 <p class="text-xs text-slate-400 mb-2">{{ __('lms.material.file_types_hint') }}</p>
                 <input type="file" name="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.txt,.jpg,.jpeg,.png,.mp4"
@@ -49,8 +67,7 @@
                 @error('file')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
 
-            {{-- YOUTUBE URL --}}
-            <div class="youtube-group">
+            <div class="youtube-group" data-lms-content-panel="link">
                 <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('lms.material.youtube_url') }}</label>
                 <input type="url" name="youtube_url" value="{{ old('youtube_url', $material->youtube_url ?? '') }}" placeholder="https://www.youtube.com/watch?v=..."
                        class="input-3d w-full rounded-lg border-slate-200 focus:border-blue-400 focus:ring-blue-400 text-sm px-3 py-2 transition-all">
@@ -65,3 +82,17 @@
         @enderror
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('[data-lms-content-mode]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            var mode = document.querySelector('[data-lms-content-mode]:checked')?.value || 'both';
+            document.querySelectorAll('[data-lms-content-panel]').forEach(function (panel) {
+                var panelMode = panel.getAttribute('data-lms-content-panel');
+                var show = mode === 'both' || mode === panelMode;
+                panel.classList.toggle('hidden', !show);
+            });
+        });
+        radio.dispatchEvent(new Event('change'));
+    });
+</script>
